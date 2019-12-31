@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace ReeseUnityDemos
 {
-    class PersonSpawner : MonoBehaviour
+    class SpawnDemoSpawner : MonoBehaviour
     {
         public Button Button;
         public Text SpawnText;
