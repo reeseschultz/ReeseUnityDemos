@@ -14,12 +14,6 @@ namespace ReeseUnityDemos
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         static Scene scene => SceneManager.GetActiveScene();
-        EntityQuery randomBufferQuery;
-
-        protected override void OnCreate()
-        {
-            randomBufferQuery = GetEntityQuery(typeof(RandomBufferElement));
-        }
 
         [BurstCompile]
         struct AddProjectileJob : IJobForEachWithEntity<Person>
@@ -31,7 +25,7 @@ namespace ReeseUnityDemos
             public EntityCommandBuffer.Concurrent CommandBuffer;
 
             [NativeDisableParallelForRestriction]
-            public DynamicBuffer<RandomBufferElement> RandomBuffer;
+            public NativeArray<Unity.Mathematics.Random> RandomArray;
 
             [NativeSetThreadIndex]
             int threadIndex;
@@ -40,20 +34,20 @@ namespace ReeseUnityDemos
             {
                 if (ProjectileFromEntity.Exists(entity) && ProjectileFromEntity[entity].HasTarget) return;
 
-                var randomBuffer = RandomBuffer[threadIndex];
+                var random = RandomArray[threadIndex];
 
                 CommandBuffer.AddComponent(index, entity, new Projectile
                 {
-                    AngleInDegrees = randomBuffer.Value.NextInt(45, 60),
-                    Gravity = randomBuffer.Value.NextInt(50, 150),
+                    AngleInDegrees = random.NextInt(45, 60),
+                    Gravity = random.NextInt(50, 150),
                     Target = new float3(
-                        randomBuffer.Value.NextInt(-10, 10),
+                        random.NextInt(-10, 10),
                         2.5f,
-                        randomBuffer.Value.NextInt(-10, 10)
+                        random.NextInt(-10, 10)
                     )
                 });
 
-                RandomBuffer[threadIndex] = randomBuffer;
+                RandomArray[threadIndex] = random;
             }
         }
 
@@ -87,16 +81,11 @@ namespace ReeseUnityDemos
         {
             if (!scene.name.Equals("ProjectileDemo")) return inputDeps;
 
-            var randomBufferEntities = randomBufferQuery.ToEntityArray(Allocator.TempJob);
-            if (randomBufferEntities.Length == 0) return inputDeps;
-            var randomBuffer = GetBufferFromEntity<RandomBufferElement>()[randomBufferEntities[0]];
-            randomBufferEntities.Dispose();
-
             var addProjectileJob = new AddProjectileJob
             {
-                RandomBuffer = randomBuffer,
                 ProjectileFromEntity = GetComponentDataFromEntity<Projectile>(true),
-                CommandBuffer = barrier.CreateCommandBuffer().ToConcurrent()
+                CommandBuffer = barrier.CreateCommandBuffer().ToConcurrent(),
+                RandomArray = World.GetExistingSystem<RandomSystem>().RandomArray
             }.Schedule(this, inputDeps);
 
             barrier.AddJobHandleForProducer(addProjectileJob);
