@@ -21,6 +21,7 @@ namespace ReeseUnityDemos
             randomBufferQuery = GetEntityQuery(typeof(RandomBufferElement));
         }
 
+        [BurstCompile]
         struct AddProjectileJob : IJobForEachWithEntity<Person>
         {
             [ReadOnly]
