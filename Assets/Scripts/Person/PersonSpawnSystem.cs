@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -12,10 +13,12 @@ namespace ReeseUnityDemos
         static ConcurrentQueue<PersonSpawn> spawnQueue = new ConcurrentQueue<PersonSpawn>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         EntityQuery personPrefabQuery;
+        EntityQuery randomBufferQuery;
 
         protected override void OnCreate()
         {
             personPrefabQuery = GetEntityQuery(typeof(PersonPrefab));
+            randomBufferQuery = GetEntityQuery(typeof(RandomBufferElement));
         }
 
         public static void Enqueue(PersonSpawn personSpawn)
@@ -42,6 +45,12 @@ namespace ReeseUnityDemos
             [WriteOnly]
             public EntityCommandBuffer.Concurrent CommandBuffer;
 
+            [NativeDisableParallelForRestriction]
+            public DynamicBuffer<RandomBufferElement> RandomBuffer;
+
+            [NativeSetThreadIndex]
+            int threadIndex;
+
             public void Execute(int i)
             {
                 if (
@@ -57,14 +66,18 @@ namespace ReeseUnityDemos
 
                 if (!spawn.Person.RandomizeTranslation) return;
 
+                var randomBuffer = RandomBuffer[threadIndex];
+
                 CommandBuffer.SetComponent(i, entity, new Translation
                 {
                     Value = new float3(
-                        Util.ConcurrentRandom.NextInt(-25, 25),
+                        randomBuffer.Value.NextInt(-25, 25),
                         2,
-                        Util.ConcurrentRandom.NextInt(-25, 25)
+                        randomBuffer.Value.NextInt(-25, 25)
                     )
                 });
+
+                RandomBuffer[threadIndex] = randomBuffer;
             }
         }
 
@@ -72,8 +85,14 @@ namespace ReeseUnityDemos
         {
             if (spawnQueue.IsEmpty) return inputDeps;
 
+            var randomBufferEntities = randomBufferQuery.ToEntityArray(Allocator.TempJob);
+            if (randomBufferEntities.Length == 0) return inputDeps;
+            var randomBuffer = GetBufferFromEntity<RandomBufferElement>()[randomBufferEntities[0]];
+            randomBufferEntities.Dispose();
+
             var job = new SpawnJob
             {
+                RandomBuffer = randomBuffer,
                 PersonPrefabs = personPrefabQuery.ToComponentDataArray<PersonPrefab>(Allocator.TempJob),
                 CommandBuffer = barrier.CreateCommandBuffer().ToConcurrent()
             }.Schedule(50, 128, inputDeps);

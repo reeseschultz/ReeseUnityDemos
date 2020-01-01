@@ -1,5 +1,6 @@
 ﻿using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -13,6 +14,12 @@ namespace ReeseUnityDemos
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         static Scene scene => SceneManager.GetActiveScene();
+        EntityQuery randomBufferQuery;
+
+        protected override void OnCreate()
+        {
+            randomBufferQuery = GetEntityQuery(typeof(RandomBufferElement));
+        }
 
         struct AddProjectileJob : IJobForEachWithEntity<Person>
         {
@@ -22,20 +29,30 @@ namespace ReeseUnityDemos
             [WriteOnly]
             public EntityCommandBuffer.Concurrent CommandBuffer;
 
+            [NativeDisableParallelForRestriction]
+            public DynamicBuffer<RandomBufferElement> RandomBuffer;
+
+            [NativeSetThreadIndex]
+            int threadIndex;
+
             public void Execute(Entity entity, int index, [ReadOnly] ref Person person)
             {
                 if (ProjectileFromEntity.Exists(entity) && ProjectileFromEntity[entity].HasTarget) return;
 
+                var randomBuffer = RandomBuffer[threadIndex];
+
                 CommandBuffer.AddComponent(index, entity, new Projectile
                 {
-                    AngleInDegrees = Util.ConcurrentRandom.NextInt(45, 60),
-                    Gravity = Util.ConcurrentRandom.NextInt(50, 150),
+                    AngleInDegrees = randomBuffer.Value.NextInt(45, 60),
+                    Gravity = randomBuffer.Value.NextInt(50, 150),
                     Target = new float3(
-                        Util.ConcurrentRandom.NextInt(-10, 10),
+                        randomBuffer.Value.NextInt(-10, 10),
                         2.5f,
-                        Util.ConcurrentRandom.NextInt(-10, 10)
+                        randomBuffer.Value.NextInt(-10, 10)
                     )
                 });
+
+                RandomBuffer[threadIndex] = randomBuffer;
             }
         }
 
@@ -69,8 +86,14 @@ namespace ReeseUnityDemos
         {
             if (!scene.name.Equals("ProjectileDemo")) return inputDeps;
 
+            var randomBufferEntities = randomBufferQuery.ToEntityArray(Allocator.TempJob);
+            if (randomBufferEntities.Length == 0) return inputDeps;
+            var randomBuffer = GetBufferFromEntity<RandomBufferElement>()[randomBufferEntities[0]];
+            randomBufferEntities.Dispose();
+
             var addProjectileJob = new AddProjectileJob
             {
+                RandomBuffer = randomBuffer,
                 ProjectileFromEntity = GetComponentDataFromEntity<Projectile>(true),
                 CommandBuffer = barrier.CreateCommandBuffer().ToConcurrent()
             }.Schedule(this, inputDeps);
