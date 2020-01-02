@@ -10,22 +10,31 @@ Hi, I'm Reese. Here's how my tutorials on [reeseschultz.com](https://reeseschult
 
 ![Video of changing prefab colors with Unity ECS.](/Gifs/point-and-click.gif)
 
+---
+
 ## [Projectile Motion with Unity DOTS](https://reeseschultz.com/projectile-motion-with-unity-dots/)
 
 ⇒ `Assets/Scenes/ProjectileDemo.unity`
 
 ![Video of projectile motion demonstration with Unity DOTS.](/Gifs/projectile.gif)
 
+---
+
 ## [Random Number Generation with Unity DOTS](https://reeseschultz.com/random-number-generation-with-unity-dots)
 
 ⇒ `Assets/Scenes/ProjectileDemo.unity`
+
 ⇒ `Assets/Scenes/SpawnDemo.unity`
+
+---
 
 ## [Spawning Prefabs with Unity ECS](https://reeseschultz.com/spawning-prefabs-with-unity-ecs/)
 
 ⇒ `Assets/Scenes/SpawnDemo.unity`
 
 ![Video of spawning prefabs with Unity ECS.](/Gifs/spawn.gif)
+
+---
 
 ## Contributor Agreement
 
