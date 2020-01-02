@@ -19,10 +19,7 @@ Hi, I'm Reese. Here's how my tutorials on [reeseschultz.com](https://reeseschult
 ## [Random Number Generation with Unity DOTS](https://reeseschultz.com/random-number-generation-with-unity-dots)
 
 ⇒ `Assets/Scenes/ProjectileDemo.unity`
-
 ⇒ `Assets/Scenes/SpawnDemo.unity`
-
-![Video of random number generation code in a text editor.](/Gifs/random.gif)
 
 ## [Spawning Prefabs with Unity ECS](https://reeseschultz.com/spawning-prefabs-with-unity-ecs/)
 
