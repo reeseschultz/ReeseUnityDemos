@@ -28,6 +28,12 @@ Hi, I'm Reese. Here's how my tutorials on [reeseschultz.com](https://reeseschult
 
 ---
 
+## [Selectively Running Systems in Scenes with Unity ECS](https://reeseschultz.com/selectively-running-systems-in-scenes-with-unity-ecs)
+
+⇒ `Assets/Scenes/ProjectileDemo.unity`
+
+---
+
 ## [Spawning Prefabs with Unity ECS](https://reeseschultz.com/spawning-prefabs-with-unity-ecs/)
 
 ⇒ `Assets/Scenes/SpawnDemo.unity`
