@@ -2,7 +2,7 @@
 
 Unity demos for [reeseschultz.com](https://reeseschultz.com).
 
-Hi, I'm Reese. Here's how my tutorials on [reeseschultz.com](https://reeseschultz.com) correspond to the demos in this project:
+Hi, I'm Reese. Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to demos in this project:
 
 ## [Pointing and Clicking with Unity ECS](https://reeseschultz.com/pointing-and-clicking-with-unity-ecs/)
 
