@@ -20,9 +20,7 @@ namespace ReeseUnityDemos
         }
 
         protected override void OnDestroy()
-        {
-            RandomArray.Dispose();
-        }
+            => RandomArray.Dispose();
 
         protected override void OnUpdate() { }
     }
