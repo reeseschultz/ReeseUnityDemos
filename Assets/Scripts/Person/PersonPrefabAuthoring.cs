@@ -13,7 +13,7 @@ namespace ReeseUnityDemos
         {
             dstManager.AddComponentData(entity, new PersonPrefab
             {
-                Prefab = conversionSystem.GetPrimaryEntity(PersonPrefab)
+                Value = conversionSystem.GetPrimaryEntity(PersonPrefab)
             });
         }
 
