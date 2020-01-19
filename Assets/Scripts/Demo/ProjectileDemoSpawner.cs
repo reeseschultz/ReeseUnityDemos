@@ -2,7 +2,7 @@
 using Unity.Transforms;
 using UnityEngine;
 
-namespace ReeseUnityDemos
+namespace Reese.Demo
 {
     class ProjectileDemoSpawner : MonoBehaviour
     {

@@ -6,7 +6,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace ReeseUnityDemos
+namespace Reese.Demo
 {
     class ProjectileSystem : JobComponentSystem
     {

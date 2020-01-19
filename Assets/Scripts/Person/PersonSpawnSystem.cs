@@ -6,7 +6,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-namespace ReeseUnityDemos
+namespace Reese.Demo
 {
     class PersonSpawnSystem : JobComponentSystem
     {

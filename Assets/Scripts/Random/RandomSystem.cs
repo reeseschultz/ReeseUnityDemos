@@ -2,7 +2,7 @@
 using Unity.Entities;
 using Unity.Jobs.LowLevel.Unsafe;
 
-namespace ReeseUnityDemos
+namespace Reese.Demo
 {
     class RandomSystem : ComponentSystem
     {

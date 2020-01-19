@@ -2,7 +2,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace ReeseUnityDemos
+namespace Reese.Demo
 {
     [RequiresEntityConversion]
     class PersonPrefabAuthoring : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs

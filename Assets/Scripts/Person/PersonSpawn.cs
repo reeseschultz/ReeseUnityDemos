@@ -1,6 +1,6 @@
 ﻿using Unity.Transforms;
 
-namespace ReeseUnityDemos
+namespace Reese.Demo
 {
     struct PersonSpawn
     {

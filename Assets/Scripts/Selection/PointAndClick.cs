@@ -5,7 +5,7 @@ using UnityEngine;
 using RaycastHit = Unity.Physics.RaycastHit;
 using Unity.Rendering;
 
-namespace ReeseUnityDemos
+namespace Reese.Demo
 {
     class PointAndClick : MonoBehaviour
     {

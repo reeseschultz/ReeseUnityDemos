@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace ReeseUnityDemos {
+namespace Reese.Demo {
     struct PersonPrefab : IComponentData
     {
         public Entity Value;

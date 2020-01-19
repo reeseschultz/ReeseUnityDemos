@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace ReeseUnityDemos
+namespace Reese.Demo
 {
     class SpawnDemoSpawner : MonoBehaviour
     {

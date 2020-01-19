@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace ReeseUnityDemos
+namespace Reese.Demo
 {
     struct Person : IComponentData {
         public bool RandomizeTranslation;

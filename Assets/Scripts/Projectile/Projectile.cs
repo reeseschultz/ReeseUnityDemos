@@ -1,7 +1,7 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
 
-namespace ReeseUnityDemos
+namespace Reese.Demo
 {
     struct Projectile : IComponentData
     {
