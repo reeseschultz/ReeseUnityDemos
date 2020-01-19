@@ -18,9 +18,6 @@ namespace Reese.Demo
 
         EntityQuery personPrefabQuery;
 
-        protected override void OnCreate()
-            => personPrefabQuery = GetEntityQuery(typeof(PersonPrefab));
-
         public static void Enqueue(PersonSpawn spawn)
             => spawnQueue.Enqueue(spawn);
 
@@ -34,6 +31,9 @@ namespace Reese.Demo
         {
             for (int i = 0; i < spawnCount; ++i) spawnQueue.Enqueue(spawn);
         }
+
+        protected override void OnCreate()
+            => personPrefabQuery = GetEntityQuery(typeof(PersonPrefab));
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
