@@ -10,13 +10,11 @@ namespace Reese.Demo
 {
     class ProjectileSystem : JobComponentSystem
     {
-        static Scene scene => SceneManager.GetActiveScene();
-
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            if (!scene.name.Equals("ProjectileDemo")) return inputDeps;
+            if (!SceneManager.GetActiveScene().name.Equals("ProjectileDemo")) return inputDeps;
 
             var projectileFromEntity = GetComponentDataFromEntity<Projectile>(true);
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
