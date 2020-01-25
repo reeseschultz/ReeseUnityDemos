@@ -6,19 +6,35 @@ Unity demos for [reeseschultz.com](https://reeseschultz.com).
 
 Hi, I'm Reese. Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to demos in this project:
 
+## DOTS Navigation with Auto-Jumping Agents and Movable Surfaces
+
+![](/Gifs/nav-moving-jump-demo.gif)
+
+⇒ `Assets/Scenes/Nav/NavMovingJumpDemo.unity`.
+
+![](/Gifs/nav-performance-demo.gif)
+
+⇒ `Assets/Scenes/Nav/NavPerformanceDemo.unity`.
+
+![](/Gifs/nav-point-and-click-demo.gif)
+
+⇒ `Assets/Scenes/Nav/NavPointAndClickDemo.unity`.
+
 ## [Pointing and Clicking with Unity ECS](https://reeseschultz.com/pointing-and-clicking-with-unity-ecs/)
 
-⇒ `Assets/Scenes/PointAndClickDemo.unity`.
 
-![Video of changing prefab colors with Unity ECS.](/Gifs/point-and-click.gif)
+![Video of changing prefab colors with Unity ECS.](/Gifs/point-and-click-demo.gif)
+
+⇒ `Assets/Scenes/PointAndClickDemo.unity`.
 
 ---
 
 ## [Projectile Motion with Unity DOTS](https://reeseschultz.com/projectile-motion-with-unity-dots/)
 
-⇒ `Assets/Scenes/ProjectileDemo.unity`
 
-![Video of projectile motion demonstration with Unity DOTS.](/Gifs/projectile.gif)
+![Video of projectile motion demonstration with Unity DOTS.](/Gifs/projectile-demo.gif)
+
+⇒ `Assets/Scenes/ProjectileDemo.unity`
 
 ---
 
@@ -27,6 +43,8 @@ Hi, I'm Reese. Here's how my articles on [reeseschultz.com](https://reeseschultz
 ⇒ `Assets/Scenes/ProjectileDemo.unity`
 
 ⇒ `Assets/Scenes/SpawnDemo.unity`
+
+⇒ `Assets/Scenes/Nav/NavPerformanceDemo.unity`
 
 ---
 
@@ -38,9 +56,9 @@ Hi, I'm Reese. Here's how my articles on [reeseschultz.com](https://reeseschultz
 
 ## [Spawning Prefabs with Unity ECS](https://reeseschultz.com/spawning-prefabs-with-unity-ecs/)
 
-⇒ `Assets/Scenes/SpawnDemo.unity`
+![Video of spawning prefabs with Unity ECS.](/Gifs/spawn-demo.gif)
 
-![Video of spawning prefabs with Unity ECS.](/Gifs/spawn.gif)
+⇒ `Assets/Scenes/SpawnDemo.unity`
 
 ---
 
