@@ -2,12 +2,14 @@
 using Unity.Jobs;
 using Unity.Transforms;
 using Unity.Collections;
+using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 
 namespace Reese.Nav
 {
     /// <summary>Pretty much only exists to create a default basis and ensure
     /// that parent-child relationships are maintained in lieu of
     /// Unity.Physics' efforts to destroy them.</summary>
+    [UpdateAfter(typeof(BuildPhysicsWorld))]
     class NavBasisSystem : JobComponentSystem
     {
         /// <summary>The default basis that all other bases and basis-lacking

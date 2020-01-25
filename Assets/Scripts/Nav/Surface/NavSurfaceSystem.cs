@@ -14,6 +14,7 @@ namespace Reese.Nav
     /// surface (or lack thereof) underneath a given NavAgent. It also ensures
     /// parent-child relationships are maintained in lieu of Unity.Physics'
     /// efforts to destroy them.</summary>
+    [UpdateAfter(typeof(NavBasisSystem))]
     class NavSurfaceSystem : JobComponentSystem
     {
         /// <summary>For knowing whether or not the NavAgent has attempted
