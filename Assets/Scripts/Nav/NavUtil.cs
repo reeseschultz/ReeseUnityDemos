@@ -43,6 +43,6 @@ namespace Reese.Nav
 
         /// <summary>Checks approximate equality between two floats.</summary>
         public static bool ApproxEquals(float a, float b)
-            => math.abs(math.abs(a) - math.abs(b)) > 1 ? false : true;
+            => math.abs(a - b) > 1 ? false : true;
     }
 }
