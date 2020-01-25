@@ -2,7 +2,7 @@
 
 # ReeseUnityDemos
 
-Unity demos for [reeseschultz.com](https://reeseschultz.com).
+Unity demos for Reese, by Reese.
 
 Hi, I'm Reese. Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to demos in this project:
 
