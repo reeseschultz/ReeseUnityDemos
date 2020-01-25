@@ -17,6 +17,9 @@ namespace Reese.Nav
     /// the jump buffer. "Walking" is a simple lerp via Vector3.MoveTowards,
     /// and it also includes appropriate "look at" rotation. Jumping is
     /// is accomplished with artificial gravity and projectile motion math.
+    /// For more info on how the jumping works, see
+    /// https://reeseschultz.com/projectile-motion-with-unity-dots. Similar
+    /// and dedicated code for that supports the ProjectileDemo scene.
     /// </summary>
     class NavInterpolationSystem : JobComponentSystem
     {
