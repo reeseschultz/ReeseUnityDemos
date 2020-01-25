@@ -14,7 +14,7 @@ namespace Reese.Nav
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
             => dstManager.AddComponentData(entity, new NavAgentPrefab
             {
-                Prefab = conversionSystem.GetPrimaryEntity(NavAgentPrefab)
+                Value = conversionSystem.GetPrimaryEntity(NavAgentPrefab)
             });
 
         public void DeclareReferencedPrefabs(List<GameObject> referencedPrefabs)

@@ -113,11 +113,11 @@ namespace Reese.Nav
                     var rayInput = new RaycastInput
                     {
                         Start = translation.Value,
-                        End = -math.up() * NavConstants.RAYCAST_DISTANCE_MAX,
+                        End = -math.up() * NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
                         Filter = CollisionFilter.Default
                     };
 
-                    if (!physicsWorld.CastRay(rayInput, out RaycastHit hit))
+                    if (!physicsWorld.CastRay(rayInput, out RaycastHit hit) || hit.RigidBodyIndex == -1)
                     {
                         agent.HasJumped = true;
                         raycastCountDictionary.TryGetValue(entity.Index, out int raycastCount);
@@ -145,7 +145,14 @@ namespace Reese.Nav
 
                     parentFromEntity[entity] = parent;
                 })
-                .Schedule(addParentJob);
+                .WithoutBurst()
+                .WithName("NavSurfaceTrackingJob")
+                .Schedule(
+                    JobHandle.CombineDependencies(
+                        addParentJob,
+                        buildPhysicsWorldSystem.FinalJobHandle
+                    )
+                );
         }
     }
 }

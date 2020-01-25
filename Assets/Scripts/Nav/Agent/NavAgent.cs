@@ -38,6 +38,14 @@ namespace Reese.Nav
         /// read, not written.</summary>
         public bool IsJumping;
 
+        /// <summary>Whether the agent is presently interpolating or not. True
+        /// as long as the NavInterpolationSystem has a reason to animate the
+        /// agent. Outside the nav systems and debugging, this is only intended
+        /// to be read, not written. An example of use is in the
+        /// NavPointAndClickDestinationSystem supporting the NavPointAndClick
+        /// demo scene.</summary>
+        public bool IsLerping;
+
         /// <summary>This is the *point* in time when the agent started
         /// falling, *not* the duration. This is written to by the nav systems
         /// to help you figure out how long the agent has been falling. See the
@@ -89,7 +97,7 @@ namespace Reese.Nav
             }
             set
             {
-                this.HasDestination = true;
+                HasDestination = true;
                 localDestination = value;
             }
         }
@@ -111,7 +119,7 @@ namespace Reese.Nav
             }
             set
             {
-                this.HasDestination = true;
+                HasDestination = true;
                 worldDestination = value;
             }
         }
@@ -159,5 +167,24 @@ namespace Reese.Nav
         /// determine which other surfaces are "jumpable" for a given
         /// NavAgent, by querying *this* surface's jumpable buffer.**</summary>
         public Entity Surface;
+
+        /// <summary>This is the last, as in prior, (world) destination.
+        /// Outside the nav systems and debugging, this is only intended to be
+        /// read, not written. Note that this isn't really valid until after
+        /// the first destination has been set. An example of usage is in the
+        /// NavPointAndClick demo with the NavPointAndClickDestinationSystem.
+        /// </summary>
+        public float3 LastDestination;
+
+        /// <summary>Clears the agent's destination. This is called in the
+        /// NavInterpolationSystem when the either the agent's final destination
+        /// is reached *or* when an obstacle prevents the agent from reaching
+        /// the final destination. Outside the nav systems and debugging, this
+        /// is not intended to be called.</summary>
+        public void ClearDestination()
+        {
+            HasQueuedPathPlanning = HasDestination = IsLerping = false;
+            PathBufferIndex = 0;
+        }
     }
 }

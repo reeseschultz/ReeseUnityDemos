@@ -45,9 +45,7 @@ namespace Reese.Demo
                     .WithNativeDisableParallelForRestriction(randomArray)
                     .ForEach((int entityInQueryIndex, int nativeThreadIndex, ref PersonPrefab prefab) =>
                     {
-                        if (
-                            !spawnQueue.TryDequeue(out PersonSpawn spawn)
-                        ) return;
+                        if (!spawnQueue.TryDequeue(out PersonSpawn spawn)) return;
 
                         var entity = commandBuffer.Instantiate(entityInQueryIndex, prefab.Value);
 

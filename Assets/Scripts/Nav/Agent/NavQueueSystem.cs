@@ -48,6 +48,7 @@ namespace Reese.Nav
                     }
                 })
                 .WithName("NavQueueJob")
+                .WithoutBurst()
                 .Schedule(inputDeps);
     }
 }
