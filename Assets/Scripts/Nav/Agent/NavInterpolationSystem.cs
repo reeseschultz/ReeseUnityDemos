@@ -17,10 +17,7 @@ namespace Reese.Nav
     /// the jump buffer. "Walking" is a simple lerp via Vector3.MoveTowards,
     /// and it also includes appropriate "look at" rotation. Jumping is
     /// is accomplished with artificial gravity and projectile motion math.
-    /// This is not integrated with Unity.Physics, but does allow for gravity
-    /// to be based upon the normal of the current surface's basis, which is a
-    /// feature, not a bug. Later integration with Unity.Physics may be
-    /// considered.</summary>
+    /// </summary>
     class NavInterpolationSystem : JobComponentSystem
     {
         /// <summary>Used for raycasting in order to detect an obstacle in
