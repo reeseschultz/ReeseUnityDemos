@@ -6,17 +6,17 @@ Unity demos for [reeseschultz.com](https://reeseschultz.com).
 
 Hi, I'm Reese. Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to demos in this project:
 
-## DOTS Navigation with Auto-Jumping Agents and Movable Surfaces
+## [DOTS Navigation with Auto-Jumping Agents and Movable Surfaces](https://reeseschultz.com/dots-navigation-with-auto-jumping-agents-and-movable-surfaces/)
 
-![](/Gifs/nav-moving-jump-demo.gif)
+![Video of navigation agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
 
 ⇒ `Assets/Scenes/Nav/NavMovingJumpDemo.unity`.
 
-![](/Gifs/nav-performance-demo.gif)
+![Video of agents spawning and avoiding obstacles.](/Gifs/nav-performance-demo.gif)
 
 ⇒ `Assets/Scenes/Nav/NavPerformanceDemo.unity`.
 
-![](/Gifs/nav-point-and-click-demo.gif)
+![Video of an agent moving to point-and-clicked destinations.](/Gifs/nav-point-and-click-demo.gif)
 
 ⇒ `Assets/Scenes/Nav/NavPointAndClickDemo.unity`.
 
