@@ -89,11 +89,11 @@ namespace Reese.Nav
 
                 NavMeshQuery.GetPathResult(polygonIdArray);
 
-                // Must add one to pathLength in case BeginFindPath returned 'Success'.
-                var straightPath = new NativeArray<NavMeshLocation>(pathLength + 1, Allocator.Temp);
-                var straightPathFlags = new NativeArray<StraightPathFlags>(pathLength + 1, Allocator.Temp);
-                var vertexSide = new NativeArray<float>(pathLength + 1, Allocator.Temp);
-                int straightPathCount = 0;
+                var len = pathLength + 1; // Must add one to pathLength in case BeginFindPath returned 'Success'.
+                var straightPath = new NativeArray<NavMeshLocation>(len, Allocator.Temp);
+                var straightPathFlags = new NativeArray<StraightPathFlags>(len, Allocator.Temp);
+                var vertexSide = new NativeArray<float>(len, Allocator.Temp);
+                var straightPathCount = 0;
 
                 status = PathUtils.FindStraightPath(
                     NavMeshQuery,
