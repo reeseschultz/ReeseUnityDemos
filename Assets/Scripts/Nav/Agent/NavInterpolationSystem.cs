@@ -125,8 +125,7 @@ namespace Reese.Nav
 
                 if (jumpBuffer.Length == 0) return;
 
-                var destination = jumpBuffer[0].Value + agent.Offset;
-
+                var destination = jumpBuffer[0].Value;
                 var velocity = Vector3.Distance(translation.Value, agent.WorldDestination) / (math.sin(2 * math.radians(agent.JumpDegrees)) / agent.JumpGravity);
                 var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees));
                 var yVelocity = math.sqrt(velocity) * math.sin(math.radians(agent.JumpDegrees));
