@@ -24,16 +24,6 @@ namespace Reese.Nav
         /// </summary>
         static ConcurrentDictionary<int, bool> hasJumpedDictionary = new ConcurrentDictionary<int, bool>();
 
-        /// <summary>For knowing how many times raycasting has been conducted
-        /// from the negative y-component of the agent (while jumping) to detect
-        /// a surface below. If no surface is detected and
-        /// NavConstants.RAYCAST_MAX is exceeded for a given NavAgent, then
-        /// NavAgent.IsFalling is set to true. Raycasting then stops. An example
-        /// of how to handle falling is in NavFallSystem, but feel free to use
-        /// whatever implementation you want, hence why NavFallSystem is
-        /// namespaced in Reese.Demo and not Reese.Nav.</summary>
-        static ConcurrentDictionary<int, int> raycastCountDictionary = new ConcurrentDictionary<int, int>();
-
         /// <summary>Used for raycasting in order to detect a surface below a
         /// given NavAgent.</summary>
         BuildPhysicsWorld buildPhysicsWorldSystem => World.GetExistingSystem<BuildPhysicsWorld>();
@@ -45,7 +35,6 @@ namespace Reese.Nav
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
-
             var parentFromEntity = GetComponentDataFromEntity<Parent>(true);
             var defaultBasis = World.GetExistingSystem<NavBasisSystem>().DefaultBasis;
 
@@ -83,7 +72,6 @@ namespace Reese.Nav
             barrier.AddJobHandleForProducer(addParentJob);
 
             parentFromEntity = GetComponentDataFromEntity<Parent>();
-
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
 
@@ -108,8 +96,6 @@ namespace Reese.Nav
 
                     hasJumpedDictionary[entity.Index] = agent.HasJumped = false;
 
-                    if (!raycastCountDictionary.ContainsKey(entity.Index)) raycastCountDictionary.TryAdd(entity.Index, 0);
-
                     var rayInput = new RaycastInput
                     {
                         Start = translation.Value,
@@ -120,10 +106,8 @@ namespace Reese.Nav
                     if (!physicsWorld.CastRay(rayInput, out RaycastHit hit) || hit.RigidBodyIndex == -1)
                     {
                         agent.HasJumped = true;
-                        raycastCountDictionary.TryGetValue(entity.Index, out int raycastCount);
-                        raycastCountDictionary[entity.Index] = ++raycastCount;
 
-                        if (raycastCount >= NavConstants.RAYCAST_MAX)
+                        if (++agent.SurfaceRaycastCount >= NavConstants.SURFACE_RAYCAST_MAX)
                         {
                             agent.Surface = Entity.Null;
                             agent.IsFalling = true;
@@ -133,14 +117,12 @@ namespace Reese.Nav
                         return;
                     }
 
-                    raycastCountDictionary[entity.Index] = 0;
-
+                    agent.SurfaceRaycastCount = 0;
                     agent.Surface = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
 
                     if (!parentFromEntity.HasComponent(agent.Surface)) return;
 
                     var parentBasis = parentFromEntity[agent.Surface].Value;
-
                     parent.Value = parentBasis.Equals(Entity.Null) ? defaultBasis : parentBasis;
 
                     parentFromEntity[entity] = parent;

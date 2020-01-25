@@ -35,7 +35,7 @@
         /// that there is no surface below the agent, its then determined to be
         /// falling which means that no more raycasts will be performed.
         /// </summary>
-        public const int RAYCAST_MAX = 100;
+        public const int SURFACE_RAYCAST_MAX = 100;
 
         /// <summary>The 'Humanoid' NavMesh agent type as a string.</summary>
         public const string HUMANOID = "Humanoid";

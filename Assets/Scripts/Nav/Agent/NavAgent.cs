@@ -25,7 +25,7 @@ namespace Reese.Nav
 
         /// <summary>Informs the nav systems when the agent is falling, meaning
         /// no surface was detected after raycast attempts exceeding
-        /// NavConstants.RAYCAST_MAX in the NavSurfaceSystem. 
+        /// NavConstants.SURFACE_RAYCAST_MAX in the NavSurfaceSystem. 
         /// Outside the nav systems and debugging, this may be read and written
         /// as long as there is a reasonable fall handling system implemented.
         /// NavFallSystem is provided as an example, hence why it's namespaced
@@ -144,11 +144,31 @@ namespace Reese.Nav
         /// read nor written.</summary>
         public int PathBufferIndex;
 
+        /// <summary>For knowing how many times raycasting has been conducted
+        /// from the negative y-component of the agent (while jumping) to detect
+        /// a surface below in the NavSurfaceSystem. If no surface is detected
+        /// and NavConstants.SURFACE_RAYCAST_MAX is exceeded for a given NavAgent, then
+        /// NavAgent.IsFalling is set to true. Raycasting then stops. An example
+        /// of how to handle falling is in NavFallSystem, but feel free to use
+        /// whatever implementation you want, hence why NavFallSystem is
+        /// namespaced in Reese.Demo and not Reese.Nav. Outside the nav systems
+        /// and debugging, this is only intended to be read, not written. 
+        /// </summary>
+        public int SurfaceRaycastCount;
+
         /// <summary>Writing to this is *required* when spawning an agent. This
         /// is the type of agent, in terms of the NavMesh system. See
         /// examples of use in the demo spawners. There is also a helper method
         /// for setting the type in NavUtil called GetAgentType.</summary>
         public int TypeID;
+
+        /// <summary>This is the last, as in prior, (world) destination.
+        /// Outside the nav systems and debugging, this is only intended to be
+        /// read, not written. Note that this isn't really valid until after
+        /// the first destination has been set. An example of usage is in the
+        /// NavPointAndClick demo with the NavPointAndClickDestinationSystem.
+        /// </summary>
+        public float3 LastDestination;
 
         /// <summary>Writing to this is *required* if and only if you also
         /// write to the LocalDestination. This is intended to be an Entity
@@ -167,14 +187,6 @@ namespace Reese.Nav
         /// determine which other surfaces are "jumpable" for a given
         /// NavAgent, by querying *this* surface's jumpable buffer.**</summary>
         public Entity Surface;
-
-        /// <summary>This is the last, as in prior, (world) destination.
-        /// Outside the nav systems and debugging, this is only intended to be
-        /// read, not written. Note that this isn't really valid until after
-        /// the first destination has been set. An example of usage is in the
-        /// NavPointAndClick demo with the NavPointAndClickDestinationSystem.
-        /// </summary>
-        public float3 LastDestination;
 
         /// <summary>Clears the agent's destination. This is called in the
         /// NavInterpolationSystem when the either the agent's final destination
