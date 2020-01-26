@@ -24,6 +24,8 @@ See the [user guide](https://github.com/reeseschultz/ReeseUnityDemos/blob/master
 
 ⇒ `Assets/Scenes/Nav/NavPointAndClickDemo.unity`.
 
+---
+
 ## [Pointing and Clicking with Unity ECS](https://reeseschultz.com/pointing-and-clicking-with-unity-ecs/)
 
 
