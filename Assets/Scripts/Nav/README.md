@@ -1,5 +1,7 @@
 # Reese's DOTS Navigation User Guide
 
+![Video of navigation agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
+
 **DISCLAIMER:** So you want to use this hacky navigation solution at your own risk? Okay, cool. Just be aware that, as soon as Unity releases an *official* alternative, I (Reese, the maintainer) will ***immediately*** update or replace all the navigation code by leaning on their solution. Same goes for this guide itself. But all won't be lost if you're insistent on using old code: it will be archived via git commits.
 
 ## Introduction & Design Philosophy
@@ -7,7 +9,7 @@
 [Read the blog post](https://reeseschultz.com/dots-navigation-with-auto-jumping-agents-and-movable-surfaces/) introducing the navigation scripts and demos. Or not. Assuming you didn't, here's what this code does:
 
 1. **Supports auto-jumping** of agents between [NavMeshSurfaces](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/ThirdParty/NavMeshComponents/Scripts/NavMeshSurface.cs) with artificial gravity relative to a shared normal.
-2. **Allows surfaces to move together** by parenting them, toggling either [Entity](https://docs.unity3d.com/Packages/com.unity.entities@0.5/manual/entities.html?q=entity)-transforms-to-[GameObject](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/GameObject.html) representations, or even the other way around.
+2. **Allows surfaces to move together with agents on them** via parent transform.
 3. Has a glorified parent, the so-called *basis*, that can be parented to another basis (and so on) to **handle complex parent transform scenarios** for surfaces and agents!
 4. Is **multi-threaded**. 👈
 5. Can be **drag-and-dropped** into other Unity projects, specifically the [Assets/Scripts/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav) directory, thanks to thoughtful file hierarchy and namespace conventions. Helper glue code for navigation can be wholesale drag-and-dropped from [Assets/Scripts/Demo/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo/Nav).
@@ -27,7 +29,7 @@ Second, there are two ways we can go about this: *The Easy Way*, meaning you wil
 git clone https://github.com/reeseschultz/ReeseUnityDemos.git
 ```
 
-Third, ideally the project should be opened with the version of Unity it's intended for, along with the packages it needs. I recommend using the [Unity Hub](https://unity3d.com/get-unity/download) to manage various editor versions.
+Third, ideally the project should be opened with the version of Unity it's intended for. I recommend using the [Unity Hub](https://unity3d.com/get-unity/download) to manage various editor versions.
 
 >**Linux & You:** Using Linux and having problems opening the project? On Ubuntu I couldn't use the [Burst compiler](https://docs.unity3d.com/Packages/com.unity.burst@1.2/manual/index.html) until I manually installed `libncurses5` via: `sudo apt install libncurses5`. But it's entirely possible you're missing another library. *Read* Unity's error message to be sure.
 
@@ -143,7 +145,7 @@ What is the basis, exactly? It's abstract for a reason: it's a glorified parent 
 
 ### Constants
 
-There are a bunch of constants in [NavConstants](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/NavConstants.cs). You might be interested in changing the following constants, though be aware that they directly affect the internal workings of the navigation code:
+There are a bunch of constants in, well, [NavConstants](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/NavConstants.cs). You might be interested in changing the following constants, though be aware that they directly affect the internal workings of the navigation code:
 
 * `OBSTACLE_RAYCAST_DISTANCE_MAX`: `float` - Default is `1000`. Upper limit on the [raycast](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts) distance when searching for an obstacle in front of a given NavAgent.
 * `SURFACE_RAYCAST_DISTANCE_MAX`: `float` - Default is `1000`. Upper limit on the [raycast](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts) distance when searching for a surface below a given [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/Agent/NavAgent.cs).
@@ -163,7 +165,7 @@ That's it. The navigation code is subject to change at any time, and if it does,
 ## Tips
 
 * Make sure you bake your [NavMeshSurfaces](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/ThirdParty/NavMeshComponents/Scripts/NavMeshSurface.cs)! The weirdest problems have to do with not having the surfaces baked.
-* Anything with an authoring script on it also needs an accompanying [ConvertToEntity](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Entities.ConvertToEntity.html?q=convert%20to%20ent) script as well. Don't forget! The Unity Editor should warn you about that if you forget.
+* Anything with an authoring script on it also needs an accompanying [ConvertToEntity](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Entities.ConvertToEntity.html?q=convert%20to%20ent) script as well. Don't forget! The Unity Editor should warn you about that.
 * The compatible version of [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents) is *already* in [Assets/Scripts/Nav/ThirdParty](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/ThirdParty/)! Use that and nothing else, and I mean for your entire project. Do not try to mix and match it with other versions.
-* Upon spawning [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/Agent/NavAgent.cs), ensure you have their initial [Translation.Value](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Transforms.Translation.html?q=translation) component right, along with their `Offset`. Getting these things wrong may result in your agents being unable to raycast the surface below them, since they may be underneath it!
-* Obstacles need the [NavMeshObstacle](https://docs.unity3d.com/2019.3/Documentation/Manual/class-NavMeshObstacle.html), colliders, and the [ConvertToEntity](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Entities.ConvertToEntity.html?q=convert%20to%20ent) script on them. Otherwise obstacles will not be detected. By the way, `Carve` should be `true`.
+* Upon spawning [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/Agent/NavAgent.cs), ensure you have their initial [Translation.Value](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Transforms.Translation.html?q=translation) right, along with their `Offset`. Getting these things wrong may result in your agents being unable to raycast the surface below them, since they may be [raycasting](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts) underneath it!
+* Obstacles need the [NavMeshObstacle](https://docs.unity3d.com/2019.3/Documentation/Manual/class-NavMeshObstacle.html), colliders, and the [ConvertToEntity](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Entities.ConvertToEntity.html?q=convert%20to%20ent) script on them. Otherwise obstacles will not be detected by [raycasts](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts). By the way, `Carve` should be `true`.
