@@ -13,24 +13,15 @@ namespace Reese.Nav
 {
     /// <summary>A hacky system for planning paths and "jumpable" positions
     /// using UnityEngine.Experimental.AI. Works with a dictionary of
-    /// NavMeshQueries. They're challenging to deal with since they maintain
-    /// state but are also NativeContainers, meaning that they cannot be used
-    /// in another NativeContainer. Thus, each entity gets its own NavMeshQuery
-    /// in said dictionary by index. IJobs with this data are manually batched
+    /// NavMeshQueries. Each entity gets its own NavMeshQuery in said
+    /// dictionary by index. IJobs with this data are manually batched
     /// to achieve Burst compilation. All that said, the NavMeshQuery
     /// orchestration here appears to be exemplary usage. Note that it depends
     /// on the third-party PathUtils.</summary>
     class NavPlanSystem : JobComponentSystem
     {
         /// <summary>A dictionary of NavMeshQueries. They cannot be placed in
-        /// another NativeContainer, hence the dictionary. But that would make
-        /// life much easier. Then a better solution *would* be a separate
-        /// NavMeshQuerySystem that assigns them to a publicly accessible
-        /// NativeArray the size of JobsUtility.MaxJobThreadCount. Then the
-        /// native thread index could be injected into the planning job to
-        /// reference the queries in a thread-safe manner, assuming that
-        /// previous queries for a given NavAgent can be reduced to no
-        /// consequence.</summary>
+        /// another NativeContainer, hence the dictionary.</summary>
         Dictionary<int, NavMeshQuery> queryDictionary = new Dictionary<int, NavMeshQuery>();
 
         [BurstCompile]
@@ -67,7 +58,7 @@ namespace Reese.Nav
                     worldDestination = ChildTransform.GetColumn(3);
                 }
 
-                var status = NavMeshQuery.BeginFindPath( // Note that BeginFindPath(...) may return 'Success' (this is not documented in UnityEngine.Experimental.AI).
+                var status = NavMeshQuery.BeginFindPath(
                     NavMeshQuery.MapLocation(worldPosition, Vector3.one * NavConstants.PATH_SEARCH_MAX, Agent.TypeID),
                     NavMeshQuery.MapLocation(worldDestination, Vector3.one * NavConstants.PATH_SEARCH_MAX, Agent.TypeID),
                     NavMesh.AllAreas
@@ -89,7 +80,7 @@ namespace Reese.Nav
 
                 NavMeshQuery.GetPathResult(polygonIdArray);
 
-                var len = pathLength + 1; // Must add one to pathLength in case BeginFindPath returned 'Success'.
+                var len = pathLength + 1;
                 var straightPath = new NativeArray<NavMeshLocation>(len, Allocator.Temp);
                 var straightPathFlags = new NativeArray<StraightPathFlags>(len, Allocator.Temp);
                 var vertexSide = new NativeArray<float>(len, Allocator.Temp);
