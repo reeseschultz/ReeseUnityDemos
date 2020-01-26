@@ -20,10 +20,11 @@ namespace Reese.Nav
         /// <summary>This is a list of surfaces that are "jumpable" from *this*
         /// one. Immense thought went into this design, and it was determined
         /// that automating what's "jumpable" is probably out of scope for this
-        /// project. Ultimately it largely depends on the design of one's game.
-        /// This means it's *entirely on you* to figure out which surfaces are
-        /// "jumpable" from one another. The agent will *not* automatically know
-        /// that there is a surface in-between them.</summary>
+        /// project, but not automating jumping itself. Ultimately it largely
+        /// depends on the design of one's game. This means it's *entirely on
+        /// you* to figure out which surfaces are "jumpable" from one another.
+        /// The agent will *not* automatically know that there is a surface
+        /// in-between them.</summary>
         public List<NavSurfaceAuthoring> JumpableSurfaces;
 
         /// <summary>This is the glorified parent transform of the surface.

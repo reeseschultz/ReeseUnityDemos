@@ -2,8 +2,8 @@
 {
     static class NavConstants
     {
-        /// <summary>Upper limit on the raycast distance when search for an
-        /// obstacle in front of a given NavAgent.</summary>
+        /// <summary>Upper limit on the raycast distance when searching
+        /// for an obstacle in front of a given NavAgent.</summary>
         public const float OBSTACLE_RAYCAST_DISTANCE_MAX = 1000;
 
         /// <summary>Upper limit on the raycast distance when searching for a
@@ -17,7 +17,7 @@
         /// to find a path in the NavPlanSystem.</summary>
         public const int ITERATION_MAX = 1000;
 
-        /// <summary>Upper limit on a given jumpable surfaces buffer.
+        /// <summary>Upper limit on a given jumpable surface buffer.
         /// Exceeding this will merely result in heap memory blocks being
         /// allocated.</summary>
         public const int JUMPABLE_SURFACE_MAX = 30;
