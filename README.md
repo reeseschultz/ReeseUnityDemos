@@ -4,9 +4,13 @@
 
 Unity demos for Reese, by Reese.
 
-Hi, I'm Reese. Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to demos in this project:
+Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to demos in this project:
 
 ## [DOTS Navigation with Auto-Jumping Agents and Movable Surfaces](https://reeseschultz.com/dots-navigation-with-auto-jumping-agents-and-movable-surfaces/)
+
+The DOTS navigation scripts and demos are self-contained so you can use them in *your* project.
+
+See the [user guide](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/README.md)!
 
 ![Video of navigation agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
 
