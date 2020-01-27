@@ -75,7 +75,6 @@ namespace Reese.Nav
 
             return Entities
                 .WithChangeFilter<NavAgent>()
-                .WithReadOnly(elapsedSeconds)
                 .WithReadOnly(defaultBasis)
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(parentFromEntity)
