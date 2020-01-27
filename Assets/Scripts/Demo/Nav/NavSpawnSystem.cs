@@ -52,8 +52,6 @@ namespace Reese.Demo
                         var entity = commandBuffer.Instantiate(entityInQueryIndex, prefab.Value);
 
                         commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(NavAgent));
-                        commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(Translation));
-                        commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(Rotation));
                         commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(NavPathBufferElement));
                         commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(NavJumpBufferElement));
                         commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(Parent));
