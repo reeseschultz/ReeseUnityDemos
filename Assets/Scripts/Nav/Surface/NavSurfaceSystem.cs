@@ -36,7 +36,6 @@ namespace Reese.Nav
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
-            var parentFromEntity = GetComponentDataFromEntity<Parent>(true);
             var defaultBasis = World.GetExistingSystem<NavBasisSystem>().DefaultBasis;
 
             // Below job is needed because Unity.Physics can remove the Parent
@@ -44,11 +43,9 @@ namespace Reese.Nav
             // runtime and not in authoring. Please submit an issue or PR if
             // you've a cleaner solution.
             var addParentJob = Entities
-                .WithReadOnly(parentFromEntity)
+                .WithNone<Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavSurface surface) =>
                 {
-                    if (parentFromEntity.Exists(entity)) return;
-
                     if (surface.Basis.Equals(Entity.Null))
                     {
                         commandBuffer.AddComponent(entityInQueryIndex, entity, new Parent
@@ -72,7 +69,7 @@ namespace Reese.Nav
 
             barrier.AddJobHandleForProducer(addParentJob);
 
-            parentFromEntity = GetComponentDataFromEntity<Parent>();
+            var parentFromEntity = GetComponentDataFromEntity<Parent>();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
 

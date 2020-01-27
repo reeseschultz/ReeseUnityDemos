@@ -33,17 +33,15 @@ namespace Reese.Nav
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
 
-            var parentFromEntity = GetComponentDataFromEntity<Parent>(true);
-
             // Below job is needed because Unity.Physics can remove the Parent
             // component, at least in 2019.3, thus it has to be added later at
             // runtime and not in authoring. Please submit an issue or PR if
             // you've a cleaner solution.
             var addParentJob = Entities
-                .WithReadOnly(parentFromEntity)
+                .WithNone<Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavBasis basis) =>
                 {
-                    if (basis.ParentBasis.Equals(Entity.Null) || parentFromEntity.Exists(entity)) return;
+                    if (basis.ParentBasis.Equals(Entity.Null)) return;
 
                     commandBuffer.AddComponent(entityInQueryIndex, entity, new Parent
                     {
