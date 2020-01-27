@@ -19,7 +19,7 @@ namespace Reese.Demo
                 {
                     translation.Value.y = math.sin(elapsedSeconds) * 10;
                 })
-                .WithName("NavMoveJob")
+                .WithName("NavTranslatorJob")
                 .Schedule(inputDeps);
         }
     }
