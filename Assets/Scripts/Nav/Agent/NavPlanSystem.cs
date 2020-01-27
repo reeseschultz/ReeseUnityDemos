@@ -24,109 +24,9 @@ namespace Reese.Nav
         /// another NativeContainer, hence the dictionary.</summary>
         Dictionary<int, NavMeshQuery> queryDictionary = new Dictionary<int, NavMeshQuery>();
 
-        [BurstCompile]
-        struct PlanJob : IJob
-        {
-            [ReadOnly]
-            public Entity Entity;
-
-            [ReadOnly]
-            public NavAgent Agent;
-
-            [ReadOnly]
-            public Matrix4x4 ChildTransform;
-
-            [ReadOnly]
-            public Matrix4x4 ParentTransform;
-
-            public NavMeshQuery NavMeshQuery;
-
-            [NativeDisableParallelForRestriction]
-            public BufferFromEntity<NavPathBufferElement> PathBufferFromEntity;
-
-            [NativeDisableParallelForRestriction]
-            public BufferFromEntity<NavJumpBufferElement> JumpBufferFromEntity;
-
-            public void Execute()
-            {
-                Vector3 worldPosition = ChildTransform.GetColumn(3);
-                Vector3 worldDestination = Agent.WorldDestination;
-
-                if (Agent.IsJumping)
-                {
-                    worldPosition = Agent.WorldDestination;
-                    worldDestination = ChildTransform.GetColumn(3);
-                }
-
-                var status = NavMeshQuery.BeginFindPath(
-                    NavMeshQuery.MapLocation(worldPosition, Vector3.one * NavConstants.PATH_SEARCH_MAX, Agent.TypeID),
-                    NavMeshQuery.MapLocation(worldDestination, Vector3.one * NavConstants.PATH_SEARCH_MAX, Agent.TypeID),
-                    NavMesh.AllAreas
-                );
-
-                while (status == PathQueryStatus.InProgress) status = NavMeshQuery.UpdateFindPath(
-                    NavConstants.ITERATION_MAX,
-                    out int iterationsPerformed
-                );
-
-                if (status != PathQueryStatus.Success) return;
-
-                NavMeshQuery.EndFindPath(out int pathLength);
-
-                var polygonIdArray = new NativeArray<PolygonId>(
-                    NavConstants.PATH_NODE_MAX,
-                    Allocator.Temp
-                );
-
-                NavMeshQuery.GetPathResult(polygonIdArray);
-
-                var len = pathLength + 1;
-                var straightPath = new NativeArray<NavMeshLocation>(len, Allocator.Temp);
-                var straightPathFlags = new NativeArray<StraightPathFlags>(len, Allocator.Temp);
-                var vertexSide = new NativeArray<float>(len, Allocator.Temp);
-                var straightPathCount = 0;
-
-                status = PathUtils.FindStraightPath(
-                    NavMeshQuery,
-                    worldPosition,
-                    worldDestination,
-                    polygonIdArray,
-                    pathLength,
-                    ref straightPath,
-                    ref straightPathFlags,
-                    ref vertexSide,
-                    ref straightPathCount,
-                    NavConstants.PATH_NODE_MAX
-                );
-
-                if (Agent.IsJumping)
-                {
-                    var lastValidPoint = float3.zero;
-                    for (int i = 0; i < straightPath.Length; ++i)
-                        if (NavMeshQuery.IsValid(straightPath[i].polygon)) lastValidPoint = straightPath[i].position;
-                        else break;
-
-                    JumpBufferFromEntity[Entity].Add((float3)ParentTransform.inverse.MultiplyPoint3x4(lastValidPoint + Agent.Offset));
-                }
-                else if (status == PathQueryStatus.Success)
-                {
-                    var pathBuffer = PathBufferFromEntity[Entity];
-                    pathBuffer.Clear();
-
-                    for (int i = 0; i < straightPathCount; ++i)
-                        pathBuffer.Add((float3)ParentTransform.inverse.MultiplyPoint3x4((float3)straightPath[i].position) + Agent.Offset);
-                }
-
-                polygonIdArray.Dispose();
-                straightPath.Dispose();
-                straightPathFlags.Dispose();
-                vertexSide.Dispose();
-            }
-        }
-
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            JobHandle job = inputDeps;
+            var job = inputDeps;
             for (int i = 0; i < NavConstants.BATCH_MAX; ++i)
             {
                 var entity = NavQueueSystem.DequeueJumpPlanning();
@@ -157,16 +57,94 @@ namespace Reese.Nav
                 }
 
                 queryDictionary.TryGetValue(entity.Index, out NavMeshQuery navMeshQuery);
-                job = new PlanJob
-                {
-                    Entity = entity,
-                    NavMeshQuery = navMeshQuery,
-                    PathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(),
-                    JumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>(),
-                    Agent = agent,
-                    ChildTransform = GetComponentDataFromEntity<LocalToWorld>(true)[entity].Value,
-                    ParentTransform = GetComponentDataFromEntity<LocalToWorld>(true)[parent].Value
-                }.Schedule(job);
+
+                var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
+                var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
+
+                var childTransform = (Matrix4x4)GetComponentDataFromEntity<LocalToWorld>(true)[entity].Value;
+                var parentTransform = (Matrix4x4)GetComponentDataFromEntity<LocalToWorld>(true)[parent].Value;
+
+                job = Job
+                    .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
+                    .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
+                    .WithCode(() => {
+                        Vector3 worldPosition = childTransform.GetColumn(3);
+                        Vector3 worldDestination = agent.WorldDestination;
+
+                        if (agent.IsJumping)
+                        {
+                            worldPosition = agent.WorldDestination;
+                            worldDestination = childTransform.GetColumn(3);
+                        }
+
+                        var status = navMeshQuery.BeginFindPath(
+                            navMeshQuery.MapLocation(worldPosition, Vector3.one * NavConstants.PATH_SEARCH_MAX, agent.TypeID),
+                            navMeshQuery.MapLocation(worldDestination, Vector3.one * NavConstants.PATH_SEARCH_MAX, agent.TypeID),
+                            NavMesh.AllAreas
+                        );
+
+                        while (status == PathQueryStatus.InProgress) status = navMeshQuery.UpdateFindPath(
+                            NavConstants.ITERATION_MAX,
+                            out int iterationsPerformed
+                        );
+
+                        if (status != PathQueryStatus.Success) return;
+
+                        navMeshQuery.EndFindPath(out int pathLength);
+
+                        var polygonIdArray = new NativeArray<PolygonId>(
+                            NavConstants.PATH_NODE_MAX,
+                            Allocator.Temp
+                        );
+
+                        navMeshQuery.GetPathResult(polygonIdArray);
+
+                        var len = pathLength + 1;
+                        var straightPath = new NativeArray<NavMeshLocation>(len, Allocator.Temp);
+                        var straightPathFlags = new NativeArray<StraightPathFlags>(len, Allocator.Temp);
+                        var vertexSide = new NativeArray<float>(len, Allocator.Temp);
+                        var straightPathCount = 0;
+
+                        status = PathUtils.FindStraightPath(
+                            navMeshQuery,
+                            worldPosition,
+                            worldDestination,
+                            polygonIdArray,
+                            pathLength,
+                            ref straightPath,
+                            ref straightPathFlags,
+                            ref vertexSide,
+                            ref straightPathCount,
+                            NavConstants.PATH_NODE_MAX
+                        );
+
+                        if (agent.IsJumping)
+                        {
+                            var lastValidPoint = float3.zero;
+                            for (int j = 0; j < straightPath.Length; ++j)
+                                if (navMeshQuery.IsValid(straightPath[j].polygon)) lastValidPoint = straightPath[j].position;
+                                else break;
+
+                            jumpBufferFromEntity[entity].Add((float3)parentTransform.inverse.MultiplyPoint3x4(lastValidPoint + agent.Offset));
+                        }
+                        else if (status == PathQueryStatus.Success)
+                        {
+                            var pathBuffer = pathBufferFromEntity[entity];
+                            pathBuffer.Clear();
+
+                            for (int j = 0; j < straightPathCount; ++j)
+                                pathBuffer.Add((float3)parentTransform.inverse.MultiplyPoint3x4((float3)straightPath[j].position) + agent.Offset);
+                        }
+
+                        polygonIdArray.Dispose();
+                        straightPath.Dispose();
+                        straightPathFlags.Dispose();
+                        vertexSide.Dispose();
+                    })
+                    .WithName("NavPlanJob")
+                    .Schedule(job);
+
+                NavMeshWorld.GetDefaultWorld().AddDependency(job);
             }
 
             return job;
