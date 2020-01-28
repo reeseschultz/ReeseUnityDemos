@@ -19,10 +19,11 @@ namespace Reese.Demo
             var destination = Destination;
 
             var job = Entities
+                .WithNone<NavLerping>()
                 .ForEach((ref NavAgent agent) =>
                 {
                     var offsetDestination = destination + agent.Offset;
-                    if (agent.IsLerping || agent.LastDestination.Equals(offsetDestination)) return;
+                    if (agent.LastDestination.Equals(offsetDestination)) return;
                     agent.WorldDestination = offsetDestination;
                 })
                 .WithName("NavPointAndClickDestinationJob")

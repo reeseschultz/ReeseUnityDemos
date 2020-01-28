@@ -52,8 +52,6 @@ namespace Reese.Nav
                 {
                     var destinationTransform = (Matrix4x4)GetComponentDataFromEntity<LocalToWorld>(true)[agent.DestinationSurface].Value;
                     agent.WorldDestination = destinationTransform.MultiplyPoint3x4(agent.LocalDestination);
-
-                    if (agent.IsJumping) parent = GetComponentDataFromEntity<Parent>(true)[agent.DestinationSurface].Value;
                 }
 
                 queryDictionary.TryGetValue(entity.Index, out NavMeshQuery navMeshQuery);
@@ -64,6 +62,8 @@ namespace Reese.Nav
                 var childTransform = (Matrix4x4)GetComponentDataFromEntity<LocalToWorld>(true)[entity].Value;
                 var parentTransform = (Matrix4x4)GetComponentDataFromEntity<LocalToWorld>(true)[parent].Value;
 
+                var jumping = GetComponentDataFromEntity<NavJumping>(true).Exists(entity);
+
                 job = Job
                     .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                     .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
@@ -71,7 +71,7 @@ namespace Reese.Nav
                         Vector3 worldPosition = childTransform.GetColumn(3);
                         Vector3 worldDestination = agent.WorldDestination;
 
-                        if (agent.IsJumping)
+                        if (jumping)
                         {
                             worldPosition = agent.WorldDestination;
                             worldDestination = childTransform.GetColumn(3);
@@ -118,7 +118,7 @@ namespace Reese.Nav
                             NavConstants.PATH_NODE_MAX
                         );
 
-                        if (agent.IsJumping)
+                        if (jumping)
                         {
                             var lastValidPoint = float3.zero;
                             for (int j = 0; j < straightPath.Length; ++j)

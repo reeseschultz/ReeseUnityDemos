@@ -13,38 +13,10 @@ namespace Reese.Nav
         /// this is only intended to be read, not written.</summary>
         public bool HasDestination;
 
-        /// <summary>Informs the nav systems that the agent has jumped. Outside
-        /// the nav systems and debugging, this only intended to be read, not
-        /// written.</summary>
-        public bool HasJumped;
-
         /// <summary>Informs the nav systems when path planning has been
         /// enqueued for the agent. Outside the nav systems and debugging, this
         /// is only intended to be read, not written.</summary>
         public bool HasQueuedPathPlanning;
-
-        /// <summary>Informs the nav systems when the agent is falling, meaning
-        /// no surface was detected after raycast attempts exceeding
-        /// NavConstants.SURFACE_RAYCAST_MAX in the NavSurfaceSystem. 
-        /// Outside the nav systems and debugging, this may be read and written
-        /// as long as there is a reasonable fall handling system implemented.
-        /// NavFallSystem is provided as an example, hence why it's namespaced
-        /// in Reese.Demo and not Reese.Nav.</summary>
-        public bool IsFalling;
-
-        /// <summary>Informs the nav systems when the agent is jumping (and not
-        /// yet determined to be falling, otherwise IsFalling would be true).
-        /// Outside the nav systems and debugging, this is only intended to be
-        /// read, not written.</summary>
-        public bool IsJumping;
-
-        /// <summary>Whether the agent is presently interpolating or not. True
-        /// as long as the NavInterpolationSystem has a reason to animate the
-        /// agent. Outside the nav systems and debugging, this is only intended
-        /// to be read, not written. An example of use is in the
-        /// NavPointAndClickDestinationSystem supporting the NavPointAndClick
-        /// demo scene.</summary>
-        public bool IsLerping;
 
         /// <summary>This is the *point* in time when the agent started
         /// falling, *not* the duration. This is written to by the nav systems
@@ -127,7 +99,7 @@ namespace Reese.Nav
         /// <summary>You should *probably* write to this when spawning an
         /// agent. If you don't get this right, then raycasts below the agent
         /// may entirely overshoot the surface, which will eventually mean that
-        /// IsFalling is set to true, which wouldn't be what you want.
+        /// the NavFalling component is added, which wouldn't be what you want.
         /// This is the offset of the agent from the basis. Now, you
         /// may find it odd that this is a float3 and not simply a float
         /// representing the y-component from the surface, but the idea here
@@ -147,8 +119,8 @@ namespace Reese.Nav
         /// <summary>For knowing how many times raycasting has been conducted
         /// from the negative y-component of the agent (while jumping) to detect
         /// a surface below in the NavSurfaceSystem. If no surface is detected
-        /// and NavConstants.SURFACE_RAYCAST_MAX is exceeded for a given NavAgent, then
-        /// NavAgent.IsFalling is set to true. Raycasting then stops. An example
+        /// and NavConstants.SURFACE_RAYCAST_MAX is exceeded for a given NavAgent,
+        /// then the falling component is added. Raycasting then stops. An example
         /// of how to handle falling is in NavFallSystem, but feel free to use
         /// whatever implementation you want, hence why NavFallSystem is
         /// namespaced in Reese.Demo and not Reese.Nav. Outside the nav systems
@@ -187,16 +159,5 @@ namespace Reese.Nav
         /// determine which other surfaces are "jumpable" for a given
         /// NavAgent, by querying *this* surface's jumpable buffer.**</summary>
         public Entity Surface;
-
-        /// <summary>Clears the agent's destination. This is called in the
-        /// NavInterpolationSystem when the either the agent's final destination
-        /// is reached *or* when an obstacle prevents the agent from reaching
-        /// the final destination. Outside the nav systems and debugging, this
-        /// is not intended to be called.</summary>
-        public void ClearDestination()
-        {
-            HasQueuedPathPlanning = HasDestination = IsLerping = false;
-            PathBufferIndex = 0;
-        }
     }
 }

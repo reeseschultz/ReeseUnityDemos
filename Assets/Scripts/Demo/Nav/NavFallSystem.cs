@@ -17,9 +17,8 @@ namespace Reese.Demo
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
 
             var job = Entities
+                .WithAll<NavFalling>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavAgent agent) => {
-                    if (!agent.IsFalling) return;
-
                     if (elapsedSeconds - agent.FallSeconds >= fallSecondsMax)
                     {
                         commandBuffer.DestroyEntity(entityInQueryIndex, entity);

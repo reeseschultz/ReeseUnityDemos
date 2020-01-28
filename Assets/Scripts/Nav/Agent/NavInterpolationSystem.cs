@@ -27,28 +27,32 @@ namespace Reese.Nav
         /// front of the agent.</summary>
         BuildPhysicsWorld buildPhysicsWorldSystem => World.GetExistingSystem<BuildPhysicsWorld>();
 
+        /// <summary>For adding and removing statuses to and from the agent.
+        /// </summary>
+        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
+            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var deltaSeconds = Time.DeltaTime;
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
+            var lerpingFromEntity = GetComponentDataFromEntity<NavLerping>(true);
 
             var walkJob = Entities
+                .WithNone<NavJumping>()
                 .WithAll<Parent, LocalToParent>()
                 .WithReadOnly(physicsWorld)
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
-                .ForEach((Entity entity, ref NavAgent agent, ref Translation translation, ref Rotation rotation) =>
+                .WithReadOnly(lerpingFromEntity)
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation) =>
                 {
-                    if (
-                        !agent.HasQueuedPathPlanning ||
-                        !agent.HasDestination ||
-                        agent.IsJumping
-                    ) return;
+                    if (!agent.HasQueuedPathPlanning || !agent.HasDestination) return;
 
-                    if (!agent.IsLerping) agent.IsLerping = true;
+                    if (!lerpingFromEntity.Exists(entity)) commandBuffer.AddComponent<NavLerping>(entityInQueryIndex, entity);
 
                     var pathBuffer = pathBufferFromEntity[entity];
 
@@ -88,12 +92,18 @@ namespace Reese.Nav
                             !NavUtil.ApproxEquals(worldPosition3, agent.WorldDestination)
                         )
                         {
-                            agent.IsJumping = true;
                             agent.JumpSeconds = elapsedSeconds;
+
+                            commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
+
                             return;
                         }
 
-                        agent.ClearDestination();
+                        agent.HasQueuedPathPlanning = agent.HasDestination = false;
+                        agent.PathBufferIndex = 0;
+
+                        commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
+
                         return;
                     }
 
@@ -116,11 +126,10 @@ namespace Reese.Nav
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
 
             return Entities
-                .WithAll<Parent, LocalToParent>()
+                .WithAll<NavJumping, Parent, LocalToParent>()
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
-                .ForEach((Entity entity, ref NavAgent agent, ref Translation translation) => {
-                    if (!agent.IsJumping) return;
-
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation) =>
+                {
                     var jumpBuffer = jumpBufferFromEntity[entity];
 
                     if (jumpBuffer.Length == 0) return;
@@ -135,8 +144,9 @@ namespace Reese.Nav
 
                     if (!NavUtil.ApproxEquals(translation.Value, destination)) return;
 
-                    agent.IsJumping = false;
-                    agent.HasJumped = true;
+                    commandBuffer.AddComponent<NavJumped>(entityInQueryIndex, entity);
+                    commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
+
                     jumpBuffer.Clear();
                 })
                 .WithName("NavJumpJob")

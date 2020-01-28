@@ -83,29 +83,34 @@ namespace Reese.Nav
                 .WithName("RemoveCompositeScaleJob")
                 .Schedule(addParentJob);
 
+            var jumpedFromEntity = GetComponentDataFromEntity<NavJumped>();
             var parentFromEntity = GetComponentDataFromEntity<Parent>();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
 
             return Entities
+                .WithNone<NavFalling>()
                 .WithChangeFilter<NavAgent>()
+                .WithReadOnly(jumpedFromEntity)
                 .WithReadOnly(defaultBasis)
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(parentFromEntity)
-                .ForEach((Entity entity, ref NavAgent agent, in Translation translation) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in Translation translation) =>
                 {
-                    if (agent.IsFalling) return;
+                    var jumped = jumpedFromEntity.Exists(entity);
 
-                    if (!hasJumpedDictionary.ContainsKey(entity.Index)) hasJumpedDictionary.TryAdd(entity.Index, agent.HasJumped);
+                    if (!hasJumpedDictionary.ContainsKey(entity.Index)) hasJumpedDictionary.TryAdd(entity.Index, jumped);
 
                     hasJumpedDictionary.TryGetValue(entity.Index, out bool hasJumped);
 
                     if (!parentFromEntity.HasComponent(entity)) return;
 
                     var parent = parentFromEntity[entity];
-                    if (!parent.Value.Equals(Entity.Null) && hasJumped == agent.HasJumped) return;
+                    if (!parent.Value.Equals(Entity.Null) && hasJumped == jumped) return;
 
-                    hasJumpedDictionary[entity.Index] = agent.HasJumped = false;
+                    hasJumpedDictionary[entity.Index] = false;
+
+                    commandBuffer.RemoveComponent<NavJumped>(entityInQueryIndex, entity);
 
                     var rayInput = new RaycastInput
                     {
@@ -116,13 +121,14 @@ namespace Reese.Nav
 
                     if (!physicsWorld.CastRay(rayInput, out RaycastHit hit) || hit.RigidBodyIndex == -1)
                     {
-                        agent.HasJumped = true;
+                        commandBuffer.AddComponent<NavJumped>(entityInQueryIndex, entity);
 
                         if (++agent.SurfaceRaycastCount >= NavConstants.SURFACE_RAYCAST_MAX)
                         {
                             agent.Surface = Entity.Null;
-                            agent.IsFalling = true;
                             agent.FallSeconds = elapsedSeconds;
+
+                            commandBuffer.AddComponent<NavFalling>(entityInQueryIndex, entity);
                         }
 
                         return;

@@ -30,9 +30,14 @@ namespace Reese.Nav
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
-            => Entities
-                .ForEach((Entity entity, ref NavAgent agent) => {
-                    if (agent.IsJumping) jumpPlanningQueue.Enqueue(entity);
+        {
+            var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
+
+            return Entities
+                .WithReadOnly(jumpingFromEntity)
+                .ForEach((Entity entity, ref NavAgent agent) =>
+                {
+                    if (jumpingFromEntity.Exists(entity)) jumpPlanningQueue.Enqueue(entity);
                     else if (!agent.HasQueuedPathPlanning && agent.HasDestination)
                     {
                         agent.HasQueuedPathPlanning = true;
@@ -42,5 +47,6 @@ namespace Reese.Nav
                 .WithName("NavQueueJob")
                 .WithoutBurst()
                 .Schedule(inputDeps);
+        }
     }
 }
