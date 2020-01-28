@@ -69,6 +69,20 @@ namespace Reese.Nav
 
             barrier.AddJobHandleForProducer(addParentJob);
 
+            // Below job is needed because Unity.Transforms assumes that
+            // children should be scaled by their parent by automatically
+            // providing them with a CompositeScale. This is a default that
+            // probably doesn't reflect 99% of use cases.
+            var removeCompositeScaleJob = Entities
+                .WithAll<CompositeScale>()
+                .WithAny<NavSurface, NavBasis>()
+                .ForEach((Entity entity, int entityInQueryIndex) =>
+                {
+                    commandBuffer.RemoveComponent<CompositeScale>(entityInQueryIndex, entity);
+                })
+                .WithName("RemoveCompositeScaleJob")
+                .Schedule(addParentJob);
+
             var parentFromEntity = GetComponentDataFromEntity<Parent>();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
@@ -128,7 +142,7 @@ namespace Reese.Nav
                 .WithName("NavSurfaceTrackingJob")
                 .Schedule(
                     JobHandle.CombineDependencies(
-                        addParentJob,
+                        removeCompositeScaleJob,
                         buildPhysicsWorldSystem.FinalJobHandle
                     )
                 );
