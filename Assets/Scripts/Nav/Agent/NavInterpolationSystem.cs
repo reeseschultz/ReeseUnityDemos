@@ -36,13 +36,13 @@ namespace Reese.Nav
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
             var walkJob = Entities
+                .WithAll<Parent, LocalToParent>()
                 .WithReadOnly(physicsWorld)
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
-                .ForEach((Entity entity, ref NavAgent agent, ref Translation translation, ref Rotation rotation, in Parent parent) =>
+                .ForEach((Entity entity, ref NavAgent agent, ref Translation translation, ref Rotation rotation) =>
                 {
                     if (
-                        parent.Value.Equals(Entity.Null) ||
                         !agent.HasQueuedPathPlanning ||
                         !agent.HasDestination ||
                         agent.IsJumping
@@ -116,12 +116,10 @@ namespace Reese.Nav
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
 
             return Entities
+                .WithAll<Parent, LocalToParent>()
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
-                .ForEach((Entity entity, ref NavAgent agent, ref Translation translation, in Parent parent) => {
-                    if (
-                        parent.Value.Equals(Entity.Null) ||
-                        !agent.IsJumping
-                    ) return;
+                .ForEach((Entity entity, ref NavAgent agent, ref Translation translation) => {
+                    if (!agent.IsJumping) return;
 
                     var jumpBuffer = jumpBufferFromEntity[entity];
 
