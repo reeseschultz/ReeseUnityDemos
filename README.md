@@ -2,7 +2,7 @@
 
 # ReeseUnityDemos
 
-Unity demos for Reese, by Reese.
+Unity demos emphasizing [DOTS](https://unity.com/dots)—ECS, jobs, and the Burst compiler—by me, Reese.
 
 Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to demos in this project:
 
