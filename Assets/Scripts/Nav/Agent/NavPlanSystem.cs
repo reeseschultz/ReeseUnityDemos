@@ -50,8 +50,8 @@ namespace Reese.Nav
                     var childTransform = (Matrix4x4)localToWorldFromEntity[entity].Value;
                     var parentTransform = (Matrix4x4)localToWorldFromEntity[parent].Value;
 
-                    Vector3 worldPosition = childTransform.GetColumn(3);
-                    Vector3 worldDestination = agent.WorldDestination;
+                    var worldPosition = (Vector3)childTransform.GetColumn(3);
+                    var worldDestination = (Vector3)agent.WorldDestination;
 
                     var jumping = jumpingFromEntity.Exists(entity);
 
@@ -133,9 +133,6 @@ namespace Reese.Nav
                         }
                     }
 
-                    UnsafeUtility.CopyStructureToPtr(ref navMeshQuery, navMeshQueryPointer.Value);
-                    navMeshQueryPointerArray[nativeThreadIndex] = navMeshQueryPointer;
-
                     polygonIdArray.Dispose();
                     straightPath.Dispose();
                     straightPathFlags.Dispose();
@@ -145,6 +142,7 @@ namespace Reese.Nav
                 .Schedule(inputDeps);
 
             NavMeshWorld.GetDefaultWorld().AddDependency(job);
+            barrier.AddJobHandleForProducer(job);
 
             return job;
         }
