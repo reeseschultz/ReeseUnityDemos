@@ -1,8 +1,8 @@
-﻿using Unity.Collections;
+﻿using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs.LowLevel.Unsafe;
-using UnityEngine;
 using UnityEngine.Experimental.AI;
 
 namespace Reese.Nav
@@ -17,6 +17,12 @@ namespace Reese.Nav
     unsafe class NavMeshQuerySystem : ComponentSystem
     {
         public NativeArray<NavMeshQueryPointer> PointerArray { get; private set; }
+
+        // Must dispose queries from the below collection, *not* via pointer
+        // from the PointerArray. Otherwise, the DisposeSentinel will
+        // mistakenly report that the queries aren't being disposed, when
+        // they actually *are*.
+        List<NavMeshQuery> queryList = new List<NavMeshQuery>();
 
         protected override void OnCreate()
         {
@@ -39,22 +45,20 @@ namespace Reese.Nav
                     NavConstants.PATH_NODE_MAX
                 );
 
+                queryList.Add(query);
+
                 UnsafeUtility.CopyStructureToPtr(ref query, pointerArray[i].Value);
             }
 
             PointerArray = new NativeArray<NavMeshQueryPointer>(pointerArray, Allocator.Persistent);
-
-            Debug.Log("Expect an error to be thrown about native collections not being disposed, specifically regarding NavMeshQueries allocated in the NavMeshQuerySystem. The error *appears* to be incorrect because the built-in DisposeSentinel cannot ascertain that the collections are actually disposed later via pointers to them, which is clear in NavMeshQuerySystem.OnDestroy.");
         }
 
         protected override void OnDestroy()
         {
-            for (int i = 0; i < PointerArray.Length; ++i)
+            queryList.ForEach(query =>
             {
-                UnsafeUtility.CopyPtrToStructure(PointerArray[i].Value, out NavMeshQuery query);
                 query.Dispose();
-                UnsafeUtility.Free(PointerArray[i].Value, Allocator.Persistent);
-            }
+            });
 
             PointerArray.Dispose();
         }
