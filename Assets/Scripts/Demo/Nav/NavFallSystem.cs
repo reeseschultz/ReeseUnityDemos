@@ -12,9 +12,9 @@ namespace Reese.Demo
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
+            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var fallSecondsMax = 5;
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
 
             var job = Entities
                 .WithAll<NavFalling>()

@@ -39,20 +39,16 @@ namespace Reese.Nav
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
-            var lerpingFromEntity = GetComponentDataFromEntity<NavLerping>(true);
 
             var walkJob = Entities
                 .WithNone<NavJumping>()
-                .WithAll<Parent, LocalToParent>()
+                .WithAll<NavLerping, Parent, LocalToParent>()
                 .WithReadOnly(physicsWorld)
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
-                .WithReadOnly(lerpingFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation) =>
                 {
                     if (!agent.HasQueuedPathPlanning || !agent.HasDestination) return;
-
-                    if (!lerpingFromEntity.Exists(entity)) commandBuffer.AddComponent<NavLerping>(entityInQueryIndex, entity);
 
                     var pathBuffer = pathBufferFromEntity[entity];
 

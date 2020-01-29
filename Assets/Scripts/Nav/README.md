@@ -80,6 +80,12 @@ You'll want to drag and drop some directories from mine to yours:
 
 You may have encountered issues moving things over. Take your time to figure out what's going if that's the case. Basically, when you copy these files over, you shouldn't be seeing any errors unless you did something wrong, or there's a version incompatibility between packages.
 
+#### Be Unsafe
+
+The navigation scripts use `unsafe` code, meaning that the compiler is unable to guarantee its safety. Thus, you need to go to *Edit* ⇒ *Project Settings* ⇒ *Player* ⇒ *Allow 'unsafe' code*. The scripts won't work if you don't opt for this setting. FYI, just because something is marked `unsafe` doesn't mean there's automatically a race condition. It means, again, that the compiler is unwilling to make any judgment on code marked as such.
+
+> **Implementation note:** The `unsafe` code is specifically needed to orchestrate [NavMeshQueries](https://docs.unity3d.com/ScriptReference/Experimental.AI.NavMeshQuery.html) in the most insane, performant way I've ever seen, which I also happen to have figured out myself ([Reese](https://github.com/reeseschultz) 👈). Effectively, the custom `NavMeshQuerySystem` creates structs with pointers to said queries in a [NativeArray](https://docs.unity3d.com/ScriptReference/Unity.Collections.NativeArray_1.html), ordered by thread index, only upon startup. The [UnsafeUtility](https://docs.unity3d.com/ScriptReference/Unity.Collections.LowLevel.Unsafe.UnsafeUtility.html) is used extensively there and in the [NavPlanSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/Agent/NavPlanSystem.cs) to use the queries. The only unfortunate side effect of this is that the built-in [DisposeSentinel](https://docs.unity3d.com/ScriptReference/Unity.Collections.LowLevel.Unsafe.DisposeSentinel.html) *appears* to mistakenly believe that the queries aren't disposed properly, even though they are via pointers to them.
+
 ## Usage
 
 So how's this thing work? The navigation code processes entities with **three key components**:

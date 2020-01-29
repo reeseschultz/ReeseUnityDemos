@@ -6,4 +6,5 @@ namespace Reese.Nav
     struct NavJumping : IComponentData { }
     struct NavJumped : IComponentData { }
     struct NavLerping : IComponentData { }
+    struct NavPlanning : IComponentData { }
 }
