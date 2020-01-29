@@ -21,6 +21,7 @@ namespace Reese.Nav
     /// https://reeseschultz.com/projectile-motion-with-unity-dots. Similar
     /// code supports the ProjectileDemo scene.
     /// </summary>
+    [UpdateAfter(typeof(BuildPhysicsWorld))]
     class NavInterpolationSystem : JobComponentSystem
     {
         /// <summary>Used for raycasting in order to detect an obstacle in
@@ -43,7 +44,6 @@ namespace Reese.Nav
             var walkJob = Entities
                 .WithNone<NavJumping>()
                 .WithAll<NavLerping, Parent, LocalToParent>()
-                .WithReadOnly(physicsWorld)
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation) =>

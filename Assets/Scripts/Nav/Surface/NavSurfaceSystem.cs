@@ -92,8 +92,6 @@ namespace Reese.Nav
                 .WithNone<NavFalling>()
                 .WithChangeFilter<NavAgent>()
                 .WithReadOnly(jumpedFromEntity)
-                .WithReadOnly(defaultBasis)
-                .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(parentFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in Translation translation) =>
                 {
