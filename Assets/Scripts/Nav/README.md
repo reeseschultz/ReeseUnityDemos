@@ -129,11 +129,11 @@ To check on the agent's progress from a system of your own, making sure only to 
 
 There are also component tags (defined in [NavAgentStatus](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/Agent/NavAgentStatus.cs)) that the navigation code applies to [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/Agent/NavAgent.cs). Please do *not* write to these, just use them for optimizing your queries. All of this [IComponentData](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Entities.IComponentData.html?q=icomponent) can be applied throughout entire navigation lifecycle for a given [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/Agent/NavAgent.cs):
 
-* `NavFalling`: Exists if the agent is falling.
-* `NavJumping`: Exists if the agent is jumping.
-* `NavJumped`: Exists if the agent recently jumped, *past tense*, primarily so the [NavSurfaceSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/Surface/NavSurfaceSystem.cs) can [raycast](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts) for a new surface potentially underneath said agent.
-* `NavLerping`: Exists if the agent is lerping.
-* `NavPlanning`: Exists if the agent is planning paths or jumps.
+* `NavFalling` - Exists if the agent is falling.
+* `NavJumping` - Exists if the agent is jumping.
+* `NavJumped` - Exists if the agent recently jumped, *past tense*, primarily so the [NavSurfaceSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/Surface/NavSurfaceSystem.cs) can [raycast](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts) for a new surface potentially underneath said agent.
+* `NavLerping` - Exists if the agent is lerping.
+* `NavPlanning` - Exists if the agent is planning paths or jumps.
 
 See the [NavDestinationSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/Nav/NavDestinationSystem.cs) and [NavPointAndClickDestinationSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/Nav/NavPointAndClickDestinationSystem.cs) in [Assets/Scripts/Demo/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo/Nav) for examples of querying and reading information out of agents to determine when and how to assign destinations.
 
