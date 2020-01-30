@@ -2,6 +2,12 @@
 {
     static class NavConstants
     {
+        /// <summary>Upper limit on the *duration* spent jumping before the
+        /// agent is actually considered falling. This limit can be reached 
+        /// when the agent tries to jump too close to the edge of a surface
+        /// and misses.</summary>
+        public const float JUMP_SECONDS_MAX = 5;
+
         /// <summary>Upper limit on the raycast distance when searching
         /// for an obstacle in front of a given NavAgent.</summary>
         public const float OBSTACLE_RAYCAST_DISTANCE_MAX = 1000;

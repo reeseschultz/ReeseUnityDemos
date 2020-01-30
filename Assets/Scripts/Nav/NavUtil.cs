@@ -36,13 +36,12 @@ namespace Reese.Nav
             return position + offset;
         }
 
-        /// <summary>Checks approximate equality between two float3s, ignoring
-        /// the y-component.</summary>
-        public static bool ApproxEquals(float3 a, float3 b)
-            => !ApproxEquals(a.x, b.x) || !ApproxEquals(a.z, b.z) ? false : true;
+        /// <summary>Checks approximate equality between two float3s.</summary>
+        public static bool ApproxEquals(float3 a, float3 b, float tolerance)
+            => !ApproxEquals(a.x, b.x, 1) || !ApproxEquals(a.y, b.y, 1) || !ApproxEquals(a.z, b.z, 1) ? false : true;
 
         /// <summary>Checks approximate equality between two floats.</summary>
-        public static bool ApproxEquals(float a, float b)
-            => math.abs(a - b) > 1 ? false : true;
+        public static bool ApproxEquals(float a, float b, float tolerance)
+            => math.abs(a - b) > tolerance ? false : true;
     }
 }
