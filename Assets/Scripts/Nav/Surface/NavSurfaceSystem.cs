@@ -80,7 +80,7 @@ namespace Reese.Nav
                 {
                     commandBuffer.RemoveComponent<CompositeScale>(entityInQueryIndex, entity);
                 })
-                .WithName("RemoveCompositeScaleJob")
+                .WithName("NavRemoveCompositeScaleJob")
                 .Schedule(addParentJob);
 
             var parentFromEntity = GetComponentDataFromEntity<Parent>();
@@ -89,12 +89,10 @@ namespace Reese.Nav
 
             return Entities
                 .WithNone<NavFalling, NavJumping>()
-                .WithAll<NavNeedsSurface>()
+                .WithAll<NavNeedsSurface, Parent, LocalToParent>()
                 .WithNativeDisableParallelForRestriction(parentFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in Translation translation) =>
                 {
-                    if (!parentFromEntity.HasComponent(entity)) return;
-
                     var parent = parentFromEntity[entity];
 
                     if (
