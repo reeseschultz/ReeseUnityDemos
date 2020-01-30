@@ -88,7 +88,7 @@ namespace Reese.Nav
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
 
             return Entities
-                .WithNone<NavFalling>()
+                .WithNone<NavFalling, NavJumping>()
                 .WithAll<NavNeedsSurface>()
                 .WithNativeDisableParallelForRestriction(parentFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in Translation translation) =>
