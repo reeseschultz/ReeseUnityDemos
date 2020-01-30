@@ -23,7 +23,7 @@ namespace Reese.Nav
         /// below. In other words, if the agent didn't jump and the system
         /// isn't starting up for the first time, then the surface is known.
         /// </summary>
-        static ConcurrentDictionary<int, bool> hasJumpedDictionary = new ConcurrentDictionary<int, bool>();
+        static ConcurrentDictionary<int, bool> needsSurfaceDictionary = new ConcurrentDictionary<int, bool>();
 
         /// <summary>Used for raycasting in order to detect a surface below a
         /// given NavAgent.</summary>
@@ -31,7 +31,7 @@ namespace Reese.Nav
 
         /// <summary>For adding Parent and LocalToParent components when they
         /// or the Parent.Value are nonexistent on a given NavSurface.</summary>
-        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
+        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
@@ -83,32 +83,26 @@ namespace Reese.Nav
                 .WithName("RemoveCompositeScaleJob")
                 .Schedule(addParentJob);
 
-            var jumpedFromEntity = GetComponentDataFromEntity<NavJumped>();
             var parentFromEntity = GetComponentDataFromEntity<Parent>();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
 
             return Entities
                 .WithNone<NavFalling>()
-                .WithChangeFilter<NavAgent>()
-                .WithReadOnly(jumpedFromEntity)
+                .WithAll<NavNeedsSurface>()
                 .WithNativeDisableParallelForRestriction(parentFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in Translation translation) =>
                 {
-                    var jumped = jumpedFromEntity.Exists(entity);
-
-                    if (!hasJumpedDictionary.ContainsKey(entity.Index)) hasJumpedDictionary.TryAdd(entity.Index, jumped);
-
-                    hasJumpedDictionary.TryGetValue(entity.Index, out bool hasJumped);
-
                     if (!parentFromEntity.HasComponent(entity)) return;
 
                     var parent = parentFromEntity[entity];
-                    if (!parent.Value.Equals(Entity.Null) && hasJumped == jumped) return;
 
-                    hasJumpedDictionary[entity.Index] = false;
+                    if (
+                        !parent.Value.Equals(Entity.Null) &&
+                        needsSurfaceDictionary.GetOrAdd(entity.Index, true)
+                    ) return;
 
-                    commandBuffer.RemoveComponent<NavJumped>(entityInQueryIndex, entity);
+                    needsSurfaceDictionary[entity.Index] = false;
 
                     var rayInput = new RaycastInput
                     {
@@ -119,8 +113,6 @@ namespace Reese.Nav
 
                     if (!physicsWorld.CastRay(rayInput, out RaycastHit hit) || hit.RigidBodyIndex == -1)
                     {
-                        commandBuffer.AddComponent<NavJumped>(entityInQueryIndex, entity);
-
                         if (++agent.SurfaceRaycastCount >= NavConstants.SURFACE_RAYCAST_MAX)
                         {
                             agent.Surface = Entity.Null;
@@ -141,6 +133,8 @@ namespace Reese.Nav
                     parent.Value = parentBasis.Equals(Entity.Null) ? defaultBasis : parentBasis;
 
                     parentFromEntity[entity] = parent;
+
+                    commandBuffer.RemoveComponent<NavNeedsSurface>(entityInQueryIndex, entity);
                 })
                 .WithoutBurst()
                 .WithName("NavSurfaceTrackingJob")

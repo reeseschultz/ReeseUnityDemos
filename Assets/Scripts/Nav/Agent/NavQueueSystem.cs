@@ -9,7 +9,7 @@ namespace Reese.Nav
     class NavQueueSystem : JobComponentSystem
     {
         /// <summary>For adding NavPlanning components.</summary>
-        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {

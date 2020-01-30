@@ -140,7 +140,7 @@ namespace Reese.Nav
 
                     if (!NavUtil.ApproxEquals(translation.Value, destination)) return;
 
-                    commandBuffer.AddComponent<NavJumped>(entityInQueryIndex, entity);
+                    commandBuffer.AddComponent<NavNeedsSurface>(entityInQueryIndex, entity);
                     commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
 
                     jumpBuffer.Clear();

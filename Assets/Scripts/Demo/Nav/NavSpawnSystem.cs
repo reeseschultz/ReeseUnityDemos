@@ -54,6 +54,7 @@ namespace Reese.Demo
                         commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(NavAgent));
                         commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(NavPathBufferElement));
                         commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(NavJumpBufferElement));
+                        commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(NavNeedsSurface));
                         commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(Parent));
                         commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(LocalToParent));
 
