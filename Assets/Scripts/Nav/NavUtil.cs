@@ -38,7 +38,7 @@ namespace Reese.Nav
 
         /// <summary>Checks approximate equality between two float3s.</summary>
         public static bool ApproxEquals(float3 a, float3 b, float tolerance)
-            => !ApproxEquals(a.x, b.x, 1) || !ApproxEquals(a.y, b.y, 1) || !ApproxEquals(a.z, b.z, 1) ? false : true;
+            => !ApproxEquals(a.x, b.x, tolerance) || !ApproxEquals(a.y, b.y, tolerance) || !ApproxEquals(a.z, b.z, tolerance) ? false : true;
 
         /// <summary>Checks approximate equality between two floats.</summary>
         public static bool ApproxEquals(float a, float b, float tolerance)
