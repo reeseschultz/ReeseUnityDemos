@@ -116,6 +116,7 @@ namespace Reese.Nav
                             agent.Surface = Entity.Null;
                             agent.FallSeconds = elapsedSeconds;
 
+                            commandBuffer.RemoveComponent<NavNeedsSurface>(entityInQueryIndex, entity);
                             commandBuffer.AddComponent<NavFalling>(entityInQueryIndex, entity);
                         }
 
