@@ -49,7 +49,14 @@ namespace Reese.Nav
         /// reasonable value to try.</summary>
         public float TranslationSpeed;
 
-        /// <summary>This is a *de facto* private variable storing the value of
+        /// <summary>This is the agent's current "avoidance destination," which
+        /// is a waypoint off the proverbial "beaten path" that the agent
+        /// aspires to reach in the interest of personal space. Outside the
+        /// nav systems and debugging, this is not intended to be read nor
+        /// written.</summary>
+        public float3 AvoidanceDestination;
+
+        /// <summary>This is a private variable storing the value of
         /// LocalDestination. This is *not* intended to be read nor written
         /// directly by *any* system.</summary>
         private float3 localDestination;
@@ -74,7 +81,7 @@ namespace Reese.Nav
             }
         }
 
-        /// <summary>This is a *de facto* private variable storing the value of
+        /// <summary>This is a private variable storing the value of
         /// WorldDestination. This is *not* intended to be read nor written
         /// directly by *any* system.</summary>
         private float3 worldDestination;

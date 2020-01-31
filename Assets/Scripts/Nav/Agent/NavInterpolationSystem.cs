@@ -1,5 +1,4 @@
-﻿using Unity.Burst;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -21,10 +20,11 @@ namespace Reese.Nav
     /// https://reeseschultz.com/projectile-motion-with-unity-dots. Similar
     /// code supports the ProjectileDemo scene.
     /// </summary>
+    
     [UpdateAfter(typeof(BuildPhysicsWorld))]
     class NavInterpolationSystem : JobComponentSystem
     {
-        /// <summary>Used for raycasting in order to detect an obstacle in
+        /// <summary>For raycasting in order to detect an obstacle in
         /// front of the agent.</summary>
         BuildPhysicsWorld buildPhysicsWorldSystem => World.GetExistingSystem<BuildPhysicsWorld>();
 
@@ -40,12 +40,14 @@ namespace Reese.Nav
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
+            var avoidantFromEntity = GetComponentDataFromEntity<NavAvoidant>(true);
 
             var walkJob = Entities
                 .WithNone<NavJumping>()
                 .WithAll<NavLerping, Parent, LocalToParent>()
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
+                .WithReadOnly(avoidantFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation) =>
                 {
                     if (!agent.HasQueuedPathPlanning || !agent.HasDestination) return;
@@ -68,6 +70,8 @@ namespace Reese.Nav
                         agent.WorldDestination = destinationTransform.MultiplyPoint3x4(agent.LocalDestination);
                     }
 
+                    var avoidant = avoidantFromEntity.Exists(entity);
+                    var worldDestination = avoidant ? agent.AvoidanceDestination : agent.WorldDestination;
                     var worldPosition4 = ((Matrix4x4)localToWorldFromEntity[entity].Value).GetColumn(3);
                     var worldPosition3 = new float3(worldPosition4.x, worldPosition4.y, worldPosition4.z);
 
@@ -76,34 +80,38 @@ namespace Reese.Nav
                         ++agent.PathBufferIndex > pathBuffer.Length - 1
                     )
                     {
-                        var rayInput = new RaycastInput
-                        {
-                            Start = translation.Value,
-                            End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
-                            Filter = CollisionFilter.Default
-                        };
+                        if (!avoidant) {
+                            var rayInput = new RaycastInput
+                            {
+                                Start = translation.Value,
+                                End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
+                                Filter = CollisionFilter.Default
+                            };
 
-                        if (
-                            !physicsWorld.CastRay(rayInput, out RaycastHit hit) &&
-                            !NavUtil.ApproxEquals(worldPosition3, agent.WorldDestination, 1)
-                        )
-                        {
-                            agent.JumpSeconds = elapsedSeconds;
-
-                            commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
-
-                            return;
+                            if (
+                                !physicsWorld.CastRay(rayInput, out RaycastHit hit) &&
+                                !NavUtil.ApproxEquals(worldPosition3, worldDestination, 1)
+                            )
+                            {
+                                agent.JumpSeconds = elapsedSeconds;
+                                commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
+                                return;
+                            }
                         }
-
-                        agent.HasQueuedPathPlanning = agent.HasDestination = false;
-                        agent.PathBufferIndex = 0;
-
+ 
                         commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
+
+                        if (avoidant) {
+                            commandBuffer.RemoveComponent<NavAvoidant>(entityInQueryIndex, entity);
+                            commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
+                        } else agent.HasQueuedPathPlanning = agent.HasDestination = false;
+
+                        agent.PathBufferIndex = 0;
 
                         return;
                     }
 
-                    var lookAt = agent.WorldDestination;
+                    var lookAt = worldDestination;
                     lookAt.y = worldPosition3.y;
                     rotation.Value = quaternion.LookRotationSafe(lookAt - worldPosition3, math.up());
 

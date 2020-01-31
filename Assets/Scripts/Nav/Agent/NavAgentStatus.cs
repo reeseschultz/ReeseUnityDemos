@@ -2,6 +2,10 @@
 
 namespace Reese.Nav
 {
+    /// <summary>Exists if the agent is too physically close to other agents,
+    /// thus yearning for personal space.</summary>
+    struct NavAvoidant : IComponentData { }
+
     /// <summary>Exists if the agent is falling.</summary>
     struct NavFalling : IComponentData { }
 

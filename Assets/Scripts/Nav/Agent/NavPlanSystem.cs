@@ -16,6 +16,9 @@ namespace Reese.Nav
     /// usage. Note that it depends on the third-party PathUtils.</summary>
     unsafe class NavPlanSystem : JobComponentSystem
     {
+        /// <summary>For removing the NavPlanning component and adding the
+        /// NavLerping component on completion of a successful "plan."
+        /// </summary>
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -24,6 +27,7 @@ namespace Reese.Nav
             var parentFromEntity = GetComponentDataFromEntity<Parent>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
+            var avoidantFromEntity = GetComponentDataFromEntity<NavAvoidant>(true);
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var navMeshQueryPointerArray = World.GetExistingSystem<NavMeshQuerySystem>().PointerArray;
@@ -33,6 +37,7 @@ namespace Reese.Nav
                 .WithReadOnly(parentFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(jumpingFromEntity)
+                .WithReadOnly(avoidantFromEntity)
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
@@ -51,7 +56,8 @@ namespace Reese.Nav
                     var parentTransform = (Matrix4x4)localToWorldFromEntity[parent].Value;
 
                     var worldPosition = (Vector3)childTransform.GetColumn(3);
-                    var worldDestination = (Vector3)agent.WorldDestination;
+                    var avoidant = avoidantFromEntity.Exists(entity);
+                    var worldDestination = avoidant ? (Vector3)agent.AvoidanceDestination : (Vector3)agent.WorldDestination;
 
                     var jumping = jumpingFromEntity.Exists(entity);
 

@@ -2,6 +2,14 @@
 {
     static class NavConstants
     {
+        /// <summary>Whether NavAgent avoidance is enabled upon creation of the
+        /// NavAvoidanceSystem. If you don't care about agent avoidance, set
+        /// this to false for performance gains.</summary>
+        public const bool AVOIDANCE_ENABLED_ON_CREATE = true;
+
+        /// <summary>The cell radius for NavAgent avoidance.</summary>
+        public const float AVOIDANCE_CELL_RADIUS = 3;
+
         /// <summary>Upper limit on the *duration* spent jumping before the
         /// agent is actually considered falling. This limit can be reached 
         /// when the agent tries to jump too close to the edge of a surface
@@ -15,6 +23,13 @@
         /// <summary>Upper limit on the raycast distance when searching for a
         /// surface below a given NavAgent.</summary>
         public const float SURFACE_RAYCAST_DISTANCE_MAX = 1000;
+
+        /// <summary>Upper limit on the NavAgents the NavAvoidanceSystem will
+        /// attempt to process per cell. Keeping this low drastically improves
+        /// performance. If there's 1000 agents in a single cell, do you really
+        /// want to make them all avoid each other? No, because they're already
+        /// colliding anyway.</summary>
+        public const int AGENTS_PER_CELL_MAX = 25;
 
         /// <summary>Upper limit when manually batching jobs.</summary>
         public const int BATCH_MAX = 50;

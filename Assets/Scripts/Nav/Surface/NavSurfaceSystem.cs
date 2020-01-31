@@ -25,7 +25,7 @@ namespace Reese.Nav
         /// </summary>
         static ConcurrentDictionary<int, bool> needsSurfaceDictionary = new ConcurrentDictionary<int, bool>();
 
-        /// <summary>Used for raycasting in order to detect a surface below a
+        /// <summary>For raycasting in order to detect a surface below a
         /// given NavAgent.</summary>
         BuildPhysicsWorld buildPhysicsWorldSystem => World.GetExistingSystem<BuildPhysicsWorld>();
 
