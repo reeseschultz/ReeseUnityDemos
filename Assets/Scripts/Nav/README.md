@@ -123,7 +123,6 @@ To move the agent, you would need to set *either* one of these:
 
 To check on the agent's progress from a system of your own, making sure only to read and not write, you'll be interested in these variables:
 
-* `HasDestination`: `bool` - Whether the agent presently has a destination. It's automatically set for you, so be sure just to read it.
 * `Surface`: `Entity` - This is the presently detected [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/Surface/NavSurface.cs) underneath the agent. Keep in mind that there *are* circumstances where this could be equal to [Entity.Null](https://docs.unity3d.com/Packages/com.unity.entities@0.5/manual/entities.html?q=entity), like if the agent is falling (and not simply jumping). The current surface could be useful to have for a number of reasons, one of which being that you can get all of the *jumpable* surfaces from a given surface like so: `jumpableBufferFromEntity[agent.Surface]`. We'll cover jumpable surfaces soon.
 * `LastDestination`: `float3` - The last destination the agent had (which is only technically valid if the agent did indeed have a prior destination). This is useful for knowing if the destination changed.
 

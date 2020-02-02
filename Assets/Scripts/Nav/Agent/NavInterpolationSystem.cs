@@ -43,15 +43,13 @@ namespace Reese.Nav
             var avoidantFromEntity = GetComponentDataFromEntity<NavAvoidant>(true);
 
             var walkJob = Entities
-                .WithNone<NavJumping>()
+                .WithNone<NavPlanning, NavJumping>()
                 .WithAll<NavLerping, Parent, LocalToParent>()
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(avoidantFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation) =>
                 {
-                    if (!agent.HasQueuedPathPlanning || !agent.HasDestination) return;
-
                     var pathBuffer = pathBufferFromEntity[entity];
 
                     if (pathBuffer.Length == 0) return;
@@ -95,6 +93,7 @@ namespace Reese.Nav
                             {
                                 agent.JumpSeconds = elapsedSeconds;
                                 commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
+                                commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                                 return;
                             }
                         }
@@ -104,7 +103,7 @@ namespace Reese.Nav
                         if (avoidant) {
                             commandBuffer.RemoveComponent<NavAvoidant>(entityInQueryIndex, entity);
                             commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
-                        } else agent.HasQueuedPathPlanning = agent.HasDestination = false;
+                        }
 
                         agent.PathBufferIndex = 0;
 
@@ -137,6 +136,8 @@ namespace Reese.Nav
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation) =>
                 {
+                    commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity); // For sticking the landing.
+
                     var jumpBuffer = jumpBufferFromEntity[entity];
 
                     if (jumpBuffer.Length == 0 && !fallingFromEntity.Exists(entity)) return;

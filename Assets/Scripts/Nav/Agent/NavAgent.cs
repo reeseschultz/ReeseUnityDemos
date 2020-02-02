@@ -7,17 +7,6 @@ namespace Reese.Nav
     /// interpolation.</summary>
     struct NavAgent : IComponentData
     {
-        /// <summary>Informs the nav systems that the agent has a destination.
-        /// It is automatically set to true when the WorldDestination or
-        /// LocalDestination is set. Outside the nav systems and debugging,
-        /// this is only intended to be read, not written.</summary>
-        public bool HasDestination;
-
-        /// <summary>Informs the nav systems when path planning has been
-        /// enqueued for the agent. Outside the nav systems and debugging, this
-        /// is only intended to be read, not written.</summary>
-        public bool HasQueuedPathPlanning;
-
         /// <summary>This is the *point* in time when the agent started
         /// falling, *not* the duration. This is written to by the nav systems
         /// to help you figure out how long the agent has been falling. See the
@@ -56,11 +45,6 @@ namespace Reese.Nav
         /// written.</summary>
         public float3 AvoidanceDestination;
 
-        /// <summary>This is a private variable storing the value of
-        /// LocalDestination. This is *not* intended to be read nor written
-        /// directly by *any* system.</summary>
-        private float3 localDestination;
-
         /// <summary>Writing to this *or* the WorldDestination is *required*
         /// when spawning an agent. If you write to this, then you *must*
         /// set the DestinationSurface as well! After all, this is a
@@ -68,40 +52,13 @@ namespace Reese.Nav
         /// This is how random positions are set as destinations in the
         /// MovingJumpDemo scene with the NavDestinationSystem.
         /// </summary>
-        public float3 LocalDestination
-        {
-            get
-            {
-                return localDestination;
-            }
-            set
-            {
-                HasDestination = true;
-                localDestination = value;
-            }
-        }
-
-        /// <summary>This is a private variable storing the value of
-        /// WorldDestination. This is *not* intended to be read nor written
-        /// directly by *any* system.</summary>
-        private float3 worldDestination;
+        public float3 LocalDestination;
 
         /// <summary>Writing to this *or* the LocalDestination is *required*
         /// when spawning an agent. An example of usage is in the
         /// NavPointAndClick demo with the NavPointAndClickDestinationSystem.
         /// </summary>
-        public float3 WorldDestination
-        {
-            get
-            {
-                return worldDestination;
-            }
-            set
-            {
-                HasDestination = true;
-                worldDestination = value;
-            }
-        }
+        public float3 WorldDestination;
 
         /// <summary>You should *probably* write to this when spawning an
         /// agent. If you don't get this right, then raycasts below the agent

@@ -5,12 +5,13 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Rendering;
 using UnityEngine.SceneManagement;
-using UnityEngine;
 
 namespace Reese.Demo
 {
     class NavDestinationSystem : JobComponentSystem
     {
+        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
+
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             if (
@@ -18,24 +19,24 @@ namespace Reese.Demo
                 !SceneManager.GetActiveScene().name.Equals("NavMovingJumpDemo")
             ) return inputDeps;
 
+            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var jumpableBufferFromEntity = GetBufferFromEntity<NavJumpableBufferElement>(true);
             var renderBoundsFromEntity = GetComponentDataFromEntity<RenderBounds>(true);
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
             return Entities
+                .WithNone<NavLerping>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
                 .WithNativeDisableParallelForRestriction(randomArray)
-                .ForEach((Entity entity, int nativeThreadIndex, ref NavAgent agent) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent) =>
                 {
                     if (
-                        agent.HasDestination ||
                         agent.Surface.Equals(Entity.Null) ||
                         !jumpableBufferFromEntity.Exists(agent.Surface)
                     ) return;
 
                     var jumpableSurfaces = jumpableBufferFromEntity[agent.Surface];
-
                     var random = randomArray[nativeThreadIndex];
 
                     if (jumpableSurfaces.Length == 0)
@@ -49,6 +50,8 @@ namespace Reese.Demo
                         var bounds = renderBoundsFromEntity[agent.DestinationSurface].Value;
                         agent.LocalDestination = NavUtil.GetRandomPointInBounds(ref random, bounds, agent.Offset, 0.7f); // Agents should not try to jump too close to an edge, hence the scale.
                     }
+
+                    commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
 
                     randomArray[nativeThreadIndex] = random;
                 })
