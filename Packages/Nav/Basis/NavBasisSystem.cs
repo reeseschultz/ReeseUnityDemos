@@ -26,7 +26,7 @@ namespace Reese.Nav
             World.EntityManager.AddComponent(DefaultBasis, typeof(LocalToWorld));
             World.EntityManager.AddComponent(DefaultBasis, typeof(Translation));
             World.EntityManager.AddComponent(DefaultBasis, typeof(Rotation));
-            // entityManager.SetName(defaultBasis, "DefaultBasis"); // Made the build fail when using 2019.2. Not sure about >= 2019.3.
+            // entityManager.SetName(defaultBasis, "DefaultBasis"); // Used to make builds fail. Not sure if it still does.
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
