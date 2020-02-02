@@ -19,11 +19,11 @@ namespace Reese.Demo
         {
             if (Button == null || Slider == null) return;
 
-            Button.onClick.AddListener(enqueue);
-            Slider.onValueChanged.AddListener(updateEnqueueCount);
+            Button.onClick.AddListener(Enqueue);
+            Slider.onValueChanged.AddListener(UpdateEnqueueCount);
         }
 
-        void updateEnqueueCount(float count)
+        void UpdateEnqueueCount(float count)
         {
             enqueueCount = (int)count;
 
@@ -35,10 +35,8 @@ namespace Reese.Demo
             else SpawnText.text += " Entities";
         }
 
-        void enqueue()
+        void Enqueue()
         {
-            if (Button == null) return;
-
             if (!IsForAgents) PersonSpawnSystem.Enqueue(new PersonSpawn
             {
                 Person = new Person
