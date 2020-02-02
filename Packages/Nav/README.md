@@ -12,79 +12,71 @@
 2. **Allows surfaces to move together with agents on them** via parent transform.
 3. Has a glorified parent, the so-called *basis*, that can be parented to another basis (and so on) to **handle complex parent transform scenarios** for surfaces and agents!
 4. Is **multi-threaded**. 👈
-5. Can be **drag-and-dropped** into other Unity projects, specifically the [Packages/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/Nav) directory, thanks to thoughtful file hierarchy and namespace conventions. Helper glue code for navigation can be wholesale drag-and-dropped from [Assets/Scripts/Demo/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo/Nav).
+5. Can be **imported** into other Unity projects.
 6. **Includes multiple demo scenes** in [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/Nav) so I don't forget how it works.
 7. Is **extensively documented** even though I'll eventually get tired of updating the docs and then they will exist solely to confuse myself and others.
-8. And **still provides good-old obstacle avoidance**, only completing a "partial path" for agents who have a destination set inside an obstacle.
+8. Features **toggleable agent-to-agent avoidance**.
+9. And **still provides good-old obstacle avoidance**, only completing a "partial path" for agents who have a destination set inside an obstacle.
 
 I care more about usability than performance. The navigation code should be reasonably easy to use and work as expected. Performance is highly important, just not as much as delivering the jumping and transform parenting features.
 
 ## Prerequisites
 
-First, it goes without saying that you should be familar with [Unity DOTS](https://unity.com/dots). If not, I know you'll just try to use this project anyway, so *at least* [follow this 'getting started' tutorial](https://reeseschultz.com/getting-started-with-unity-dots/). It will lead you to other tutorials and resources you may find useful.
+First, you should be familar with [Unity DOTS](https://unity.com/dots). If not, I know you'll just try to use this project anyway, so *at least* [follow this 'getting started' tutorial](https://reeseschultz.com/getting-started-with-unity-dots/). It will lead you to other tutorials and resources you may find useful.
 
-Second, there are two ways we can go about this: *The Easy Way*, meaning you will build your game or simulation from a clone of *this* project; or *The Hard Way*, meaning you want to copy this project's code (and possibly demos) into another (maybe because you noticed the nav code was optimized, and you want to update it). I'll cover these two different approaches below, but you'll want to clone my project regardless:
+Second, clone the demo project since it has glue code not part of `Reese.Nav` that you might want to copy later:
 
 ```sh
 git clone https://github.com/reeseschultz/ReeseUnityDemos.git
 ```
 
-Third, ideally the project should be opened with the version of Unity it's intended for. I recommend using the [Unity Hub](https://unity3d.com/get-unity/download) to manage various editor versions.
+Third, ideally that project should be opened with the version of Unity it's intended for. I recommend using the [Unity Hub](https://unity3d.com/get-unity/download) to manage various editor versions.
 
->**Linux & You:** Using Linux and having problems opening the project? On Ubuntu I couldn't use the [Burst compiler](https://docs.unity3d.com/Packages/com.unity.burst@1.2/manual/index.html) until I manually installed `libncurses5` via: `sudo apt install libncurses5`. But it's entirely possible you're missing another library. *Read* Unity's error message to be sure.
+>**Linux & You:** Using Linux and having problems opening the project? On Ubuntu I couldn't use the [Burst compiler](https://docs.unity3d.com/Packages/com.unity.burst@1.2/manual/index.html) until I manually installed `libncurses5` via: `sudo apt install libncurses5`. But it's entirely possible you're missing another library. Read Unity's error message to be sure.
 
-Now for *The Easy Way* and *The Hard Way*.
+### Import
 
-### The Easy Way
+The nav code is a stand-alone [UPM package](https://docs.unity3d.com/Manual/Packages.html), meaning you can import it directly into your project as long as you're using >=`2019.3`. While support for [multiple subpackages in a single Git repository won't be available until 2020.1](https://forum.unity.com/threads/git-support-on-package-manager.573673/page-5), I hacked it to work anyway by creating a Git subtree for each package. That's why the [nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/nav) and [random](https://github.com/reeseschultz/ReeseUnityDemos/tree/random) branches exist—they're auto-forked from `master` upon commit by way of [a GitHub actions script](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/.github/workflows/split.yml).
 
-This means you've a greenfield project, or you're willing to copy your existing code and assets from another project into this one. If you've been following along, then feel free to add and delete stuff at your leisure. That's it then. Project-wise, you have everything you need. Skip ahead to the *Usage* section and pat yourself on the back for not being difficult.
-
-### The Hard Way
-
-#### Checking Versions
-
-Ugh. Okay. If you want to be inconvenient, then we'll move the navigation code into a different Unity project. First we need to ensure that, ideally, versions of things match exactly, or are reasonably close. To check the editor versions between your project and mine for a quick sanity check, run this from either project directory:
+To take advantage of this, just run the below line in your shell.
 
 ```sh
-cat ProjectSettings/ProjectVersion.txt | grep -Po '\d{4}\..*\..*' | head -n 1
+DEMO_URL=https://github.com/reeseschultz/ReeseUnityDemos.git && echo $DEMO_URL#$(git ls-remote $DEMO_URL nav | grep -Po "^([\w\-]+)")
 ```
 
-You'll see the version in the output.
+Copy the output. Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in the top-left corner, and then click on `Add package from git URL`. Paste the text you copied and finally click `Add`.
 
-Next, as for the packages:
-
-```sh
-cat Packages/manifest.json
-```
-
-If they're close enough, you may be okay. It's on you to troubleshoot getting them right, though. If my project works assuming you're running it with the intended versions of everything, and yours doesn't, it's a You-Problem.
+It'll take a little while for the import to work. After it's done doing its thing, note that *Reese's DOTS Navigation*'s version will display as `0.0.0`, since all we care about is the most recent commit hash. [Semantic versioning](https://semver.org/) may be added later in the future.
 
 #### Upgrading and Downgrading Packages
 
-To upgrade or downgrade things, which is probably what you'll need to do, you'll have to open your project in the Unity Editor. Go to `Window ⇒ Package Manager`, then click on `Advanced ⇒ Enable Preview Packages`. Install the following packages, ensuring their versions match exactly with those of my project if possible:
+Now you may see some errors, but don't panic. You probably need to upgrade or downgrade things. Again, go to `Window ⇒ Package Manager`, but this time click on `Advanced ⇒ Enable Preview Packages`. Install the following packages, ensuring their versions match exactly with those of the demo project you cloned:
 
 1. `Burst`
 2. `Entities`
 3. `Hybrid Renderer`
 4. `Physics` (this project is only confirmed to work with *Unity* physics; it has not been tested with Havok)
 
-Other packages, such as `Collections` and `Mathematics`, should be installed *automatically* along with `Entities`.
+Other packages, such as `Collections` and `Mathematics`, should be installed *automatically* alongside `Entities`.
+
+FYI, to quickly check the editor versions between your project and the demo project you cloned, run this from each project directory:
+
+```sh
+cat ProjectSettings/ProjectVersion.txt | grep -Po '\d{4}\..*\..*' | head -n 1
+```
+
+To check the individual packages:
+ 
+```sh
+cat Packages/manifest.json
+ ```
 
 #### Drag-And-Drop
 
-You'll want to drag and drop some directories from mine to yours:
+I ***highly*** recommend that you drag and drop some files from the demo project to yours:
 
-* You **must** copy over the [Packages/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/Nav) directory and all its contents, including `.meta` files. In the editor, it will display as *Reese's DOTS Navigation*. Place it somewhere under your `Assets` directory.
-* I highly **recommend** copying over the code in [Assets/Scripts/Demo/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo/Nav), which include additional systems and code to support the navigation demos. You may think you don't need these, but they're helpful for reference, especially the [NavFallSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/Nav/NavFallSystem.cs) since how you want to handle falling is entirely up to you—it's not part of the core navigation code because it's too dependent on the game or simulation in question.
-* I highly **recommend** you copy over the navigation demo scenes in [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scenes/Nav). They're only here to help and show you how to set up your scenes. You can always modify them or delete them later.
-
-You may have encountered issues moving things over. Take your time to figure out what's going if that's the case. Basically, when you copy these files over, you shouldn't be seeing any errors unless you did something wrong, or there's a version incompatibility between packages.
-
-#### Be Unsafe
-
-The navigation scripts use `unsafe` code, which, for C#, simply means that pointers are used. Thus, you need to go to *Edit* ⇒ *Project Settings* ⇒ *Player* ⇒ *Allow 'unsafe' code*. The scripts won't work if you don't opt for this setting.
-
-> **Implementation note:** The `unsafe` code is specifically needed to orchestrate [NavMeshQueries](https://docs.unity3d.com/ScriptReference/Experimental.AI.NavMeshQuery.html) efficiently. As such, the custom [NavMeshQuerySystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/Nav/Agent/NavMeshQuerySystem.cs) creates structs with pointers to said queries in a [NativeArray](https://docs.unity3d.com/ScriptReference/Unity.Collections.NativeArray_1.html), ordered by thread index, only upon startup. The [UnsafeUtility](https://docs.unity3d.com/ScriptReference/Unity.Collections.LowLevel.Unsafe.UnsafeUtility.html) is used extensively there and in the [NavPlanSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/Nav/Agent/NavPlanSystem.cs) to make short work of the pointers.
+* [Assets/Scripts/Demo/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo/Nav) - Includes additional systems and code to support the navigation demos. You may think you don't need these, but they're helpful for reference, especially the [NavFallSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/Nav/NavFallSystem.cs) since how you want to handle falling is entirely up to you—it's not part of the core navigation code because it's too dependent on the game or simulation in question.
+* [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scenes/Nav) - The home of the nav demo scenes. It's easier to modify these than start from scratch.
 
 ## Usage
 
