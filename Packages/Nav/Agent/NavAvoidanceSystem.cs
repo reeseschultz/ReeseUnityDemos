@@ -41,7 +41,7 @@ namespace Reese.Nav
     /// (https://github.com/Unity-Technologies/EntityComponentSystemSamples)
     /// since this system uses the same hashing strategy.
     /// </summary>
-    class NavAvoidanceSystem : JobComponentSystem
+    public class NavAvoidanceSystem : JobComponentSystem
     {
         /// <summary>For removing the NavLerping component and adding the
         /// NavPlanning and NavAvoidant components for agents lacking

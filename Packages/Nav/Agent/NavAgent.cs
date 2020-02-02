@@ -5,7 +5,7 @@ namespace Reese.Nav
 {
     ///<summary>The NavAgent which is used for path and jump planning and
     /// interpolation.</summary>
-    struct NavAgent : IComponentData
+    public struct NavAgent : IComponentData
     {
         /// <summary>This is the *point* in time when the agent started
         /// falling, *not* the duration. This is written to by the nav systems

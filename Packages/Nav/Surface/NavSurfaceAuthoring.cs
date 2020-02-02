@@ -8,7 +8,7 @@ namespace Reese.Nav
 {
     /// <summary>Authors a NavSurface.</summary>
     [RequiresEntityConversion]
-    class NavSurfaceAuthoring : MonoBehaviour, IConvertGameObjectToEntity
+    public class NavSurfaceAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
         /// <summary>If true the GameObject's transform will be used and
         /// applied to possible children via CopyTransformFromGameObject.

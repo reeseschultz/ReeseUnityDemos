@@ -3,7 +3,7 @@
 namespace Reese.Nav
 {
     /// <summary>This is a traversible surface for NavAgents.</summary>
-    struct NavSurface : IComponentData
+    public struct NavSurface : IComponentData
     {
         /// <summary>This is intended only to be set during authoring. If you
         /// need to make a runtime change, then modify the Parent component

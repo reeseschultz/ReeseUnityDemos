@@ -1,6 +1,6 @@
 ﻿namespace Reese.Nav
 {
-    static class NavConstants
+    public static class NavConstants
     {
         /// <summary>Whether NavAgent avoidance is enabled upon creation of the
         /// NavAvoidanceSystem. If you don't care about agent avoidance, set

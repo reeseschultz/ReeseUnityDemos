@@ -4,7 +4,7 @@ namespace Reese.Nav
 {
     /// <summary>A NavBasis is a glorified parent transform for NavSurfaces.
     /// </summary>
-    struct NavBasis : IComponentData
+    public struct NavBasis : IComponentData
     {
         /// <summary>This is intended only to be set during authoring. If you
         /// need to make a runtime change, then modify the Parent component

@@ -10,7 +10,7 @@ Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to
 
 The DOTS navigation scripts and demos are self-contained so you can use them in *your* project.
 
-See the [user guide](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/README.md)!
+See the [user guide](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/Nav/README.md)!
 
 ![Video of navigation agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
 
