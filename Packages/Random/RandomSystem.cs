@@ -5,7 +5,7 @@ using Unity.Jobs.LowLevel.Unsafe;
 namespace Reese.Random
 {
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    class RandomSystem : ComponentSystem
+    public class RandomSystem : ComponentSystem
     {
         public NativeArray<Unity.Mathematics.Random> RandomArray { get; private set; }
 

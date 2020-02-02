@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 namespace Reese.Nav
 {
-    static class NavUtil
+    public static class NavUtil
     {
         /// <summary>Gets the agent type from the string name.</summary>
         public static int GetAgentType(string agentName)

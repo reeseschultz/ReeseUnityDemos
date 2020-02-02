@@ -1,0 +1,13 @@
+{
+    "name": "com.reese.demo",
+    "version": "0.0.0",
+    "displayName": "Reese's Unity Demos",
+    "description": "Unity demos emphasizing DOTS—ECS, jobs, and the Burst compiler—by me, Reese.",
+    "unity": "2019.3",
+    "unityRelease": "0f6",
+    "author": {
+        "name": "Reese Schultz",
+        "email": "reeseschultz@gmail.com",
+        "url": "https://reeseschultz.com"
+    }
+}
