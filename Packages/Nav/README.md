@@ -12,8 +12,8 @@
 2. **Allows surfaces to move together with agents on them** via parent transform.
 3. Has a glorified parent, the so-called *basis*, that can be parented to another basis (and so on) to **handle complex parent transform scenarios** for surfaces and agents!
 4. Is **multi-threaded**. 👈
-5. Can be **drag-and-dropped** into other Unity projects, specifically the [Assets/Scripts/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav) directory, thanks to thoughtful file hierarchy and namespace conventions. Helper glue code for navigation can be wholesale drag-and-dropped from [Assets/Scripts/Demo/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo/Nav).
-6. **Includes multiple demo scenes** in [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav) so I don't forget how it works.
+5. Can be **drag-and-dropped** into other Unity projects, specifically the [Packages/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/Nav) directory, thanks to thoughtful file hierarchy and namespace conventions. Helper glue code for navigation can be wholesale drag-and-dropped from [Assets/Scripts/Demo/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo/Nav).
+6. **Includes multiple demo scenes** in [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/Nav) so I don't forget how it works.
 7. Is **extensively documented** even though I'll eventually get tired of updating the docs and then they will exist solely to confuse myself and others.
 8. And **still provides good-old obstacle avoidance**, only completing a "partial path" for agents who have a destination set inside an obstacle.
 
@@ -74,7 +74,7 @@ Other packages, such as `Collections` and `Mathematics`, should be installed *au
 
 You'll want to drag and drop some directories from mine to yours:
 
-* You **must** copy over the [Assets/Scripts/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav) directory and all its contents, including `.meta` files. Where you put it in your project shouldn't matter so long as it's under `Assets`.
+* You **must** copy over the [Packages/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/Nav) directory and all its contents, including `.meta` files. In the editor, it will display as *Reese's DOTS Navigation*. Place it somewhere under your `Assets` directory.
 * I highly **recommend** copying over the code in [Assets/Scripts/Demo/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo/Nav), which include additional systems and code to support the navigation demos. You may think you don't need these, but they're helpful for reference, especially the [NavFallSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/Nav/NavFallSystem.cs) since how you want to handle falling is entirely up to you—it's not part of the core navigation code because it's too dependent on the game or simulation in question.
 * I highly **recommend** you copy over the navigation demo scenes in [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scenes/Nav). They're only here to help and show you how to set up your scenes. You can always modify them or delete them later.
 
