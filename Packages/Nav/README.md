@@ -46,30 +46,7 @@ DEMO_URL=https://github.com/reeseschultz/ReeseUnityDemos.git && echo $DEMO_URL#$
 
 Copy the output. Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in the top-left corner, and then click on `Add package from git URL`. Paste the text you copied and finally click `Add`.
 
-It'll take a little while for the import to work. After it's done doing its thing, note that *Reese's DOTS Navigation*'s version will display as `0.0.0`, since all we care about is the most recent commit hash. [Semantic versioning](https://semver.org/) may be added later in the future.
-
-#### Upgrading and Downgrading Packages
-
-Now you may see some errors, but don't panic. You probably need to upgrade or downgrade things. Again, go to `Window ⇒ Package Manager`, but this time click on `Advanced ⇒ Enable Preview Packages`. Install the following packages, ensuring their versions match exactly with those of the demo project you cloned:
-
-1. `Burst`
-2. `Entities`
-3. `Hybrid Renderer`
-4. `Physics` (this project is only confirmed to work with *Unity* physics; it has not been tested with Havok)
-
-Other packages, such as `Collections` and `Mathematics`, should be installed *automatically* alongside `Entities`.
-
-FYI, to quickly check the editor versions between your project and the demo project you cloned, run this from each project directory:
-
-```sh
-cat ProjectSettings/ProjectVersion.txt | grep -Po '\d{4}\..*\..*' | head -n 1
-```
-
-To check the individual packages:
- 
-```sh
-cat Packages/manifest.json
- ```
+It'll take a little while for the import to work. It should install the required dependencies and appropriate versions for you. After it's done doing its thing, note that *Reese's DOTS Navigation*'s version will display as `0.0.0`, since all we care about is the most recent commit hash. [Semantic versioning](https://semver.org/) may be added later.
 
 #### Drag-And-Drop
 
