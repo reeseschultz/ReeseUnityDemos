@@ -3,6 +3,11 @@
     "version": "0.0.0",
     "displayName": "Reese's DOTS Navigation",
     "description": "DOTS navigation with auto-jumping agents and movable surfaces.",
+    "dependencies": {
+        "com.unity.entities": "0.5.1-preview.11",
+        "com.unity.physics": "0.2.5-preview.1",
+        "com.unity.rendering.hybrid": "0.3.3-preview.11"
+    },
     "unity": "2019.3",
     "unityRelease": "0f6",
     "author": {

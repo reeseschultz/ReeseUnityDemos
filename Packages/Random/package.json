@@ -3,6 +3,9 @@
     "version": "0.0.0",
     "displayName": "Reese's DOTS RNGs",
     "description": "Exposes Unity.Mathematics.Random generators compatible with Burst-compiled jobs.",
+    "dependencies": {
+        "com.unity.entities": "0.5.1-preview.11"
+    },
     "unity": "2019.3",
     "unityRelease": "0f6",
     "author": {
