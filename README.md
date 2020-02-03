@@ -1,8 +1,6 @@
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E31D3V7)
-
 # ReeseUnityDemos
 
-Unity demos emphasizing [DOTS](https://unity.com/dots)—ECS, jobs, and the Burst compiler—by me, Reese.
+Unity DOTS packages and samples—featuring ECS, jobs, and the Burst compiler—by me, Reese.
 
 Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to demos in this project:
 
