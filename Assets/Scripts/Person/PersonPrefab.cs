@@ -1,6 +1,7 @@
 ﻿using Unity.Entities;
 
-namespace Reese.Demo {
+namespace Reese.Demo
+{
     [GenerateAuthoringComponent]
     struct PersonPrefab : IComponentData
     {

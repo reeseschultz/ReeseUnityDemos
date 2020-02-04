@@ -2,7 +2,5 @@
 
 namespace Reese.Demo
 {
-    struct Person : IComponentData {
-        public bool RandomizeTranslation;
-    }
+    struct Person : IComponentData { }
 }

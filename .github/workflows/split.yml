@@ -44,12 +44,17 @@ jobs:
       run: |
         git branch -d nav &> /dev/null || echo nav branch not found
         git branch -d random &> /dev/null || echo random branch not found
+        git branch -d spawning &> /dev/null || echo spawning branch not found
 
         git subtree split -P Packages/Nav -b nav
         git subtree split -P Packages/Random -b random
+        git subtree split -P Packages/Spawning -b spawning
 
         git checkout nav
         git push -fu origin nav
 
         git checkout random
         git push -fu origin random
+
+        git checkout spawning
+        git push -fu origin spawning

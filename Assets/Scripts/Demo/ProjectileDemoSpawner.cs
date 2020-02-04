@@ -1,4 +1,6 @@
-﻿using Unity.Mathematics;
+﻿using Reese.Spawning;
+using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -6,31 +8,20 @@ namespace Reese.Demo
 {
     class ProjectileDemoSpawner : MonoBehaviour
     {
+        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
+
         void Start()
         {
-            PersonSpawnSystem.Enqueue(new PersonSpawn
-            {
-                Translation = new Translation
+            var prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
+
+            SpawnSystem.Enqueue(new Spawn(
+                prefabEntity,
+                new Translation
                 {
                     Value = new float3(0, 0, 0)
-                }
-            });
-
-            PersonSpawnSystem.Enqueue(new PersonSpawn
-            {
-                Translation = new Translation
-                {
-                    Value = new float3(5, 0, 0)
-                }
-            });
-
-            PersonSpawnSystem.Enqueue(new PersonSpawn
-            {
-                Translation = new Translation
-                {
-                    Value = new float3(-5, 0, 0)
-                }
-            });
+                },
+                new Projectile { }
+            ), 3);
         }
     }
 }

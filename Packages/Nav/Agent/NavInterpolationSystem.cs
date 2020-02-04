@@ -166,6 +166,7 @@ namespace Reese.Nav
 
                     jumpBuffer.Clear();
                 })
+                .WithoutBurst()
                 .WithName("NavArtificialGravityJob")
                 .Schedule(walkJob);
         }

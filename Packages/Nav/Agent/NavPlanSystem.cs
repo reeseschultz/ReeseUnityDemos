@@ -111,6 +111,9 @@ namespace Reese.Nav
                         NavConstants.PATH_NODE_MAX
                     );
 
+                    var jumpBuffer = !jumpBufferFromEntity.Exists(entity) ? commandBuffer.AddBuffer<NavJumpBufferElement>(entityInQueryIndex, entity) : jumpBufferFromEntity[entity];
+                    var pathBuffer = !pathBufferFromEntity.Exists(entity) ? commandBuffer.AddBuffer<NavPathBufferElement>(entityInQueryIndex, entity) : pathBufferFromEntity[entity];
+
                     if (jumping)
                     {
                         var lastValidPoint = float3.zero;
@@ -118,16 +121,15 @@ namespace Reese.Nav
                             if (navMeshQuery.IsValid(straightPath[j].polygon)) lastValidPoint = straightPath[j].position;
                             else break;
 
-                        jumpBufferFromEntity[entity].Add((float3)parentTransform.inverse.MultiplyPoint3x4(lastValidPoint + agent.Offset));
+                        jumpBuffer.Add((float3)parentTransform.inverse.MultiplyPoint3x4(lastValidPoint + agent.Offset));
 
-                        if (jumpBufferFromEntity[entity].Length > 0) {
+                        if (jumpBuffer.Length > 0) {
                             commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
                             commandBuffer.AddComponent<NavLerping>(entityInQueryIndex, entity);
                         }
                     }
                     else if (status == PathQueryStatus.Success)
                     {
-                        var pathBuffer = pathBufferFromEntity[entity];
                         pathBuffer.Clear();
 
                         for (int j = 0; j < straightPathCount; ++j)

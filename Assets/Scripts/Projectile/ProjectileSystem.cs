@@ -17,23 +17,18 @@ namespace Reese.Demo
         {
             if (!SceneManager.GetActiveScene().name.Equals("ProjectileDemo")) return inputDeps;
 
-            var projectileFromEntity = GetComponentDataFromEntity<Projectile>(true);
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
 
-            var addProjectileJob = Entities
-                .WithReadOnly(projectileFromEntity)
+            var setProjectileJob = Entities
                 .WithNativeDisableParallelForRestriction(randomArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref Person person) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, in Projectile projectile) =>
                 {
-                    if (
-                        projectileFromEntity.Exists(entity) &&
-                        projectileFromEntity[entity].HasTarget
-                    ) return;
+                    if (projectile.HasTarget) return;
 
                     var random = randomArray[nativeThreadIndex];
 
-                    commandBuffer.AddComponent(entityInQueryIndex, entity, new Projectile
+                    commandBuffer.SetComponent(entityInQueryIndex, entity, new Projectile
                     {
                         AngleInDegrees = random.NextInt(45, 60),
                         Gravity = random.NextInt(50, 150),
@@ -46,11 +41,11 @@ namespace Reese.Demo
 
                     randomArray[nativeThreadIndex] = random;
                 })
-                .WithName("AddProjectileJob")
+                .WithName("SetProjectileJob")
                 .Schedule(inputDeps);
 
-            barrier.AddJobHandleForProducer(addProjectileJob);
-            addProjectileJob.Complete();
+            barrier.AddJobHandleForProducer(setProjectileJob);
+            setProjectileJob.Complete();
 
             var deltaSeconds = Time.DeltaTime;
 
@@ -76,7 +71,7 @@ namespace Reese.Demo
                 .WithName("LaunchJob")
                 .Schedule(inputDeps);
 
-            return JobHandle.CombineDependencies(addProjectileJob, launchJob);
+            return JobHandle.CombineDependencies(setProjectileJob, launchJob);
         }
     }
 }

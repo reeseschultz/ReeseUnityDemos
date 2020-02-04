@@ -1,8 +1,10 @@
 ﻿using Reese.Nav;
+using Reese.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Unity.Entities;
 
 namespace Reese.Demo
 {
@@ -15,12 +17,18 @@ namespace Reese.Demo
 
         int enqueueCount = 1;
 
+        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
+        Entity prefabEntity;
+
         void Start()
         {
             if (Button == null || Slider == null) return;
 
             Button.onClick.AddListener(Enqueue);
             Slider.onValueChanged.AddListener(UpdateEnqueueCount);
+
+            if (!IsForAgents) prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
+            else prefabEntity = entityManager.CreateEntityQuery(typeof(NavAgentPrefab)).GetSingleton<NavAgentPrefab>().Value;
         }
 
         void UpdateEnqueueCount(float count)
@@ -37,16 +45,29 @@ namespace Reese.Demo
 
         void Enqueue()
         {
-            if (!IsForAgents) PersonSpawnSystem.Enqueue(new PersonSpawn
-            {
-                Person = new Person
-                {
-                    RandomizeTranslation = true
+            if (!IsForAgents) {
+                var random = new Unity.Mathematics.Random((uint)new System.Random().Next());
+
+                for (int i = 0; i < enqueueCount; ++i) {
+                    SpawnSystem.Enqueue(new Spawn(
+                        prefabEntity,
+                        new Translation
+                        {
+                            Value = new float3(
+                                random.NextInt(-25, 25),
+                                2,
+                                random.NextInt(-25, 25)
+                            )
+                        }
+                    ));
                 }
-            }, enqueueCount);
-            else NavSpawnSystem.Enqueue(new NavAgentSpawn
-            {
-               Agent = new NavAgent
+
+                return;
+            }
+
+            SpawnSystem.Enqueue(new Spawn(
+                prefabEntity,
+                new NavAgent
                 {
                     JumpDegrees = 45,
                     JumpGravity = 200,
@@ -54,11 +75,14 @@ namespace Reese.Demo
                     TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
                     Offset = new float3(0, 1, 0)
                 },
-                Translation = new Translation
+                new NavNeedsSurface { },
+                new Parent { },
+                new LocalToParent { },
+                new Translation
                 {
                     Value = new float3(0, 1, 0)
-                } 
-            }, enqueueCount);
+                }
+            ), enqueueCount);
         }
     }
 }
