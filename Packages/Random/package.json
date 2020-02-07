@@ -1,8 +1,8 @@
 {
     "name": "com.reese.random",
     "version": "0.0.0",
-    "displayName": "Reese's DOTS RNGs",
-    "description": "Exposes Unity.Mathematics.Random generators compatible with Burst-compiled jobs.",
+    "displayName": "Reese's DOTS Randomization",
+    "description": "Exposes Unity.Mathematics.Random number generators compatible with Burst-compiled jobs.",
     "dependencies": {
         "com.unity.entities": "0.5.1-preview.11"
     },
