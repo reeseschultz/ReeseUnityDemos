@@ -2,7 +2,7 @@
     "name": "com.reese.spawning",
     "version": "0.0.0",
     "displayName": "Reese's DOTS Spawning",
-    "description": "Genericized and evil DOTS spawning using reflection.",
+    "description": "Genericized and evil DOTS runtime spawning using reflection.",
     "dependencies": {
         "com.unity.entities": "0.5.1-preview.11"
     },
