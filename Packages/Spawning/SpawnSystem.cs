@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Reflection;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
@@ -18,6 +19,22 @@ namespace Reese.Spawning
 
         /// <summary>The spawn queue.</summary>
         static ConcurrentQueue<Spawn> queue = new ConcurrentQueue<Spawn>();
+
+        /// <summary>Reflected EntityCommandBuffer.Concurrent.AddComponent for
+        /// casting with runtime types instead of being restricted to
+        /// compile-time types.</summary>
+        static MethodInfo addComponent = typeof(EntityCommandBuffer.Concurrent)
+            .GetMethods()
+            .Where(method => method.Name == "AddComponent")
+            .Select(method => new
+            {
+                Method = method,
+                Params = method.GetParameters(),
+                Args = method.GetGenericArguments()
+            })
+            .Where(method => method.Params.Length == 3)
+            .Select(method => method.Method)
+            .First();
 
         /// <summary>For creating a command buffer to spawn entities.</summary>
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
@@ -50,27 +67,16 @@ namespace Reese.Spawning
 
             public void Execute()
             {
-                if (!queue.TryDequeue(out Spawn spawn)) return;
+                if (
+                    !queue.TryDequeue(out Spawn spawn) ||
+                    spawn.PrefabEntity.Equals(Entity.Null)
+                ) return;
 
                 var entity = CommandBuffer.Instantiate(nativeThreadIndex, spawn.PrefabEntity);
 
-                var addComponent = typeof(EntityCommandBuffer.Concurrent)
-                    .GetMethods()
-                    .Where(method => method.Name == "AddComponent")
-                    .Select(method => new
-                    {
-                        Method = method,
-                        Params = method.GetParameters(),
-                        Args = method.GetGenericArguments()
-                    })
-                    .Where(method => method.Params.Length == 3)
-                    .Select(method => method.Method)
-                    .First();
-
-                for (int i = 0; i < spawn.Count; ++i) {
-                    var genericAddComponent = addComponent.MakeGenericMethod(spawn[i].GetType());
-
-                    genericAddComponent.Invoke(
+                for (int i = 0; i < spawn.Count; ++i)
+                {
+                    addComponent.MakeGenericMethod(spawn[i].GetType()).Invoke(
                         CommandBuffer,
                         new object[] { nativeThreadIndex, entity, spawn[i] }
                     );

@@ -20,7 +20,6 @@ namespace Reese.Nav
     /// https://reeseschultz.com/projectile-motion-with-unity-dots. Similar
     /// code supports the ProjectileDemo scene.
     /// </summary>
-    
     [UpdateAfter(typeof(BuildPhysicsWorld))]
     class NavInterpolationSystem : JobComponentSystem
     {
