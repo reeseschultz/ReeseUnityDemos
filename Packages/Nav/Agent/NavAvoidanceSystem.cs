@@ -111,7 +111,7 @@ namespace Reese.Nav
 
                 if (basis.Equals(Entity.Null) || !LocalToWorldFromEntity.Exists(basis)) return;
 
-                var basisTransform = (Matrix4x4)LocalToWorldFromEntity[basis].Value;
+                var basisTransform = LocalToWorldFromEntity[basis].Value;
 
                 var pathBuffer = PathBufferFromEntity[AgentEntityArray[index]];
 
@@ -123,7 +123,7 @@ namespace Reese.Nav
                 avoidanceDestination = (Quaternion)rotation.Value * ((float3)Vector3.forward + avoidanceDestination) * agent.TranslationSpeed * DeltaSeconds;
                 avoidanceDestination += pathBuffer[agent.PathBufferIndex];
 
-                agent.AvoidanceDestination = basisTransform.MultiplyPoint3x4(avoidanceDestination - agent.Offset);
+                agent.AvoidanceDestination = NavUtil.MultiplyPoint3x4(basisTransform, avoidanceDestination - agent.Offset);
                 AgentFromEntity[AgentEntityArray[index]] = agent;
 
                 CommandBuffer.RemoveComponent<NavLerping>(index, AgentEntityArray[index]);

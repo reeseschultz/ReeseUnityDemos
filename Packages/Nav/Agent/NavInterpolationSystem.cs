@@ -64,14 +64,13 @@ namespace Reese.Nav
 
                     if (!agent.DestinationSurface.Equals(Entity.Null))
                     {
-                        var destinationTransform = (Matrix4x4)localToWorldFromEntity[agent.DestinationSurface].Value;
-                        agent.WorldDestination = destinationTransform.MultiplyPoint3x4(agent.LocalDestination);
+                        var destinationTransform = localToWorldFromEntity[agent.DestinationSurface].Value;
+                        agent.WorldDestination = NavUtil.MultiplyPoint3x4(destinationTransform, agent.LocalDestination);
                     }
 
                     var avoidant = avoidantFromEntity.Exists(entity);
                     var worldDestination = avoidant ? agent.AvoidanceDestination : agent.WorldDestination;
-                    var worldPosition4 = ((Matrix4x4)localToWorldFromEntity[entity].Value).GetColumn(3);
-                    var worldPosition3 = new float3(worldPosition4.x, worldPosition4.y, worldPosition4.z);
+                    var worldPosition = localToWorldFromEntity[entity].Position;
 
                     if (
                         NavUtil.ApproxEquals(translation.Value, destination, 1) &&
@@ -88,7 +87,7 @@ namespace Reese.Nav
 
                             if (
                                 !physicsWorld.CastRay(rayInput, out RaycastHit hit) &&
-                                !NavUtil.ApproxEquals(worldPosition3, worldDestination, 1)
+                                !NavUtil.ApproxEquals(worldPosition, worldDestination, 1)
                             )
                             {
                                 agent.JumpSeconds = elapsedSeconds;
@@ -111,8 +110,8 @@ namespace Reese.Nav
                     }
 
                     var lookAt = worldDestination;
-                    lookAt.y = worldPosition3.y;
-                    rotation.Value = quaternion.LookRotationSafe(lookAt - worldPosition3, math.up());
+                    lookAt.y = worldPosition.y;
+                    rotation.Value = quaternion.LookRotationSafe(lookAt - worldPosition, math.up());
 
                     translation.Value = Vector3.MoveTowards(translation.Value, destination, agent.TranslationSpeed * deltaSeconds);
 
@@ -166,7 +165,6 @@ namespace Reese.Nav
 
                     jumpBuffer.Clear();
                 })
-                .WithoutBurst()
                 .WithName("NavArtificialGravityJob")
                 .Schedule(walkJob);
         }

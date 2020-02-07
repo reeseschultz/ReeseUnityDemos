@@ -41,21 +41,22 @@ namespace Reese.Nav
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent) => {
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent) =>
+                {
                     if (agent.Surface.Equals(Entity.Null)) return;
 
                     var parent = parentFromEntity[agent.Surface].Value;
 
                     if (!agent.DestinationSurface.Equals(Entity.Null))
                     {
-                        var destinationTransform = (Matrix4x4)localToWorldFromEntity[agent.DestinationSurface].Value;
-                        agent.WorldDestination = destinationTransform.MultiplyPoint3x4(agent.LocalDestination);
+                        var destinationTransform = localToWorldFromEntity[agent.DestinationSurface].Value;
+                        agent.WorldDestination = NavUtil.MultiplyPoint3x4(destinationTransform, agent.LocalDestination);
                     }
 
-                    var childTransform = (Matrix4x4)localToWorldFromEntity[entity].Value;
-                    var parentTransform = (Matrix4x4)localToWorldFromEntity[parent].Value;
+                    var childTransform = localToWorldFromEntity[entity];
+                    var parentTransform = localToWorldFromEntity[parent];
 
-                    var worldPosition = (Vector3)childTransform.GetColumn(3);
+                    var worldPosition = childTransform.Position;
                     var avoidant = avoidantFromEntity.Exists(entity);
                     var worldDestination = avoidant ? (Vector3)agent.AvoidanceDestination : (Vector3)agent.WorldDestination;
 
@@ -64,7 +65,7 @@ namespace Reese.Nav
                     if (jumping)
                     {
                         worldPosition = agent.WorldDestination;
-                        worldDestination = childTransform.GetColumn(3);
+                        worldDestination = childTransform.Position;
                     }
 
                     var navMeshQueryPointer = navMeshQueryPointerArray[nativeThreadIndex];
@@ -121,9 +122,13 @@ namespace Reese.Nav
                             if (navMeshQuery.IsValid(straightPath[j].polygon)) lastValidPoint = straightPath[j].position;
                             else break;
 
-                        jumpBuffer.Add((float3)parentTransform.inverse.MultiplyPoint3x4(lastValidPoint + agent.Offset));
+                        jumpBuffer.Add(NavUtil.MultiplyPoint3x4(
+                            math.inverse(parentTransform.Value),
+                            (float3)lastValidPoint + agent.Offset
+                        ));
 
-                        if (jumpBuffer.Length > 0) {
+                        if (jumpBuffer.Length > 0)
+                        {
                             commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
                             commandBuffer.AddComponent<NavLerping>(entityInQueryIndex, entity);
                         }
@@ -132,10 +137,13 @@ namespace Reese.Nav
                     {
                         pathBuffer.Clear();
 
-                        for (int j = 0; j < straightPathCount; ++j)
-                            pathBuffer.Add((float3)parentTransform.inverse.MultiplyPoint3x4((float3)straightPath[j].position) + agent.Offset);
+                        for (int j = 0; j < straightPathCount; ++j) pathBuffer.Add(NavUtil.MultiplyPoint3x4(
+                            math.inverse(parentTransform.Value),
+                            (float3)straightPath[j].position + agent.Offset
+                        ));
 
-                        if (pathBuffer.Length > 0) {
+                        if (pathBuffer.Length > 0)
+                        {
                             commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
                             commandBuffer.AddComponent<NavLerping>(entityInQueryIndex, entity);
                         }
