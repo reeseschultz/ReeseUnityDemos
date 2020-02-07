@@ -9,8 +9,8 @@ using Unity.Jobs;
 
 namespace Reese.Spawning
 {
-    /// <summary>A system for spawning from any set of prefabs and components.
-    /// </summary>
+    /// <summary>A system for spawning entities with any prefab, components,
+    /// and buffers (or lack thereof).</summary>
     public class SpawnSystem : JobComponentSystem
     {
         /// <summary>Number of spawn jobs to schedule per frame. The default
@@ -20,9 +20,25 @@ namespace Reese.Spawning
         /// <summary>The spawn queue.</summary>
         static ConcurrentQueue<Spawn> queue = new ConcurrentQueue<Spawn>();
 
+        /// <summary>Reflected EntityCommandBuffer.Concurrent.AddBuffer for
+        /// casting with runtime types instead of being restricted to
+        /// compile-time.</summary>
+        static MethodInfo addBuffer = typeof(EntityCommandBuffer.Concurrent)
+            .GetMethods()
+            .Where(method => method.Name == "AddBuffer")
+            .Select(method => new
+            {
+                Method = method,
+                Params = method.GetParameters(),
+                Args = method.GetGenericArguments()
+            })
+            .Where(method => method.Params.Length == 2)
+            .Select(method => method.Method)
+            .First();
+
         /// <summary>Reflected EntityCommandBuffer.Concurrent.AddComponent for
         /// casting with runtime types instead of being restricted to
-        /// compile-time types.</summary>
+        /// compile-time.</summary>
         static MethodInfo addComponent = typeof(EntityCommandBuffer.Concurrent)
             .GetMethods()
             .Where(method => method.Name == "AddComponent")
@@ -67,20 +83,19 @@ namespace Reese.Spawning
 
             public void Execute()
             {
-                if (
-                    !queue.TryDequeue(out Spawn spawn) ||
-                    spawn.PrefabEntity.Equals(Entity.Null)
-                ) return;
+                if (!queue.TryDequeue(out Spawn spawn)) return;
 
-                var entity = CommandBuffer.Instantiate(nativeThreadIndex, spawn.PrefabEntity);
+                var entity = spawn.Prefab.Equals(Entity.Null) ? CommandBuffer.CreateEntity(nativeThreadIndex) : CommandBuffer.Instantiate(nativeThreadIndex, spawn.Prefab);
 
-                for (int i = 0; i < spawn.Count; ++i)
-                {
-                    addComponent.MakeGenericMethod(spawn[i].GetType()).Invoke(
-                        CommandBuffer,
-                        new object[] { nativeThreadIndex, entity, spawn[i] }
-                    );
-                }
+                foreach (IBufferElementData buffer in spawn.BufferList) addBuffer.MakeGenericMethod(buffer.GetType()).Invoke(
+                    CommandBuffer,
+                    new object[] { nativeThreadIndex, entity }
+                );
+
+                foreach (IComponentData component in spawn.ComponentList) addComponent.MakeGenericMethod(component.GetType()).Invoke(
+                    CommandBuffer,
+                    new object[] { nativeThreadIndex, entity, component }
+                );
             }
         }
 

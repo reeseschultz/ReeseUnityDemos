@@ -48,9 +48,9 @@ namespace Reese.Demo
             if (!IsForAgents) {
                 var random = new Unity.Mathematics.Random((uint)new System.Random().Next());
 
-                for (int i = 0; i < enqueueCount; ++i) {
-                    SpawnSystem.Enqueue(new Spawn(
-                        prefabEntity,
+                for (int i = 0; i < enqueueCount; ++i) SpawnSystem.Enqueue(new Spawn()
+                    .WithPrefab(prefabEntity)
+                    .WithComponentList(
                         new Translation
                         {
                             Value = new float3(
@@ -59,30 +59,33 @@ namespace Reese.Demo
                                 random.NextInt(-25, 25)
                             )
                         }
-                    ));
-                }
+                    )
+                );
 
                 return;
             }
 
-            SpawnSystem.Enqueue(new Spawn(
-                prefabEntity,
-                new NavAgent
-                {
-                    JumpDegrees = 45,
-                    JumpGravity = 200,
-                    TranslationSpeed = 20,
-                    TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
-                    Offset = new float3(0, 1, 0)
-                },
-                new NavNeedsSurface { },
-                new Parent { },
-                new LocalToParent { },
-                new Translation
-                {
-                    Value = new float3(0, 1, 0)
-                }
-            ), enqueueCount);
+            SpawnSystem.Enqueue(new Spawn()
+                .WithPrefab(prefabEntity)
+                .WithComponentList(
+                    new NavAgent
+                    {
+                        JumpDegrees = 45,
+                        JumpGravity = 200,
+                        TranslationSpeed = 20,
+                        TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
+                        Offset = new float3(0, 1, 0)
+                    },
+                    new NavNeedsSurface { },
+                    new Parent { },
+                    new LocalToParent { },
+                    new Translation
+                    {
+                        Value = new float3(0, 1, 0)
+                    }
+                ),
+                enqueueCount
+            );
         }
     }
 }

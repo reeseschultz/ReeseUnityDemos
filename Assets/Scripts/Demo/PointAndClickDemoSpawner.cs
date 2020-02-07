@@ -14,29 +14,35 @@ namespace Reese.Demo
         {
             var prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
 
-            SpawnSystem.Enqueue(new Spawn(
-                prefabEntity, 
-                new Translation
-                {
-                    Value = new float3(0, 1, 0)
-                }
-            ));
+            SpawnSystem.Enqueue(new Spawn()
+                .WithPrefab(prefabEntity)
+                .WithComponentList(
+                    new Translation
+                    {
+                        Value = new float3(0, 1, 0)
+                    }
+                )
+            );
 
-            SpawnSystem.Enqueue(new Spawn(
-                prefabEntity, 
-                new Translation
-                {
-                    Value = new float3(5, 1, 0)
-                }
-            ));
+            SpawnSystem.Enqueue(new Spawn()
+                .WithPrefab(prefabEntity)
+                .WithComponentList(
+                    new Translation
+                    {
+                        Value = new float3(5, 1, 0)
+                    }
+                )
+            );
 
-            SpawnSystem.Enqueue(new Spawn(
-                prefabEntity, 
-                new Translation
-                {
-                    Value = new float3(-5, 1, 0)
-                }
-            ));
+            SpawnSystem.Enqueue(new Spawn()
+                .WithPrefab(prefabEntity)
+                .WithComponentList(
+                    new Translation
+                    {
+                        Value = new float3(-5, 1, 0)
+                    }
+                )
+            );
         }
     }
 }
