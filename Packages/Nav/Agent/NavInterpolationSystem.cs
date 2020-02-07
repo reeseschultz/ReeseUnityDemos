@@ -62,11 +62,10 @@ namespace Reese.Nav
 
                     var destination = pathBuffer[agent.PathBufferIndex].Value;
 
-                    if (!agent.DestinationSurface.Equals(Entity.Null))
-                    {
-                        var destinationTransform = localToWorldFromEntity[agent.DestinationSurface].Value;
-                        agent.WorldDestination = NavUtil.MultiplyPoint3x4(destinationTransform, agent.LocalDestination);
-                    }
+                    if (!agent.DestinationSurface.Equals(Entity.Null)) agent.WorldDestination = NavUtil.MultiplyPoint3x4(
+                        localToWorldFromEntity[agent.DestinationSurface].Value,
+                        agent.LocalDestination
+                    );
 
                     var avoidant = avoidantFromEntity.Exists(entity);
                     var worldDestination = avoidant ? agent.AvoidanceDestination : agent.WorldDestination;
