@@ -2,13 +2,23 @@
 
 Unity DOTS packages and samples—featuring ECS, jobs, and the Burst compiler—by me, Reese.
 
-Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to demos in this project:
+## Packages
 
-## [DOTS Navigation with Auto-Jumping Agents and Movable Surfaces](https://reeseschultz.com/dots-navigation-with-auto-jumping-agents-and-movable-surfaces/)
+This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [monorepo](https://en.wikipedia.org/wiki/Monorepo) that supports my demos, including:
+
+1. [Nav](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/Nav/README.md) - DOTS navigation with auto-jumping agents and movable surfaces.
+2. [Spawning](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/Spawning) - Genericized and evil DOTS runtime spawning using reflection.
+3. [Randomization](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/Random) - Exposes Unity.Mathematics.Random number generators compatible with Burst-compiled jobs. 
+
+Why a monorepo? Because juggling multiple Unity projects with different configurations is annoying. Plus, if I have to update one thing, it forces me to consider updating or removing other things. Centralizing configuration—while distributing standalone packages—works best for me personally. The alternative would be a sprawling mishmash of disproportionately maintained projects.
+
+## Samples
+
+Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to samples in this project:
+
+### [DOTS Navigation with Auto-Jumping Agents and Movable Surfaces](https://reeseschultz.com/dots-navigation-with-auto-jumping-agents-and-movable-surfaces/)
 
 The DOTS navigation scripts and demos are self-contained so you can use them in *your* project.
-
-See the [user guide](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/Nav/README.md)!
 
 ![Video of navigation agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
 
@@ -24,7 +34,7 @@ See the [user guide](https://github.com/reeseschultz/ReeseUnityDemos/blob/master
 
 ---
 
-## [Pointing and Clicking with Unity ECS](https://reeseschultz.com/pointing-and-clicking-with-unity-ecs/)
+### [Pointing and Clicking with Unity ECS](https://reeseschultz.com/pointing-and-clicking-with-unity-ecs/)
 
 
 ![Video of changing prefab colors with Unity ECS.](/Gifs/point-and-click-demo.gif)
@@ -33,7 +43,7 @@ See the [user guide](https://github.com/reeseschultz/ReeseUnityDemos/blob/master
 
 ---
 
-## [Projectile Motion with Unity DOTS](https://reeseschultz.com/projectile-motion-with-unity-dots/)
+### [Projectile Motion with Unity DOTS](https://reeseschultz.com/projectile-motion-with-unity-dots/)
 
 
 ![Video of projectile motion demonstration with Unity DOTS.](/Gifs/projectile-demo.gif)
@@ -42,7 +52,7 @@ See the [user guide](https://github.com/reeseschultz/ReeseUnityDemos/blob/master
 
 ---
 
-## [Random Number Generation with Unity DOTS](https://reeseschultz.com/random-number-generation-with-unity-dots)
+### [Random Number Generation with Unity DOTS](https://reeseschultz.com/random-number-generation-with-unity-dots)
 
 ⇒ `Assets/Scenes/ProjectileDemo.unity`
 
@@ -52,13 +62,13 @@ See the [user guide](https://github.com/reeseschultz/ReeseUnityDemos/blob/master
 
 ---
 
-## [Selectively Running Systems in Scenes with Unity ECS](https://reeseschultz.com/selectively-running-systems-in-scenes-with-unity-ecs)
+### [Selectively Running Systems in Scenes with Unity ECS](https://reeseschultz.com/selectively-running-systems-in-scenes-with-unity-ecs)
 
 ⇒ `Assets/Scenes/ProjectileDemo.unity`
 
 ---
 
-## [Spawning Prefabs with Unity ECS](https://reeseschultz.com/spawning-prefabs-with-unity-ecs/)
+### [Spawning Prefabs with Unity ECS](https://reeseschultz.com/spawning-prefabs-with-unity-ecs/)
 
 ![Video of spawning prefabs with Unity ECS.](/Gifs/spawn-demo.gif)
 
@@ -66,6 +76,6 @@ See the [user guide](https://github.com/reeseschultz/ReeseUnityDemos/blob/master
 
 ---
 
-## Contributor Agreement
+### Contributor Agreement
 
-By submitting a pull request for this project, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
+By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
