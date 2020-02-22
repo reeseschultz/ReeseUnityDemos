@@ -38,8 +38,8 @@ Third, ideally that project should be opened with the version of Unity it's inte
 
 The nav code is a stand-alone [UPM package](https://docs.unity3d.com/Manual/Packages.html), meaning you can import it directly into your project as long as you're using >=`2019.3`. To take advantage of this, just copy one of the below Git URLs:
 
-* **HTTPS:** https://github.com/reeseschultz/ReeseUnityDemos.git#nav
-* **SSH:** git@github.com:reeseschultz/ReeseUnityDemos.git#nav
+* **HTTPS:** `https://github.com/reeseschultz/ReeseUnityDemos.git#nav`
+* **SSH:** `git@github.com:reeseschultz/ReeseUnityDemos.git#nav`
 
 Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in the top-left corner, and then click on `Add package from git URL`. Paste the text you copied and finally click `Add`.
 
