@@ -10,7 +10,7 @@ This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [
 2. [Spawning](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/Spawning) - Genericized and evil DOTS runtime spawning using reflection.
 3. [Randomization](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/Random) - Exposes Unity.Mathematics.Random number generators compatible with Burst-compiled jobs. 
 
-Why a monorepo? Because juggling multiple Unity projects with different configurations is annoying. Plus, if I have to update one thing, it forces me to consider updating or removing other things. Centralizing configuration—while distributing standalone packages—works best for me personally. The alternative would be a sprawling mishmash of disproportionately maintained projects.
+Why a monorepo? Because juggling multiple Unity projects with different configurations is annoying. Plus, if I have to update one thing, it forces me to consider updating or removing other things. Centralizing configuration—while distributing stand-alone packages—works best for me personally. The alternative would be a sprawling mishmash of disproportionately maintained projects.
 
 ## Samples
 
