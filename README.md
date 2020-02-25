@@ -1,6 +1,6 @@
 # ReeseUnityDemos
 
-Unity DOTS packages and samples—featuring ECS, jobs, and the Burst compiler—by me, Reese.
+Unity DOTS packages and samples—featuring ECS, jobs and the Burst compiler—by me, Reese.
 
 ## Packages
 
@@ -10,7 +10,9 @@ This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [
 2. [Spawning](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.spawning) - Generic DOTS runtime spawning for any combination of prefab, components, and buffers.
 3. [Randomization](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.random) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones. 
 
-Why a monorepo? Because juggling multiple Unity projects with different configurations is annoying. Plus, if I have to update one thing, it forces me to consider updating or removing other things. Centralizing configuration—while distributing stand-alone packages—works best for me personally. The alternative would be a sprawling mishmash of disproportionately maintained projects.
+These packages all use [ubump](https://github.com/reeseschultz/ubump) to automate their SemVer-bumping needs, including committing, pushing, tagging, changelog generation and subtree splitting so each package can be imported stand-alone with Git.
+
+And why a monorepo? Because juggling multiple Unity projects with different configurations is annoying. Plus, if I have to update one thing, it forces me to consider updating or removing other things. Centralizing configuration—while distributing stand-alone packages—works best for me personally. The alternative would be a sprawling mishmash of disproportionately maintained projects.
 
 ## Demos
 
