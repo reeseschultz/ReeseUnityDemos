@@ -1,4 +1,4 @@
-# Reese's DOTS Navigation User Guide
+# Reese's DOTS Navigation
 
 ![Video of navigation agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
 
