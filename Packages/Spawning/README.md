@@ -2,7 +2,7 @@
 
 ![Video of spawning prefabs with Unity ECS.](/Gifs/spawn-demo.gif)
 
-Genericized and evil DOTS runtime spawning using reflection.
+Generic DOTS runtime spawning for any combination of prefab, components, and buffers.
 
 ## Import
 
@@ -17,38 +17,48 @@ It'll take a little while for the import to work. It should install the required
 
 ## Usage
 
+If you're unfamiliar with converting prefabs into entities, please see [this tutorial](https://reeseschultz.com/spawning-prefabs-with-unity-ecs/), which covers that *and* how to use this package. Otherwise, see below:
+
 ```csharp
-class SomeSpawner : MonoBehaviour
-{
-    EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
+using Reese.Spawning;
+using Unity.Entities;
+using UnityEngine;
 
-    void Start()
+namespace SomeNamespace {
+    class SomeSpawner : MonoBehaviour
     {
-        // First, get the entity associated with the prefab.
-        var prefabEntity = entityManager.CreateEntityQuery(typeof(SomePrefab)).GetSingleton<SomePrefab>().Value;
+        // Get the default world containing all entities:
+        EntityManager entityManager => World
+            .DefaultGameObjectInjectionWorld
+            .EntityManager;
 
-        // Second and lastly, enqueue spawning.
-        SpawnSystem.Enqueue(new Spawn()
-            .WithPrefab(prefabEntity) //  Optional prefab entity.
-            .WithComponentList( // Optional comma-delimited list of IComponentData.
-                new Translation
-                {
-                    Value = new float3(100, 0, 100)
-                },
-                new SomeComponent
-                {
-                    Charisma = 6,
-                    Intelligence = 3,
-                    Luck = 14,
-                    Strength = 16,
-                    Wisdom = 9
-                }
-            )
-            .WithBufferList( // Optional comma-delimited list of IBufferElementData.
-                new SomeBufferElement { }
-            ),
-            50 // Optional number of times to spawn (default is once).
-        );
+        void Start()
+        {
+            // Get the entity associated with the prefab:
+            var prefabEntity = entityManager
+                .CreateEntityQuery(typeof(SomePrefab))
+                .GetSingleton<SomePrefab>()
+                .Value;
+
+            // Enqueue spawning (SpawnSystem and Spawn are from Reese.Spawning):
+            SpawnSystem.Enqueue(new Spawn()
+                .WithPrefab(prefabEntity) //  Optional prefab entity.
+                .WithComponentList( // Optional comma-delimited list of IComponentData.
+                    new SomeComponent
+                    {
+                        Charisma = 6,
+                        Intelligence = 3,
+                        Luck = 14,
+                        Strength = 16,
+                        Wisdom = 9
+                    }
+                )
+                .WithBufferList( // Optional comma-delimited list of IBufferElementData.
+                    new SomeBufferElement { }
+                ),
+                50 // Optional number of times to spawn (default is once).
+            );
+        }
     }
 }
 ```
