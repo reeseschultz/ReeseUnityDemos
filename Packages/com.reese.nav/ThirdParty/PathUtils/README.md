@@ -1,6 +1,4 @@
-# UniteAustinTechnicalPresentation
-
-Copied from [here](https://github.com/Unity-Technologies/UniteAustinTechnicalPresentation).
+# PathUtils
 
 This is ***SEPARATELY*** licensed software that is used as a dependency.
 
