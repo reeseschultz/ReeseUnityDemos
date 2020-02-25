@@ -1,4 +1,4 @@
-# Reese's DOTS Spawning User Guide
+# Reese's DOTS Spawning
 
 ![Video of spawning prefabs with Unity ECS.](/Gifs/spawn-demo.gif)
 

@@ -1,4 +1,4 @@
-# Reese's DOTS Randomization User Guide
+# Reese's DOTS Randomization
 
 ![Video of agents spawning and avoiding obstacles.](/Gifs/nav-performance-demo.gif)
 
