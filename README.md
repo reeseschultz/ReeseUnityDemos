@@ -1,3 +1,5 @@
+[![openupm](https://img.shields.io/npm/v/com.reese.nav?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.reese.nav/)
+
 # Reese's DOTS Navigation
 
 ![Video of navigation agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
@@ -34,16 +36,26 @@ Third, ideally that project should be opened with the version of Unity it's inte
 
 >**Linux & You:** Using Linux and having problems opening the project? On Ubuntu I couldn't use the [Burst compiler](https://docs.unity3d.com/Packages/com.unity.burst@1.2/manual/index.html) until I manually installed `libncurses5` via: `sudo apt install libncurses5`. But it's entirely possible you're missing another library. Read Unity's error message to be sure.
 
-### Import
+## Import
 
-The nav code is a stand-alone [UPM package](https://docs.unity3d.com/Manual/Packages.html), meaning you can import it directly into your project as long as you're using >=`2019.3`. To take advantage of this, just copy one of the below Git URLs:
+There are two ways to import this package, one being with [OpenUPM](https://openupm.com/), the preferred method, and the other via Git URL:
+
+### OpenUPM
+
+This requires [Node.js](https://nodejs.org/en/) `12` or greater. `cd` to your project's directory and run:
+
+```sh
+npx openupm-cli add com.reese.nav
+```
+
+### Git
+
+This requires Unity editor `2019.3` or greater. Copy one of the below Git URLs:
 
 * **HTTPS:** `https://github.com/reeseschultz/ReeseUnityDemos.git#nav`
 * **SSH:** `git@github.com:reeseschultz/ReeseUnityDemos.git#nav`
 
 Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in the top-left corner, and then click on `Add package from git URL`. Paste the text you copied and finally click `Add`.
-
-It'll take a little while for the import to work. It should install the required dependencies and appropriate versions for you. After it's done doing its thing, note that *Reese's DOTS Navigation*'s version will display as `0.0.0`, since all we care about is the most recent commit hash. [Semantic versioning](https://semver.org/) may be added later.
 
 #### Drag-And-Drop
 
