@@ -126,7 +126,7 @@ namespace Reese.Nav
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var fallingFromEntity = GetComponentDataFromEntity<NavFalling>();
 
-            return Entities
+            var artificialGravityJob = Entities
                 .WithAny<NavFalling, NavJumping>()
                 .WithAll<Parent, LocalToParent>()
                 .WithReadOnly(fallingFromEntity)
@@ -165,6 +165,10 @@ namespace Reese.Nav
                 })
                 .WithName("NavArtificialGravityJob")
                 .Schedule(walkJob);
+
+            barrier.AddJobHandleForProducer(artificialGravityJob);
+
+            return artificialGravityJob;
         }
     }
 }
