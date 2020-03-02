@@ -24,7 +24,7 @@ namespace Reese.Demo
             var renderBoundsFromEntity = GetComponentDataFromEntity<RenderBounds>(true);
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
-            return Entities
+            var job = Entities
                 .WithNone<NavLerping>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
@@ -57,6 +57,10 @@ namespace Reese.Demo
                 })
                 .WithName("NavDestinationJob")
                 .Schedule(inputDeps);
+
+            barrier.AddJobHandleForProducer(job);
+
+            return job;
         }
     }
 }
