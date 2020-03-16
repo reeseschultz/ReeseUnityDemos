@@ -78,6 +78,24 @@ The DOTS navigation scripts and demos are self-contained so you can use them in 
 
 ---
 
+## Linux & You
+
+Linux users may need to do some extra work to get the project and/or packages up and running.
+
+### Mono Setup
+
+Install Mono by following [these directions](https://www.mono-project.com/download/stable/).
+
+### Burst Prerequisite Setup
+
+On Ubuntu I couldn't use the [Burst compiler](https://docs.unity3d.com/Packages/com.unity.burst@1.2/manual/index.html) until I manually installed `gcc-multilib` and `libncurses5` with:
+
+```sh
+sudo apt install gcc-multilib libncurses5
+```
+
+You may have these libraries already, or you could be experiencing a different problem. Be sure to read any error messages the Unity Editor outputs.
+
 ### Contributor Agreement
 
 By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
