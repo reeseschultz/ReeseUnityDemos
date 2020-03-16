@@ -34,8 +34,6 @@ git clone https://github.com/reeseschultz/ReeseUnityDemos.git
 
 Third, ideally that project should be opened with the version of Unity it's intended for. I recommend using the [Unity Hub](https://unity3d.com/get-unity/download) to manage various editor versions.
 
->**Linux & You:** Using Linux and having problems opening the project? On Ubuntu I couldn't use the [Burst compiler](https://docs.unity3d.com/Packages/com.unity.burst@1.2/manual/index.html) until I manually installed `libncurses5` via: `sudo apt install libncurses5`. But it's entirely possible you're missing another library. Read Unity's error message to be sure.
-
 ## Import
 
 There are two ways to import this package, one being with [OpenUPM](https://openupm.com/), the preferred method, and the other via Git URL:
