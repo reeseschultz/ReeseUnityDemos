@@ -4,6 +4,9 @@ using Unity.Entities;
 using UnityEngine;
 using RaycastHit = Unity.Physics.RaycastHit;
 using Unity.Rendering;
+using Reese.Spawning;
+using Unity.Transforms;
+using Unity.Mathematics;
 
 namespace Reese.Demo
 {
@@ -13,6 +16,41 @@ namespace Reese.Demo
         const float RAYCAST_DISTANCE = 1000;
         PhysicsWorld physicsWorld => World.DefaultGameObjectInjectionWorld.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
+
+        void Start()
+        {
+            var prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
+
+            SpawnSystem.Enqueue(new Spawn()
+                .WithPrefab(prefabEntity)
+                .WithComponentList(
+                    new Translation
+                    {
+                        Value = new float3(0, 1, 0)
+                    }
+                )
+            );
+
+            SpawnSystem.Enqueue(new Spawn()
+                .WithPrefab(prefabEntity)
+                .WithComponentList(
+                    new Translation
+                    {
+                        Value = new float3(5, 1, 0)
+                    }
+                )
+            );
+
+            SpawnSystem.Enqueue(new Spawn()
+                .WithPrefab(prefabEntity)
+                .WithComponentList(
+                    new Translation
+                    {
+                        Value = new float3(-5, 1, 0)
+                    }
+                )
+            );
+        }
 
         void LateUpdate()
         {
