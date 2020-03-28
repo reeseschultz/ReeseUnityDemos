@@ -7,6 +7,7 @@ using RaycastHit = Unity.Physics.RaycastHit;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 using Unity.Collections;
 using System.Collections.Concurrent;
+using UnityEngine;
 
 namespace Reese.Nav
 {
@@ -38,10 +39,8 @@ namespace Reese.Nav
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var defaultBasis = World.GetExistingSystem<NavBasisSystem>().DefaultBasis;
 
-            // Below job is needed because Unity.Physics has been observed to remove
-            // the Parent component, thus it can only reliably be added later at
-            // runtime and not in authoring :(. Please submit an issue or PR if
-            // you've a cleaner solution.
+            // Below job is needed because Unity.Physics removes the Parent
+            // component for dynamic bodies.
             var addParentJob = Entities
                 .WithNone<Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavSurface surface) =>
@@ -83,18 +82,18 @@ namespace Reese.Nav
                 .WithName("NavRemoveCompositeScaleJob")
                 .Schedule(addParentJob);
 
-            var parentFromEntity = GetComponentDataFromEntity<Parent>();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
+            var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
+            var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
             return Entities
                 .WithNone<NavFalling, NavJumping>()
-                .WithAll<NavNeedsSurface, Parent, LocalToParent>()
-                .WithNativeDisableParallelForRestriction(parentFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in Translation translation) =>
+                .WithAll<NavNeedsSurface, LocalToParent>()
+                .WithReadOnly(localToWorldFromEntity)
+                .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent parent, ref Translation translation) =>
                 {
-                    var parent = parentFromEntity[entity];
-
                     if (
                         !parent.Value.Equals(Entity.Null) &&
                         needsSurfaceDictionary.GetOrAdd(entity.Index, true)
@@ -104,7 +103,7 @@ namespace Reese.Nav
 
                     var rayInput = new RaycastInput
                     {
-                        Start = translation.Value,
+                        Start = localToWorldFromEntity[entity].Position + agent.Offset,
                         End = -math.up() * NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
                         Filter = CollisionFilter.Default
                     };
@@ -124,16 +123,19 @@ namespace Reese.Nav
                     }
 
                     agent.SurfaceRaycastCount = 0;
-                    agent.Surface = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-
-                    if (!parentFromEntity.HasComponent(agent.Surface)) return;
-
-                    var parentBasis = parentFromEntity[agent.Surface].Value;
-                    parent.Value = parentBasis.Equals(Entity.Null) ? defaultBasis : parentBasis;
-
-                    parentFromEntity[entity] = parent;
-
+                    parent.Value = agent.Surface = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                     commandBuffer.RemoveComponent<NavNeedsSurface>(entityInQueryIndex, entity);
+
+                    if (!jumpBufferFromEntity.Exists(entity)) return;
+                    var jumpBuffer = jumpBufferFromEntity[entity];
+                    if (jumpBuffer.Length < 1) return;
+
+                    translation.Value = NavUtil.MultiplyPoint3x4(
+                        math.inverse(localToWorldFromEntity[parent.Value].Value),
+                        jumpBuffer[0].Value
+                    ) + agent.Offset;
+
+                    jumpBuffer.Clear();
                 })
                 .WithoutBurst()
                 .WithName("NavSurfaceTrackingJob")

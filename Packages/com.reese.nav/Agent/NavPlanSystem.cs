@@ -53,10 +53,10 @@ namespace Reese.Nav
                         agent.WorldDestination = NavUtil.MultiplyPoint3x4(destinationTransform, agent.LocalDestination);
                     }
 
-                    var childTransform = localToWorldFromEntity[entity];
-                    var parentTransform = localToWorldFromEntity[parent];
+                    var childWorldPosition = localToWorldFromEntity[entity].Position;
+                    var parentTransform = math.inverse(localToWorldFromEntity[parent].Value);
 
-                    var worldPosition = childTransform.Position;
+                    var worldPosition = childWorldPosition;
                     var avoidant = avoidantFromEntity.Exists(entity);
                     var worldDestination = avoidant ? (Vector3)agent.AvoidanceDestination : (Vector3)agent.WorldDestination;
 
@@ -65,7 +65,7 @@ namespace Reese.Nav
                     if (jumping)
                     {
                         worldPosition = agent.WorldDestination;
-                        worldDestination = childTransform.Position;
+                        worldDestination = childWorldPosition;
                     }
 
                     var navMeshQueryPointer = navMeshQueryPointerArray[nativeThreadIndex];
@@ -123,7 +123,7 @@ namespace Reese.Nav
                             else break;
 
                         jumpBuffer.Add(NavUtil.MultiplyPoint3x4(
-                            math.inverse(parentTransform.Value),
+                            parentTransform,
                             (float3)lastValidPoint + agent.Offset
                         ));
 
@@ -138,7 +138,7 @@ namespace Reese.Nav
                         pathBuffer.Clear();
 
                         for (int j = 0; j < straightPathCount; ++j) pathBuffer.Add(NavUtil.MultiplyPoint3x4(
-                            math.inverse(parentTransform.Value),
+                            parentTransform,
                             (float3)straightPath[j].position + agent.Offset
                         ));
 
