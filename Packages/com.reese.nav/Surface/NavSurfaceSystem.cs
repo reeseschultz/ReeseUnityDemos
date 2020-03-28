@@ -7,13 +7,12 @@ using RaycastHit = Unity.Physics.RaycastHit;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 using Unity.Collections;
 using System.Collections.Concurrent;
-using UnityEngine;
 
 namespace Reese.Nav
 {
     /// <summary>The primary responsibility of this system is to track the
     /// surface (or lack thereof) underneath a given NavAgent. It also ensures
-    /// parent-child relationships are maintained in lieu of Unity.Physics'
+    /// surface-child relationships are maintained in lieu of Unity.Physics'
     /// efforts to destroy them.</summary>
     [UpdateAfter(typeof(NavBasisSystem))]
     class NavSurfaceSystem : JobComponentSystem
@@ -69,7 +68,7 @@ namespace Reese.Nav
             barrier.AddJobHandleForProducer(addParentJob);
 
             // Below job is needed because Unity.Transforms assumes that
-            // children should be scaled by their parent by automatically
+            // children should be scaled by their surface by automatically
             // providing them with a CompositeScale. This is a default that
             // probably doesn't reflect 99% of use cases.
             var removeCompositeScaleJob = Entities
@@ -92,10 +91,10 @@ namespace Reese.Nav
                 .WithAll<NavNeedsSurface, LocalToParent>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent parent, ref Translation translation) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation) =>
                 {
                     if (
-                        !parent.Value.Equals(Entity.Null) &&
+                        !surface.Value.Equals(Entity.Null) &&
                         needsSurfaceDictionary.GetOrAdd(entity.Index, true)
                     ) return;
 
@@ -112,7 +111,7 @@ namespace Reese.Nav
                     {
                         if (++agent.SurfaceRaycastCount >= NavConstants.SURFACE_RAYCAST_MAX)
                         {
-                            agent.Surface = Entity.Null;
+                            surface.Value = Entity.Null;
                             agent.FallSeconds = elapsedSeconds;
 
                             commandBuffer.RemoveComponent<NavNeedsSurface>(entityInQueryIndex, entity);
@@ -123,7 +122,7 @@ namespace Reese.Nav
                     }
 
                     agent.SurfaceRaycastCount = 0;
-                    parent.Value = agent.Surface = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
+                    surface.Value = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                     commandBuffer.RemoveComponent<NavNeedsSurface>(entityInQueryIndex, entity);
 
                     if (!jumpBufferFromEntity.Exists(entity)) return;
@@ -131,7 +130,7 @@ namespace Reese.Nav
                     if (jumpBuffer.Length < 1) return;
 
                     translation.Value = NavUtil.MultiplyPoint3x4(
-                        math.inverse(localToWorldFromEntity[parent.Value].Value),
+                        math.inverse(localToWorldFromEntity[surface.Value].Value),
                         jumpBuffer[0].Value
                     ) + agent.Offset;
 

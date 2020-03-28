@@ -114,14 +114,5 @@ namespace Reese.Nav
         /// set as destinations in the MovingJumpDemo scene with the
         /// NavDestinationSystem.</summary>
         public Entity DestinationSurface;
-
-        /// <summary>This is the currently detected surface underneath the
-        /// agent. The surface is detected with the NavSurfaceSystem. Outside
-        /// the nav systems and debugging, this is only intended to be read,
-        /// not written. An example of such a read is in the
-        /// NavDestinationSystem example. **Using this surface is how you
-        /// determine which other surfaces are "jumpable" for a given
-        /// NavAgent, by querying *this* surface's jumpable buffer.**</summary>
-        public Entity Surface;
     }
 }

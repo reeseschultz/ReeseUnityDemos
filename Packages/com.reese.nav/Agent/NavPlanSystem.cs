@@ -43,9 +43,17 @@ namespace Reese.Nav
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
                 .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent) =>
                 {
-                    if (agent.Surface.Equals(Entity.Null)) return;
+                    if (!parentFromEntity.Exists(entity)) return;
 
-                    var parent = parentFromEntity[agent.Surface].Value;
+                    var surface = parentFromEntity[entity];
+
+                    if (surface.Value.Equals(Entity.Null)) return;
+
+                    if (!parentFromEntity.Exists(surface.Value)) return;
+
+                    var basis = parentFromEntity[surface.Value];
+
+                    if (basis.Value.Equals(Entity.Null)) return;
 
                     if (!agent.DestinationSurface.Equals(Entity.Null))
                     {
@@ -53,10 +61,10 @@ namespace Reese.Nav
                         agent.WorldDestination = NavUtil.MultiplyPoint3x4(destinationTransform, agent.LocalDestination);
                     }
 
-                    var childWorldPosition = localToWorldFromEntity[entity].Position;
-                    var parentTransform = math.inverse(localToWorldFromEntity[parent].Value);
+                    var agentPosition = localToWorldFromEntity[entity].Position;
+                    var basisTransform = math.inverse(localToWorldFromEntity[basis.Value].Value);
 
-                    var worldPosition = childWorldPosition;
+                    var worldPosition = agentPosition;
                     var avoidant = avoidantFromEntity.Exists(entity);
                     var worldDestination = avoidant ? (Vector3)agent.AvoidanceDestination : (Vector3)agent.WorldDestination;
 
@@ -65,7 +73,7 @@ namespace Reese.Nav
                     if (jumping)
                     {
                         worldPosition = agent.WorldDestination;
-                        worldDestination = childWorldPosition;
+                        worldDestination = agentPosition;
                     }
 
                     var navMeshQueryPointer = navMeshQueryPointerArray[nativeThreadIndex];
@@ -123,7 +131,7 @@ namespace Reese.Nav
                             else break;
 
                         jumpBuffer.Add(NavUtil.MultiplyPoint3x4(
-                            parentTransform,
+                            basisTransform,
                             (float3)lastValidPoint + agent.Offset
                         ));
 
@@ -138,7 +146,7 @@ namespace Reese.Nav
                         pathBuffer.Clear();
 
                         for (int j = 0; j < straightPathCount; ++j) pathBuffer.Add(NavUtil.MultiplyPoint3x4(
-                            parentTransform,
+                            basisTransform,
                             (float3)straightPath[j].position + agent.Offset
                         ));
 

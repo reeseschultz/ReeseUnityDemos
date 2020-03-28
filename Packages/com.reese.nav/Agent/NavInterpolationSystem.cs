@@ -47,7 +47,7 @@ namespace Reese.Nav
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(avoidantFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent parent, ref Translation translation, ref Rotation rotation) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation, in Parent surface) =>
                 {
                     var pathBuffer = pathBufferFromEntity[entity];
 
@@ -71,19 +71,19 @@ namespace Reese.Nav
                     var worldPosition = localToWorldFromEntity[entity].Position;
 
                     var localDestination = NavUtil.MultiplyPoint3x4(
-                        math.inverse(localToWorldFromEntity[parent.Value].Value),
+                        math.inverse(localToWorldFromEntity[surface.Value].Value),
                         worldDestination
                     );
 
                     localDestination.y = agent.Offset.y;
 
                     var localPosition = NavUtil.MultiplyPoint3x4(
-                        math.inverse(localToWorldFromEntity[parent.Value].Value),
+                        math.inverse(localToWorldFromEntity[surface.Value].Value),
                         worldPosition
                     );
 
                     var localWaypoint = NavUtil.MultiplyPoint3x4(
-                        math.inverse(localToWorldFromEntity[parent.Value].Value),
+                        math.inverse(localToWorldFromEntity[surface.Value].Value),
                         destination
                     );
 
@@ -151,7 +151,7 @@ namespace Reese.Nav
                 .WithReadOnly(fallingFromEntity)
                 .WithReadOnly(jumpBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent parent, ref Translation translation) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in NavAgent agent, in Parent surface) =>
                 {
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
 
@@ -167,7 +167,7 @@ namespace Reese.Nav
                         var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees));
 
                         destination = NavUtil.MultiplyPoint3x4(
-                            math.inverse(localToWorldFromEntity[parent.Value].Value),
+                            math.inverse(localToWorldFromEntity[surface.Value].Value),
                             jumpBuffer[0].Value
                         );
 

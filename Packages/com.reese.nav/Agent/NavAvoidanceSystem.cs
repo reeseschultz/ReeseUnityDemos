@@ -73,7 +73,7 @@ namespace Reese.Nav
         }
 
         [BurstCompile]
-        struct AvoidJob : IJobNativeMultiHashMapMergedSharedKeyIndices // There's no syntactic sugar for this beast yet.
+        struct AvoidJob : IJobNativeMultiHashMapMergedSharedKeyIndices
         {
             [ReadOnly]
             public float DeltaSeconds;
@@ -105,13 +105,13 @@ namespace Reese.Nav
 
                 var agent = AgentFromEntity[AgentEntityArray[index]];
 
-                if (agent.Surface.Equals(Entity.Null) || !ParentFromEntity.Exists(agent.Surface)) return;
+                if (!ParentFromEntity.Exists(AgentEntityArray[index])) return;
 
-                var basis = ParentFromEntity[agent.Surface].Value;
+                var surface = ParentFromEntity[AgentEntityArray[index]].Value;
 
-                if (basis.Equals(Entity.Null) || !LocalToWorldFromEntity.Exists(basis)) return;
+                if (surface.Equals(Entity.Null) || !LocalToWorldFromEntity.Exists(surface)) return;
 
-                var basisTransform = LocalToWorldFromEntity[basis].Value;
+                var parentWorldTransform = LocalToWorldFromEntity[surface].Value;
 
                 var pathBuffer = PathBufferFromEntity[AgentEntityArray[index]];
 
@@ -123,7 +123,7 @@ namespace Reese.Nav
                 avoidanceDestination = (Quaternion)rotation.Value * ((float3)Vector3.forward + avoidanceDestination) * agent.TranslationSpeed * DeltaSeconds;
                 avoidanceDestination += pathBuffer[agent.PathBufferIndex];
 
-                agent.AvoidanceDestination = NavUtil.MultiplyPoint3x4(basisTransform, avoidanceDestination - agent.Offset);
+                agent.AvoidanceDestination = NavUtil.MultiplyPoint3x4(parentWorldTransform, avoidanceDestination - agent.Offset);
                 AgentFromEntity[AgentEntityArray[index]] = agent;
 
                 CommandBuffer.RemoveComponent<NavLerping>(index, AgentEntityArray[index]);

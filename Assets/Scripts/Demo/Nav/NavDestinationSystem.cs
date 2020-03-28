@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Rendering;
+using Unity.Transforms;
 using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
@@ -29,19 +30,19 @@ namespace Reese.Demo
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
                 .WithNativeDisableParallelForRestriction(randomArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface) =>
                 {
                     if (
-                        agent.Surface.Equals(Entity.Null) ||
-                        !jumpableBufferFromEntity.Exists(agent.Surface)
+                        surface.Value.Equals(Entity.Null) ||
+                        !jumpableBufferFromEntity.Exists(surface.Value)
                     ) return;
 
-                    var jumpableSurfaces = jumpableBufferFromEntity[agent.Surface];
+                    var jumpableSurfaces = jumpableBufferFromEntity[surface.Value];
                     var random = randomArray[nativeThreadIndex];
 
                     if (jumpableSurfaces.Length == 0)
                     { // For the NavPerformanceDemo scene.
-                        var bounds = renderBoundsFromEntity[agent.Surface].Value;
+                        var bounds = renderBoundsFromEntity[surface.Value].Value;
                         agent.WorldDestination = NavUtil.GetRandomPointInBounds(ref random, bounds, agent.Offset, 99);
                     }
                     else
