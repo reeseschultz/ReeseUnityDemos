@@ -10,9 +10,9 @@ using UnityEngine.Experimental.AI;
 
 namespace Reese.Nav
 {
-    /// <summary>A hacky system for planning paths and "jumpable" positions
-    /// using UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery
-    /// by thread index. NavMeshQuery orchestration here appears to be exemplary
+    /// <summary>Plans paths and "jumpable" positions using
+    /// UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery by
+    /// thread index. NavMeshQuery orchestration here appears to be exemplary
     /// usage. Note that it depends on the third-party PathUtils.</summary>
     unsafe class NavPlanSystem : JobComponentSystem
     {
@@ -24,7 +24,6 @@ namespace Reese.Nav
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
-            var parentFromEntity = GetComponentDataFromEntity<Parent>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
             var avoidantFromEntity = GetComponentDataFromEntity<NavAvoidant>(true);
@@ -34,7 +33,6 @@ namespace Reese.Nav
 
             var job = Entities
                 .WithAll<NavPlanning, Parent, LocalToParent>()
-                .WithReadOnly(parentFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(jumpingFromEntity)
                 .WithReadOnly(avoidantFromEntity)
@@ -43,18 +41,6 @@ namespace Reese.Nav
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
                 .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent) =>
                 {
-                    if (!parentFromEntity.Exists(entity)) return;
-
-                    var surface = parentFromEntity[entity];
-
-                    if (surface.Value.Equals(Entity.Null)) return;
-
-                    if (!parentFromEntity.Exists(surface.Value)) return;
-
-                    var basis = parentFromEntity[surface.Value];
-
-                    if (basis.Value.Equals(Entity.Null)) return;
-
                     if (!agent.DestinationSurface.Equals(Entity.Null))
                     {
                         var destinationTransform = localToWorldFromEntity[agent.DestinationSurface].Value;
@@ -62,8 +48,6 @@ namespace Reese.Nav
                     }
 
                     var agentPosition = localToWorldFromEntity[entity].Position;
-                    var basisTransform = math.inverse(localToWorldFromEntity[basis.Value].Value);
-
                     var worldPosition = agentPosition;
                     var avoidant = avoidantFromEntity.Exists(entity);
                     var worldDestination = avoidant ? (Vector3)agent.AvoidanceDestination : (Vector3)agent.WorldDestination;
@@ -126,14 +110,11 @@ namespace Reese.Nav
                     if (jumping)
                     {
                         var lastValidPoint = float3.zero;
-                        for (int j = 0; j < straightPath.Length; ++j)
-                            if (navMeshQuery.IsValid(straightPath[j].polygon)) lastValidPoint = straightPath[j].position;
+                        for (int i = 0; i < straightPath.Length; ++i)
+                            if (navMeshQuery.IsValid(straightPath[i].polygon)) lastValidPoint = straightPath[i].position;
                             else break;
 
-                        jumpBuffer.Add(NavUtil.MultiplyPoint3x4(
-                            basisTransform,
-                            (float3)lastValidPoint + agent.Offset
-                        ));
+                        jumpBuffer.Add((float3)lastValidPoint + agent.Offset);
 
                         if (jumpBuffer.Length > 0)
                         {
@@ -145,10 +126,9 @@ namespace Reese.Nav
                     {
                         pathBuffer.Clear();
 
-                        for (int j = 0; j < straightPathCount; ++j) pathBuffer.Add(NavUtil.MultiplyPoint3x4(
-                            basisTransform,
-                            (float3)straightPath[j].position + agent.Offset
-                        ));
+                        for (int i = 0; i < straightPathCount; ++i) pathBuffer.Add(
+                            (float3)straightPath[i].position + agent.Offset
+                        );
 
                         if (pathBuffer.Length > 0)
                         {
