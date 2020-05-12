@@ -1,18 +1,22 @@
 # ReeseUnityDemos
 
-Unity DOTS packages and samples—featuring ECS, jobs and the Burst compiler—by me, Reese.
+Unity packages and demos—emphasizing ECS, jobs, and the Burst compiler—by me, Reese.
 
 ## Packages
 
-This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [monorepo](https://en.wikipedia.org/wiki/Monorepo) that supports my demos, including:
+This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [monorepo](https://en.wikipedia.org/wiki/Monorepo) that supports the included demos, featuring:
 
-1. [Nav](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav) - DOTS navigation with auto-jumping agents and movable surfaces.
-2. [Spawning](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.spawning) - Generic DOTS runtime spawning for any combination of prefab, components, and buffers.
-3. [Randomization](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.random) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones. 
+1. [Nav](https://openupm.com/packages/com.reese.nav/) - DOTS navigation with auto-jumping agents and movable surfaces.
+2. [Spawning](https://openupm.com/packages/com.reese.spawning/) - Generic DOTS runtime spawning for any combination of prefab, components, and buffers.
+3. [Randomization](https://openupm.com/packages/com.reese.random/) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones.
 
-These packages all use [ubump](https://github.com/reeseschultz/ubump) to automate their SemVer-bumping needs, including committing, pushing, tagging, changelog generation and subtree splitting so each package can be imported stand-alone with Git.
+All of my packages are available on [OpenUPM](https://openupm.com/). Please [support](https://www.patreon.com/openupm) it and its maintainer, Favo. We depend on dedicated people like him.
 
-And why a monorepo? Because juggling multiple Unity projects with different configurations is annoying. Plus, if I have to update one thing, it forces me to consider updating or removing other things. Centralizing configuration—while distributing stand-alone packages—works best for me personally. The alternative would be a sprawling mishmash of disproportionately maintained projects.
+### `ubump`
+
+My packages benefit from [ubump](https://github.com/reeseschultz/ubump), automating their SemVer-bumping needs, including committing, pushing, tagging, changelog generation and subtree splitting so each package can be released stand-alone and imported with OpenUPM or Git.
+
+![Video of using ubump's interactive CLI mode.](Gifs/ubump.gif)
 
 ## Demos
 
