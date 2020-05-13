@@ -38,13 +38,6 @@ namespace Reese.Nav
         /// reasonable value to try.</summary>
         public float TranslationSpeed;
 
-        /// <summary>This is the agent's current "avoidance destination," which
-        /// is a waypoint off the proverbial "beaten path" that the agent
-        /// aspires to reach in the interest of personal space. Outside the
-        /// nav systems and debugging, this is not intended to be read nor
-        /// written.</summary>
-        public float3 AvoidanceDestination;
-
         /// <summary>Writing to this *or* the WorldDestination is *required*
         /// when spawning an agent. If you write to this, then you *must*
         /// set the DestinationSurface as well! After all, this is a
