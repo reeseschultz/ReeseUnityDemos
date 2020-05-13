@@ -26,7 +26,6 @@ namespace Reese.Nav
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
-            var avoidantFromEntity = GetComponentDataFromEntity<NavAvoidant>(true);
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var navMeshQueryPointerArray = World.GetExistingSystem<NavMeshQuerySystem>().PointerArray;
@@ -35,7 +34,6 @@ namespace Reese.Nav
                 .WithAll<NavPlanning, Parent, LocalToParent>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(jumpingFromEntity)
-                .WithReadOnly(avoidantFromEntity)
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
@@ -49,8 +47,7 @@ namespace Reese.Nav
 
                     var agentPosition = localToWorldFromEntity[entity].Position;
                     var worldPosition = agentPosition;
-                    var avoidant = avoidantFromEntity.Exists(entity);
-                    var worldDestination = avoidant ? (Vector3)agent.AvoidanceDestination : (Vector3)agent.WorldDestination;
+                    var worldDestination = (Vector3)agent.WorldDestination;
 
                     var jumping = jumpingFromEntity.Exists(entity);
 

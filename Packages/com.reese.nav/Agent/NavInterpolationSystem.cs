@@ -39,14 +39,12 @@ namespace Reese.Nav
             var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
-            var avoidantFromEntity = GetComponentDataFromEntity<NavAvoidant>(true);
 
             var walkJob = Entities
                 .WithNone<NavPlanning, NavJumping>()
                 .WithAll<NavLerping, LocalToParent>()
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
-                .WithReadOnly(avoidantFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation, in Parent surface) =>
                 {
                     var pathBuffer = pathBufferFromEntity[entity];
@@ -66,8 +64,7 @@ namespace Reese.Nav
                         agent.LocalDestination
                     );
 
-                    var avoidant = avoidantFromEntity.Exists(entity);
-                    var worldDestination = avoidant ? agent.AvoidanceDestination : agent.WorldDestination;
+                    var worldDestination = agent.WorldDestination;
                     var worldPosition = localToWorldFromEntity[entity].Position;
 
                     var localDestination = NavUtil.MultiplyPoint3x4(
@@ -94,35 +91,26 @@ namespace Reese.Nav
                         ++agent.PathBufferIndex > pathBuffer.Length - 1
                     )
                     {
-                        if (!avoidant) {
-                            var rayInput = new RaycastInput
-                            {
-                                Start = translation.Value,
-                                End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
-                                Filter = CollisionFilter.Default
-                            };
+                        var rayInput = new RaycastInput
+                        {
+                            Start = translation.Value,
+                            End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
+                            Filter = CollisionFilter.Default
+                        };
 
-                            if (
-                                !physicsWorld.CastRay(rayInput, out RaycastHit hit) &&
-                                !NavUtil.ApproxEquals(localPosition, localDestination, 1)
-                            )
-                            {
-                                agent.JumpSeconds = elapsedSeconds;
-                                commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
-                                commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
-                                return;
-                            }
+                        if (
+                            !physicsWorld.CastRay(rayInput, out RaycastHit hit) &&
+                            !NavUtil.ApproxEquals(localPosition, localDestination, 1)
+                        )
+                        {
+                            agent.JumpSeconds = elapsedSeconds;
+                            commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
+                            commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
+                            return;
                         }
  
                         commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
-
-                        if (avoidant) {
-                            commandBuffer.RemoveComponent<NavAvoidant>(entityInQueryIndex, entity);
-                            commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
-                        }
-
                         agent.PathBufferIndex = 0;
-
                         return;
                     }
 

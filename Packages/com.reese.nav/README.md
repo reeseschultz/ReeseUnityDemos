@@ -17,8 +17,7 @@
 5. Can be **imported** into other Unity projects.
 6. **Includes multiple demo scenes** in [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.nav) so I don't forget how it works.
 7. Is **extensively documented** even though I'll eventually get tired of updating the docs and then they will exist solely to confuse myself and others.
-8. Features **toggleable agent-to-agent avoidance**.
-9. And **still provides good-old obstacle avoidance**, only completing a "partial path" for agents who have a destination set inside an obstacle.
+8. And **still provides good-old obstacle avoidance**, only completing a "partial path" for agents who have a destination set inside an obstacle.
 
 I care more about usability than performance. The navigation code should be reasonably easy to use and work as expected. Performance is highly important, just not as much as delivering the jumping and transform parenting features.
 
@@ -103,7 +102,6 @@ To check on the agent's progress from a system of your own, making sure only to 
 
 There are also component tags (defined in [NavAgentStatus](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentStatus.cs)) that the navigation code applies to [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs). Please do *not* write to these, just use them for optimizing your queries. All of this [IComponentData](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Entities.IComponentData.html?q=icomponent) can be applied throughout entire navigation lifecycle for a given [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs):
 
-* `NavAvoidant` - Exists if the agent is too physically close to other agents, thus yearning for personal space.
 * `NavFalling` - Exists if the agent is falling.
 * `NavJumping` - Exists if the agent is jumping.
 * `NavLerping` - Exists if the agent is lerping.
@@ -135,12 +133,9 @@ What is the basis, exactly? It's abstract for a reason: it's a glorified parent 
 
 There are a bunch of constants in, well, [NavConstants](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/NavConstants.cs). You might be interested in changing the following constants, although be aware that they directly affect the internal workings of the navigation code:
 
-* `AVOIDANCE_ENABLED_ON_CREATE`: `bool` - Default is `true`. Whether [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) avoidance is enabled upon creation of the [NavAvoidanceSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAvoidanceSystem.cs). If you don't care about agent avoidance, set this to `false` for performance gains.
-* `AVOIDANCE_CELL_RADIUS`: `float` - Default is `3`. The cell radius for [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) avoidance.
 * `JUMP_SECONDS_MAX`: `float` - Default is `5`. Upper limit on the *duration* spent jumping before the agent is actually considered falling. This limit can be reached when the agent tries to jump too close to the edge of a surface and misses.
 * `OBSTACLE_RAYCAST_DISTANCE_MAX`: `float` - Default is `1000`. Upper limit on the [raycast](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts) distance when searching for an obstacle in front of a given NavAgent.
 * `SURFACE_RAYCAST_DISTANCE_MAX`: `float` - Default is `1000`. Upper limit on the [raycast](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts) distance when searching for a surface below a given [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs).
-* `AGENTS_PER_CELL_MAX`: `int` - Default is `25`. Upper limit on the [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) the [NavAvoidanceSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAvoidanceSystem.cs) will attempt to process per cell. Keeping this low drastically improves performance. If there's `1000` agents in a single cell, do you really want to make them all avoid each other? No, because they're already colliding anyway.
 * `BATCH_MAX`: `int` - Default is 50. Upper limit when manually batching jobs.
 * `ITERATION_MAX`: `int` - Upper limit on the iterations performed in a [NavMeshQuery](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/Experimental.AI.NavMeshQuery.html) to find a path in the [NavPlanSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavPlanSystem.cs).
 * `JUMPABLE_SURFACE_MAX`: `int` - Default is `30`. Upper limit on a given jumpable surface buffer. Exceeding this will only result in heap memory blocks being allocated.
