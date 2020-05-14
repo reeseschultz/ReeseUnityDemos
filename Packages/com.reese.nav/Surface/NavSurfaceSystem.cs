@@ -135,6 +135,8 @@ namespace Reese.Nav
                     ) + agent.Offset;
 
                     jumpBuffer.Clear();
+
+                    commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                 })
                 .WithoutBurst()
                 .WithName("NavSurfaceTrackingJob")
