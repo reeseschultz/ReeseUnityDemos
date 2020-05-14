@@ -38,21 +38,6 @@ namespace Reese.Nav
         /// reasonable value to try.</summary>
         public float TranslationSpeed;
 
-        /// <summary>Writing to this *or* the WorldDestination is *required*
-        /// when spawning an agent. If you write to this, then you *must*
-        /// set the DestinationSurface as well! After all, this is a
-        /// destination that is relative to the provided DestinationSurface.
-        /// This is how random positions are set as destinations in the
-        /// MovingJumpDemo scene with the NavDestinationSystem.
-        /// </summary>
-        public float3 LocalDestination;
-
-        /// <summary>Writing to this *or* the LocalDestination is *required*
-        /// when spawning an agent. An example of usage is in the
-        /// NavPointAndClick demo with the NavPointAndClickDestinationSystem.
-        /// </summary>
-        public float3 WorldDestination;
-
         /// <summary>You should *probably* write to this when spawning an
         /// agent. If you don't get this right, then raycasts below the agent
         /// may entirely overshoot the surface, which will eventually mean that
@@ -99,13 +84,14 @@ namespace Reese.Nav
         /// </summary>
         public float3 LastDestination;
 
-        /// <summary>Writing to this is *required* if and only if you also
-        /// write to the LocalDestination. This is intended to be an Entity
-        /// with a NavSurface component. The set LocalDestination is thus
-        /// locally relative to this surface, meaning the matrix math to
-        /// figure that out is done for you. This is how random positions are
-        /// set as destinations in the MovingJumpDemo scene with the
-        /// NavDestinationSystem.</summary>
-        public Entity DestinationSurface;
+        /// <summary>TODO</summary>
+        public float3 LocalDestination;
+
+        /// <summary>TODO</summary>
+        public float3 GetWorldDestination(float4x4 transform)
+            => NavUtil.MultiplyPoint3x4(
+                transform,
+                this.LocalDestination
+            );
     }
 }

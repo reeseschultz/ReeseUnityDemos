@@ -57,43 +57,30 @@ namespace Reese.Nav
                         return;
                     }
 
-                    var destination = pathBuffer[agent.PathBufferIndex].Value;
-
-                    if (!agent.DestinationSurface.Equals(Entity.Null)) agent.WorldDestination = NavUtil.MultiplyPoint3x4(
-                        localToWorldFromEntity[agent.DestinationSurface].Value,
-                        agent.LocalDestination
+                    var worldDestination = agent.GetWorldDestination(
+                        localToWorldFromEntity[surface.Value].Value
                     );
-
-                    var worldDestination = agent.WorldDestination;
-                    var worldPosition = localToWorldFromEntity[entity].Position;
-
-                    var localDestination = NavUtil.MultiplyPoint3x4(
-                        math.inverse(localToWorldFromEntity[surface.Value].Value),
-                        worldDestination
-                    );
-
+                    var localDestination = agent.LocalDestination;
                     localDestination.y = agent.Offset.y;
 
-                    var localPosition = NavUtil.MultiplyPoint3x4(
-                        math.inverse(localToWorldFromEntity[surface.Value].Value),
-                        worldPosition
-                    );
+                    var worldPosition = localToWorldFromEntity[entity].Position;
+                    var localPosition = translation.Value;
 
+                    var worldWaypoint = pathBuffer[agent.PathBufferIndex].Value;
                     var localWaypoint = NavUtil.MultiplyPoint3x4(
                         math.inverse(localToWorldFromEntity[surface.Value].Value),
-                        destination
+                        worldWaypoint
                     );
-
                     localWaypoint.y = agent.Offset.y;
 
                     if (
-                        NavUtil.ApproxEquals(translation.Value, localWaypoint, 1) &&
+                        NavUtil.ApproxEquals(localPosition, localWaypoint, 1) &&
                         ++agent.PathBufferIndex > pathBuffer.Length - 1
                     )
                     {
                         var rayInput = new RaycastInput
                         {
-                            Start = translation.Value,
+                            Start = worldPosition,
                             End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
                             Filter = CollisionFilter.Default
                         };
@@ -108,19 +95,20 @@ namespace Reese.Nav
                             commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                             return;
                         }
- 
+
                         commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
+                        commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity);
                         agent.PathBufferIndex = 0;
-                        return;
+                        return; 
                     }
 
                     var lookAt = localDestination;
                     lookAt.y = localPosition.y;
                     rotation.Value = quaternion.LookRotationSafe(lookAt - localPosition, math.up());
 
-                    translation.Value = Vector3.MoveTowards(translation.Value, localWaypoint, agent.TranslationSpeed * deltaSeconds);
+                    translation.Value = Vector3.MoveTowards(localPosition, localWaypoint, agent.TranslationSpeed * deltaSeconds);
 
-                    agent.LastDestination = agent.WorldDestination;
+                    agent.LastDestination = worldDestination;
                 })
                 .WithName("NavWalkJob")
                 .Schedule(
@@ -147,19 +135,23 @@ namespace Reese.Nav
 
                     if (jumpBuffer.Length == 0 && !fallingFromEntity.Exists(entity)) return;
 
-                    var velocity = Vector3.Distance(translation.Value, agent.WorldDestination) / (math.sin(2 * math.radians(agent.JumpDegrees)) / agent.JumpGravity);
+                    var worldDestination = agent.GetWorldDestination(
+                        localToWorldFromEntity[surface.Value].Value
+                    );
+
+                    var velocity = Vector3.Distance(translation.Value, worldDestination) / (math.sin(2 * math.radians(agent.JumpDegrees)) / agent.JumpGravity);
                     var yVelocity = math.sqrt(velocity) * math.sin(math.radians(agent.JumpDegrees));
-                    var destination = translation.Value + math.up() * float.NegativeInfinity;
+                    var worldWaypoint = translation.Value + math.up() * float.NegativeInfinity;
 
                     if (!fallingFromEntity.Exists(entity)) {
                         var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees));
 
-                        destination = NavUtil.MultiplyPoint3x4(
+                        worldWaypoint = NavUtil.MultiplyPoint3x4(
                             math.inverse(localToWorldFromEntity[surface.Value].Value),
                             jumpBuffer[0].Value
                         );
 
-                        translation.Value = Vector3.MoveTowards(translation.Value, destination, xVelocity * deltaSeconds);
+                        translation.Value = Vector3.MoveTowards(translation.Value, worldWaypoint, xVelocity * deltaSeconds);
                     }
 
                     translation.Value.y += (yVelocity - (elapsedSeconds - agent.JumpSeconds) * agent.JumpGravity) * deltaSeconds;
@@ -169,7 +161,7 @@ namespace Reese.Nav
                         commandBuffer.AddComponent<NavFalling>(entityInQueryIndex, entity);
                     }
 
-                    if (!NavUtil.ApproxEquals(translation.Value, destination, 1)) return;
+                    if (!NavUtil.ApproxEquals(translation.Value, worldWaypoint, 1)) return;
 
                     commandBuffer.AddComponent<NavNeedsSurface>(entityInQueryIndex, entity);
                     commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);

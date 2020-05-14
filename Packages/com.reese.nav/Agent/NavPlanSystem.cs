@@ -31,29 +31,27 @@ namespace Reese.Nav
             var navMeshQueryPointerArray = World.GetExistingSystem<NavMeshQuerySystem>().PointerArray;
 
             var job = Entities
-                .WithAll<NavPlanning, Parent, LocalToParent>()
+                .WithAll<NavPlanning, LocalToParent>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(jumpingFromEntity)
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface) =>
                 {
-                    if (!agent.DestinationSurface.Equals(Entity.Null))
-                    {
-                        var destinationTransform = localToWorldFromEntity[agent.DestinationSurface].Value;
-                        agent.WorldDestination = NavUtil.MultiplyPoint3x4(destinationTransform, agent.LocalDestination);
-                    }
+                    if (surface.Value.Equals(Entity.Null)) return;
 
                     var agentPosition = localToWorldFromEntity[entity].Position;
                     var worldPosition = agentPosition;
-                    var worldDestination = (Vector3)agent.WorldDestination;
+                    var worldDestination = (Vector3)agent.GetWorldDestination(
+                        localToWorldFromEntity[surface.Value].Value
+                    );
 
                     var jumping = jumpingFromEntity.Exists(entity);
 
                     if (jumping)
                     {
-                        worldPosition = agent.WorldDestination;
+                        worldPosition = worldDestination;
                         worldDestination = agentPosition;
                     }
 

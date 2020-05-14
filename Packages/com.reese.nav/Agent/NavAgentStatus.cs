@@ -1,9 +1,15 @@
 ﻿using Unity.Entities;
+using Unity.Mathematics;
 
 namespace Reese.Nav
 {
     /// <summary>Exists if the agent is falling.</summary>
     public struct NavFalling : IComponentData { }
+
+    /// <summary>Exists if the agent has a destination.</summary>
+    public struct NavDestination : IComponentData {
+        public float3 Value;
+    }
 
     /// <summary>Exists if the agent is jumping.</summary>
     public struct NavJumping : IComponentData { }

@@ -87,13 +87,6 @@ The [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packa
 
 See the [NavMovingJumpDemoSpawner](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/Nav/NavMovingJumpDemoSpawner.cs) and [NavPointAndClickDemoSpawner](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/Nav/NavPointAndClickDemoSpawner.cs) in [Assets/Scripts/Demo/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo/Nav) for examples of setting such data. The redundantly named [SpawnDemoSpawner](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/SpawnDemoSpawner.cs) in [Assets/Scripts/Demo](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo) would also be worth looking at, since it's piggybacked for navigation purposes.
 
-#### Destination Variables
-
-To move the agent, you would need to set *either* one of these:
-
-* `WorldDestination`: `float3` - This is a destination in *world* space.
-* `LocalDestination`: `float3` - This is a destination *local* to provided destination surface of your choosing, meaning you **must** also provide the `DestinationSurface` if you use the `LocalDestination`. The `DestinationSurface` is an [Entity](https://docs.unity3d.com/Packages/com.unity.entities@0.5/manual/entities.html?q=entity) that is supposed to have a [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurface.cs) component on it.
-
 #### Status Variables & Components
 
 To check on the agent's progress from a system of your own, making sure only to read and not write, you'll be interested in these variables:

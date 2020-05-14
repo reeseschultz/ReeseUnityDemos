@@ -26,7 +26,7 @@ namespace Reese.Demo
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
             var job = Entities
-                .WithNone<NavLerping>()
+                .WithNone<NavDestination>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
                 .WithNativeDisableParallelForRestriction(randomArray)
@@ -42,18 +42,30 @@ namespace Reese.Demo
 
                     if (jumpableSurfaces.Length == 0)
                     { // For the NavPerformanceDemo scene.
-                        var bounds = renderBoundsFromEntity[surface.Value].Value;
-                        agent.WorldDestination = NavUtil.GetRandomPointInBounds(ref random, bounds, agent.Offset, 99);
+                        commandBuffer.AddComponent(entityInQueryIndex, entity, new NavDestination{
+                            Value = NavUtil.GetRandomPointInBounds(
+                                ref random,
+                                renderBoundsFromEntity[surface.Value].Value,
+                                agent.Offset,
+                                99
+                            )
+                        });
                     }
                     else
                     { // For the NavMovingJumpDemo scene.
-                        agent.DestinationSurface = jumpableSurfaces[random.NextInt(0, jumpableSurfaces.Length)];
-                        var bounds = renderBoundsFromEntity[agent.DestinationSurface].Value;
-                        agent.LocalDestination = NavUtil.GetRandomPointInBounds(ref random, bounds, agent.Offset, 0.7f); // Agents should not try to jump too close to an edge, hence the scale.
+                        var destinationSurface = jumpableSurfaces[random.NextInt(0, jumpableSurfaces.Length)];
+
+                        commandBuffer.AddComponent(entityInQueryIndex, entity, new NavDestination{
+                            Value = NavUtil.GetRandomPointInBounds(
+                                ref random,
+                                renderBoundsFromEntity[destinationSurface].Value,
+                                agent.Offset,
+                                0.7f
+                            )
+                        });
                     }
 
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
-
                     randomArray[nativeThreadIndex] = random;
                 })
                 .WithName("NavDestinationJob")
