@@ -37,13 +37,18 @@ namespace Reese.Nav
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface, in NavDestination destination) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, ref NavDestination destination, in Parent surface) =>
                 {
                     if (surface.Value.Equals(Entity.Null)) return;
 
                     var agentPosition = localToWorldFromEntity[entity].Position;
                     var worldPosition = agentPosition;
                     var worldDestination = destination.Value;
+
+                    agent.LocalDestination = NavUtil.MultiplyPoint3x4(
+                        math.inverse(localToWorldFromEntity[surface.Value].Value),
+                        worldDestination
+                    ) + agent.Offset;
 
                     var jumping = jumpingFromEntity.Exists(entity);
 
