@@ -89,11 +89,7 @@ See the [NavMovingJumpDemoSpawner](https://github.com/reeseschultz/ReeseUnityDem
 
 #### Status Variables & Components
 
-To check on the agent's progress from a system of your own, making sure only to read and not write, you'll be interested in these variables:
-
-* `LastDestination`: `float3` - The last destination the agent had (which is only technically valid if the agent did indeed have a prior destination). This is useful for knowing if the destination changed.
-
-There are also component tags (defined in [NavAgentStatus](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentStatus.cs)) that the navigation code applies to [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs). Please do *not* write to these, just use them for optimizing your queries. All of this [IComponentData](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Entities.IComponentData.html?q=icomponent) can be applied throughout entire navigation lifecycle for a given [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs):
+There are component tags (defined in [NavAgentStatus](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentStatus.cs)) that the navigation code applies to [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs). Please do *not* write to these, just use them for optimizing your queries. All of this [IComponentData](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Entities.IComponentData.html?q=icomponent) can be applied throughout entire navigation lifecycle for a given [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs):
 
 * `NavFalling` - Exists if the agent is falling.
 * `NavJumping` - Exists if the agent is jumping.

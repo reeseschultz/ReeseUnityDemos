@@ -76,14 +76,6 @@ namespace Reese.Nav
         /// for setting the type in NavUtil called GetAgentType.</summary>
         public int TypeID;
 
-        /// <summary>This is the last, as in prior, (world) destination.
-        /// Outside the nav systems and debugging, this is only intended to be
-        /// read, not written. Note that this isn't really valid until after
-        /// the first destination has been set. An example of usage is in the
-        /// NavPointAndClick demo with the NavPointAndClickDestinationSystem.
-        /// </summary>
-        public float3 LastDestination;
-
         /// <summary>TODO</summary>
         public float3 LocalDestination;
 

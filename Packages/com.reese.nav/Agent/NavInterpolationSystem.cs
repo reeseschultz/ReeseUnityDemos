@@ -107,8 +107,6 @@ namespace Reese.Nav
                     rotation.Value = quaternion.LookRotationSafe(lookAt - localPosition, math.up());
 
                     translation.Value = Vector3.MoveTowards(localPosition, localWaypoint, agent.TranslationSpeed * deltaSeconds);
-
-                    agent.LastDestination = worldDestination;
                 })
                 .WithName("NavWalkJob")
                 .Schedule(
