@@ -77,6 +77,9 @@ namespace Reese.Nav
         public int TypeID;
 
         /// <summary>TODO</summary>
+        public Entity Destination;
+
+        /// <summary>TODO</summary>
         public float3 LocalDestination;
 
         /// <summary>TODO</summary>
