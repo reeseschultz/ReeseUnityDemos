@@ -129,10 +129,7 @@ namespace Reese.Nav
                     var jumpBuffer = jumpBufferFromEntity[entity];
                     if (jumpBuffer.Length < 1) return;
 
-                    translation.Value = NavUtil.MultiplyPoint3x4(
-                        math.inverse(localToWorldFromEntity[surface.Value].Value),
-                        jumpBuffer[0].Value
-                    ) + agent.Offset;
+                    translation.Value = jumpBuffer[0].Value + agent.Offset;
 
                     jumpBuffer.Clear();
 

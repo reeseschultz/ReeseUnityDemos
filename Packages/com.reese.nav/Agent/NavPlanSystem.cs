@@ -24,6 +24,7 @@ namespace Reese.Nav
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var parentFromEntity = GetComponentDataFromEntity<Parent>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var translationFromEntity = GetComponentDataFromEntity<Translation>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
@@ -33,18 +34,30 @@ namespace Reese.Nav
 
             var job = Entities
                 .WithAll<NavPlanning, LocalToParent>()
+                .WithReadOnly(parentFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(translationFromEntity)
                 .WithReadOnly(jumpingFromEntity)
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in NavNeedsDestination destination, in Parent surface) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in NavNeedsDestination destination) =>
                 {
                     if (
-                        surface.Value.Equals(Entity.Null) ||
+                        !parentFromEntity.Exists(entity) ||
                         agent.Destination.Equals(Entity.Null) ||
-                        !translationFromEntity.Exists(agent.Destination)
+                        !parentFromEntity.Exists(agent.Destination)
+                    ) return;
+
+                    var agentSurface = parentFromEntity[entity].Value;
+                    var destinationSurface = parentFromEntity[agent.Destination].Value;
+
+                    if (
+                        agentSurface.Equals(Entity.Null) ||
+                        destinationSurface.Equals(Entity.Null) ||
+                        !translationFromEntity.Exists(agent.Destination) ||
+                        !localToWorldFromEntity.Exists(agentSurface) ||
+                        !localToWorldFromEntity.Exists(destinationSurface)
                     ) return;
 
                     agent.LocalDestination = translationFromEntity[agent.Destination].Value;
@@ -114,7 +127,12 @@ namespace Reese.Nav
                             if (navMeshQuery.IsValid(straightPath[i].polygon)) lastValidPoint = straightPath[i].position;
                             else break;
 
-                        jumpBuffer.Add((float3)lastValidPoint + agent.Offset);
+                        jumpBuffer.Add(
+                            NavUtil.MultiplyPoint3x4(
+                                math.inverse(localToWorldFromEntity[destinationSurface].Value),
+                                (float3)lastValidPoint + agent.Offset
+                            )
+                        );
 
                         if (jumpBuffer.Length > 0)
                         {
@@ -128,7 +146,7 @@ namespace Reese.Nav
 
                         for (int i = 0; i < straightPathCount; ++i) pathBuffer.Add(
                             NavUtil.MultiplyPoint3x4(
-                                math.inverse(localToWorldFromEntity[surface.Value].Value),
+                                math.inverse(localToWorldFromEntity[agentSurface].Value),
                                 (float3)straightPath[i].position + agent.Offset
                             )
                         );

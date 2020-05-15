@@ -88,7 +88,7 @@ namespace Reese.Nav
                         commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
                         commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
                         agent.PathBufferIndex = 0;
-                        return; 
+                        return;
                     }
 
                     var lookAt = localDestination;
@@ -106,6 +106,7 @@ namespace Reese.Nav
                 );
 
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
+            var parentFromEntity = GetComponentDataFromEntity<Parent>();
             var fallingFromEntity = GetComponentDataFromEntity<NavFalling>();
 
             var artificialGravityJob = Entities
@@ -113,8 +114,9 @@ namespace Reese.Nav
                 .WithAll<LocalToParent>()
                 .WithReadOnly(fallingFromEntity)
                 .WithReadOnly(jumpBufferFromEntity)
+                .WithReadOnly(parentFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in NavAgent agent, in Parent surface) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in NavAgent agent) =>
                 {
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
 
@@ -123,17 +125,24 @@ namespace Reese.Nav
                     if (jumpBuffer.Length == 0 && !fallingFromEntity.Exists(entity)) return;
 
                     var destination = localToWorldFromEntity[agent.Destination].Position;
-
                     var velocity = Vector3.Distance(translation.Value, destination) / (math.sin(2 * math.radians(agent.JumpDegrees)) / agent.JumpGravity);
                     var yVelocity = math.sqrt(velocity) * math.sin(math.radians(agent.JumpDegrees));
                     var waypoint = translation.Value + math.up() * float.NegativeInfinity;
 
-                    if (!fallingFromEntity.Exists(entity)) {
+                    if (!fallingFromEntity.Exists(entity))
+                    {
                         var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees));
+                        var agentSurface = parentFromEntity[entity].Value;
+                        var destinationSurface = parentFromEntity[agent.Destination].Value;
 
-                        waypoint = NavUtil.MultiplyPoint3x4(
-                            math.inverse(localToWorldFromEntity[surface.Value].Value),
+                        waypoint = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
+                            localToWorldFromEntity[destinationSurface].Value,
                             jumpBuffer[0].Value
+                        );
+
+                        waypoint = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).
+                            math.inverse(localToWorldFromEntity[agentSurface].Value),
+                            waypoint
                         );
 
                         translation.Value = Vector3.MoveTowards(translation.Value, waypoint, xVelocity * deltaSeconds);
@@ -141,7 +150,8 @@ namespace Reese.Nav
 
                     translation.Value.y += (yVelocity - (elapsedSeconds - agent.JumpSeconds) * agent.JumpGravity) * deltaSeconds;
 
-                    if (elapsedSeconds - agent.JumpSeconds >= NavConstants.JUMP_SECONDS_MAX) {
+                    if (elapsedSeconds - agent.JumpSeconds >= NavConstants.JUMP_SECONDS_MAX)
+                    {
                         commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
                         commandBuffer.AddComponent<NavFalling>(entityInQueryIndex, entity);
                     }
