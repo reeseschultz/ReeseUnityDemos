@@ -14,32 +14,23 @@ namespace Reese.Nav
     class NavDestinationSystem : JobComponentSystem
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
-        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
-            var needsDestinationFromEntity = GetComponentDataFromEntity<NavNeedsDestination>(true);
-
-            var destroyDestinationJob = Entities
-                .WithReadOnly(needsDestinationFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref NavDestination destination) => {
-                    if (needsDestinationFromEntity.Exists(destination.Agent)) return;
-                    commandBuffer.DestroyEntity(entityInQueryIndex, entity);
-                })
-                .Schedule(inputDeps);
-
-            destroyDestinationJob.Complete();
-
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
-            var agentPrefab = EntityManager.CreateEntityQuery(typeof(NavAgentPrefab)).GetSingleton<NavAgentPrefab>().Value;
+            var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
-            Entities
+            var createJob = Entities
                 .WithChangeFilter<NavNeedsDestination>()
+                .WithReadOnly(localToWorldFromEntity)
+                .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination destination) =>
                 {
                     var collider = SphereCollider.Create(
-                        new SphereGeometry() {
+                        new SphereGeometry()
+                        {
                             Center = destination.Value,
                             Radius = 1
                         },
@@ -51,7 +42,8 @@ namespace Reese.Nav
                         }
                     );
 
-                    unsafe {
+                    unsafe
+                    {
                         var castInput = new ColliderCastInput()
                         {
                             Collider = (Collider*)collider.GetUnsafePtr(),
@@ -61,33 +53,58 @@ namespace Reese.Nav
                         if (!physicsWorld.CastCollider(castInput, out ColliderCastHit hit) || hit.RigidBodyIndex == -1) return;
 
                         var surfaceEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-                        var destinationEntity = EntityManager.Instantiate(agentPrefab); // TODO : Need a conditional destination marker prefab.
+                        var destinationEntity = commandBuffer.CreateEntity(entityInQueryIndex);
 
-                        EntityManager.AddComponentData(destinationEntity, new NavDestination{
+                        commandBuffer.AddComponent(entityInQueryIndex, destinationEntity, new NavDestination
+                        {
                             Agent = entity
                         });
 
-                        EntityManager.AddComponentData(destinationEntity, new Parent{
+                        commandBuffer.AddComponent(entityInQueryIndex, destinationEntity, new Parent
+                        {
                             Value = surfaceEntity
                         });
 
-                        EntityManager.AddComponent<LocalToParent>(destinationEntity);
-                        EntityManager.AddComponent<Translation>(destinationEntity);
+                        commandBuffer.AddComponent<LocalToParent>(entityInQueryIndex, destinationEntity);
+                        commandBuffer.AddComponent<LocalToWorld>(entityInQueryIndex, destinationEntity);
+                        commandBuffer.AddComponent<Translation>(entityInQueryIndex, destinationEntity);
 
-                        EntityManager.AddComponentData(destinationEntity, new Translation{
+                        commandBuffer.AddComponent(entityInQueryIndex, destinationEntity, new Translation
+                        {
                             Value = NavUtil.MultiplyPoint3x4(
-                                math.inverse(GetComponentDataFromEntity<LocalToWorld>(true)[surfaceEntity].Value),
+                                math.inverse(localToWorldFromEntity[surfaceEntity].Value),
                                 destination.Value
                             ) + agent.Offset
                         });
-
-                        agent.Destination = destinationEntity;
                     }
                 })
-                .WithStructuralChanges()
-                .Run();
+                .WithName("CreateDestinationJob")
+                .Schedule(JobHandle.CombineDependencies(
+                    inputDeps,
+                    buildPhysicsWorld.FinalJobHandle
+                ));
 
-            return destroyDestinationJob;
+            barrier.AddJobHandleForProducer(createJob);
+
+            var agentFromEntity = GetComponentDataFromEntity<NavAgent>();
+
+            var mapJob = Entities
+                .WithNativeDisableParallelForRestriction(agentFromEntity)
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavDestination destination) =>
+                {
+                    if (
+                        destination.Agent.Equals(Entity.Null) ||
+                        !agentFromEntity.Exists(destination.Agent)
+                    ) return;
+
+                    var agent = agentFromEntity[destination.Agent];
+                    agent.Destination = entity;
+                    agentFromEntity[destination.Agent] = agent;
+                })
+                .WithName("DestinationMappingJob")
+                .Schedule(createJob);
+
+            return mapJob;
         }
     }
 }
