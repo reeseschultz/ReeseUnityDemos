@@ -6,11 +6,6 @@ namespace Reese.Nav
     /// <summary>Exists if the agent is falling.</summary>
     public struct NavFalling : IComponentData { }
 
-    /// <summary>Exists if the agent has a destination.</summary>
-    public struct NavDestination : IComponentData {
-        public float3 Value;
-    }
-
     /// <summary>Exists if the agent is jumping.</summary>
     public struct NavJumping : IComponentData { }
 
@@ -22,6 +17,11 @@ namespace Reese.Nav
     /// agent jumps. When this component exists, the NavSurfaceSystem will try
     /// to raycast for a new surface potentially underneath said agent.</summary>
     public struct NavNeedsSurface : IComponentData { }
+
+    /// <summary>Exists if the agent needs a destination.</summary>
+    public struct NavNeedsDestination : IComponentData {
+        public float3 Value;
+    }
 
     /// <summary>Exists if the agent is planning paths or jumps.</summary>
     public struct NavPlanning : IComponentData { }

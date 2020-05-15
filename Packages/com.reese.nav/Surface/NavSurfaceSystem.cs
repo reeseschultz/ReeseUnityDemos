@@ -27,7 +27,7 @@ namespace Reese.Nav
 
         /// <summary>For raycasting in order to detect a surface below a
         /// given NavAgent.</summary>
-        BuildPhysicsWorld buildPhysicsWorldSystem => World.GetExistingSystem<BuildPhysicsWorld>();
+        BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
 
         /// <summary>For adding Parent and LocalToParent components when they
         /// or the Parent.Value are nonexistent on a given NavSurface.</summary>
@@ -82,7 +82,7 @@ namespace Reese.Nav
                 .Schedule(addParentJob);
 
             var elapsedSeconds = (float)Time.ElapsedTime;
-            var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
+            var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
@@ -143,7 +143,7 @@ namespace Reese.Nav
                 .Schedule(
                     JobHandle.CombineDependencies(
                         removeCompositeScaleJob,
-                        buildPhysicsWorldSystem.FinalJobHandle
+                        buildPhysicsWorld.FinalJobHandle
                     )
                 );
         }

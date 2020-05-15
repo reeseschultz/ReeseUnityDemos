@@ -25,7 +25,7 @@ namespace Reese.Nav
     {
         /// <summary>For raycasting in order to detect an obstacle in
         /// front of the agent.</summary>
-        BuildPhysicsWorld buildPhysicsWorldSystem => World.GetExistingSystem<BuildPhysicsWorld>();
+        BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
 
         /// <summary>For adding and removing statuses to and from the agent.
         /// </summary>
@@ -36,7 +36,7 @@ namespace Reese.Nav
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var deltaSeconds = Time.DeltaTime;
-            var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
+            var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
@@ -90,7 +90,7 @@ namespace Reese.Nav
                         }
 
                         commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
-                        commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity);
+                        commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
                         agent.PathBufferIndex = 0;
                         return; 
                     }
@@ -105,7 +105,7 @@ namespace Reese.Nav
                 .Schedule(
                     JobHandle.CombineDependencies(
                         inputDeps,
-                        buildPhysicsWorldSystem.FinalJobHandle
+                        buildPhysicsWorld.FinalJobHandle
                     )
                 );
 

@@ -18,7 +18,7 @@ namespace Reese.Demo
                 !Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out RaycastHit hit)
             ) return;
 
-            entityManager.AddComponentData(agentQuery.GetSingletonEntity(), new NavDestination{
+            entityManager.AddComponentData(agentQuery.GetSingletonEntity(), new NavNeedsDestination{
                 Value = hit.point
             });
 
