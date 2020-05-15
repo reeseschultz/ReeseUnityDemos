@@ -58,12 +58,8 @@ namespace Reese.Nav
                     }
 
                     var localDestination = agent.LocalDestination;
-                    localDestination.y = agent.Offset.y;
 
-                    var localWaypoint = NavUtil.MultiplyPoint3x4(
-                        math.inverse(localToWorldFromEntity[surface.Value].Value),
-                        pathBuffer[agent.PathBufferIndex].Value
-                    );
+                    var localWaypoint = pathBuffer[agent.PathBufferIndex].Value;
                     localWaypoint.y = agent.Offset.y;
 
                     if (
@@ -126,23 +122,21 @@ namespace Reese.Nav
 
                     if (jumpBuffer.Length == 0 && !fallingFromEntity.Exists(entity)) return;
 
-                    var destination = agent.GetWorldDestination(
-                        localToWorldFromEntity[surface.Value].Value
-                    );
+                    var destination = localToWorldFromEntity[agent.Destination].Position;
 
                     var velocity = Vector3.Distance(translation.Value, destination) / (math.sin(2 * math.radians(agent.JumpDegrees)) / agent.JumpGravity);
                     var yVelocity = math.sqrt(velocity) * math.sin(math.radians(agent.JumpDegrees));
-                    var worldWaypoint = translation.Value + math.up() * float.NegativeInfinity;
+                    var waypoint = translation.Value + math.up() * float.NegativeInfinity;
 
                     if (!fallingFromEntity.Exists(entity)) {
                         var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees));
 
-                        worldWaypoint = NavUtil.MultiplyPoint3x4(
+                        waypoint = NavUtil.MultiplyPoint3x4(
                             math.inverse(localToWorldFromEntity[surface.Value].Value),
                             jumpBuffer[0].Value
                         );
 
-                        translation.Value = Vector3.MoveTowards(translation.Value, worldWaypoint, xVelocity * deltaSeconds);
+                        translation.Value = Vector3.MoveTowards(translation.Value, waypoint, xVelocity * deltaSeconds);
                     }
 
                     translation.Value.y += (yVelocity - (elapsedSeconds - agent.JumpSeconds) * agent.JumpGravity) * deltaSeconds;
@@ -152,7 +146,7 @@ namespace Reese.Nav
                         commandBuffer.AddComponent<NavFalling>(entityInQueryIndex, entity);
                     }
 
-                    if (!NavUtil.ApproxEquals(translation.Value, worldWaypoint, 1)) return;
+                    if (!NavUtil.ApproxEquals(translation.Value, waypoint, 1)) return;
 
                     commandBuffer.AddComponent<NavNeedsSurface>(entityInQueryIndex, entity);
                     commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
