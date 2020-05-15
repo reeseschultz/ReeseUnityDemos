@@ -29,13 +29,13 @@ namespace Reese.Nav
                 })
                 .Schedule(inputDeps);
 
+            destroyDestinationJob.Complete();
+
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
-            var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var agentPrefab = EntityManager.CreateEntityQuery(typeof(NavAgentPrefab)).GetSingleton<NavAgentPrefab>().Value;
 
-            var createDestinationJob = Entities
+            Entities
                 .WithChangeFilter<NavNeedsDestination>()
-                .WithReadOnly(localToWorldFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination destination) =>
                 {
                     var collider = SphereCollider.Create(
@@ -61,40 +61,33 @@ namespace Reese.Nav
                         if (!physicsWorld.CastCollider(castInput, out ColliderCastHit hit) || hit.RigidBodyIndex == -1) return;
 
                         var surfaceEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
+                        var destinationEntity = EntityManager.Instantiate(agentPrefab); // TODO : Need a conditional destination marker prefab.
 
-                        // agent.Destination = commandBuffer.CreateEntity(entityInQueryIndex);
-                        agent.Destination = commandBuffer.Instantiate(entityInQueryIndex, agentPrefab); // TODO : Need a conditional destination marker prefab.
-
-                        commandBuffer.AddComponent(entityInQueryIndex, agent.Destination, new NavDestination{
+                        EntityManager.AddComponentData(destinationEntity, new NavDestination{
                             Agent = entity
                         });
 
-                        commandBuffer.AddComponent(entityInQueryIndex, agent.Destination, new Parent{
+                        EntityManager.AddComponentData(destinationEntity, new Parent{
                             Value = surfaceEntity
                         });
 
-                        commandBuffer.AddComponent<LocalToParent>(entityInQueryIndex, agent.Destination);
+                        EntityManager.AddComponent<LocalToParent>(destinationEntity);
+                        EntityManager.AddComponent<Translation>(destinationEntity);
 
-                        commandBuffer.AddComponent(entityInQueryIndex, agent.Destination, new Translation{
+                        EntityManager.AddComponentData(destinationEntity, new Translation{
                             Value = NavUtil.MultiplyPoint3x4(
-                                math.inverse(localToWorldFromEntity[surfaceEntity].Value),
+                                math.inverse(GetComponentDataFromEntity<LocalToWorld>(true)[surfaceEntity].Value),
                                 destination.Value
                             ) + agent.Offset
                         });
+
+                        agent.Destination = destinationEntity;
                     }
                 })
-                .WithoutBurst()
-                .WithName("NavDestinationJob")
-                .Schedule(
-                    JobHandle.CombineDependencies(
-                        destroyDestinationJob,
-                        buildPhysicsWorld.FinalJobHandle
-                    )
-                );
+                .WithStructuralChanges()
+                .Run();
 
-            createDestinationJob.Complete();
-
-            return createDestinationJob;
+            return destroyDestinationJob;
         }
     }
 }
