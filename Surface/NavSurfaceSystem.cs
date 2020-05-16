@@ -67,12 +67,14 @@ namespace Reese.Nav
                 .WithName("NavRemoveCompositeScaleJob")
                 .Schedule(addParentJob);
 
+            barrier.AddJobHandleForProducer(removeCompositeScaleJob);
+
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
-            return Entities
+            var navSurfaceTrackingJob = Entities
                 .WithNone<NavFalling, NavJumping>()
                 .WithAll<NavNeedsSurface, LocalToParent>()
                 .WithReadOnly(localToWorldFromEntity)
@@ -130,6 +132,10 @@ namespace Reese.Nav
                         buildPhysicsWorld.FinalJobHandle
                     )
                 );
+
+            barrier.AddJobHandleForProducer(navSurfaceTrackingJob);
+
+            return navSurfaceTrackingJob;
         }
     }
 }
