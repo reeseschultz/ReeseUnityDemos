@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Rendering;
+using Unity.Transforms;
 using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
@@ -22,36 +23,56 @@ namespace Reese.Demo
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var jumpableBufferFromEntity = GetBufferFromEntity<NavJumpableBufferElement>(true);
             var renderBoundsFromEntity = GetComponentDataFromEntity<RenderBounds>(true);
+            var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
             var job = Entities
-                .WithNone<NavLerping>()
+                .WithNone<NavNeedsDestination>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
+                .WithReadOnly(localToWorldFromEntity)
                 .WithNativeDisableParallelForRestriction(randomArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface) =>
                 {
                     if (
-                        agent.Surface.Equals(Entity.Null) ||
-                        !jumpableBufferFromEntity.Exists(agent.Surface)
+                        surface.Value.Equals(Entity.Null) ||
+                        !jumpableBufferFromEntity.Exists(surface.Value)
                     ) return;
 
-                    var jumpableSurfaces = jumpableBufferFromEntity[agent.Surface];
+                    var jumpableSurfaces = jumpableBufferFromEntity[surface.Value];
                     var random = randomArray[nativeThreadIndex];
 
                     if (jumpableSurfaces.Length == 0)
                     { // For the NavPerformanceDemo scene.
-                        var bounds = renderBoundsFromEntity[agent.Surface].Value;
-                        agent.WorldDestination = NavUtil.GetRandomPointInBounds(ref random, bounds, agent.Offset, 99);
+                        commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination{
+                            Value = NavUtil.GetRandomPointInBounds(
+                                ref random,
+                                renderBoundsFromEntity[surface.Value].Value,
+                                agent.Offset,
+                                99
+                            )
+                        });
                     }
                     else
                     { // For the NavMovingJumpDemo scene.
-                        agent.DestinationSurface = jumpableSurfaces[random.NextInt(0, jumpableSurfaces.Length)];
-                        var bounds = renderBoundsFromEntity[agent.DestinationSurface].Value;
-                        agent.LocalDestination = NavUtil.GetRandomPointInBounds(ref random, bounds, agent.Offset, 0.7f); // Agents should not try to jump too close to an edge, hence the scale.
-                    }
+                        var destinationSurface = jumpableSurfaces[random.NextInt(0, jumpableSurfaces.Length)];
 
-                    commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
+                        var localPoint = NavUtil.GetRandomPointInBounds(
+                            ref random,
+                            renderBoundsFromEntity[destinationSurface].Value,
+                            agent.Offset,
+                            0.7f
+                        );
+
+                        var worldPoint = NavUtil.MultiplyPoint3x4(
+                            localToWorldFromEntity[destinationSurface.Value].Value,
+                            localPoint
+                        );
+
+                        commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination{
+                            Value = worldPoint
+                        });
+                    }
 
                     randomArray[nativeThreadIndex] = random;
                 })

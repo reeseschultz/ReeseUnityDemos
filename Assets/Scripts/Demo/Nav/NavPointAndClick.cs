@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using Reese.Nav;
+using Unity.Entities;
+using UnityEngine;
 
 namespace Reese.Demo
 {
     class NavPointAndClick : MonoBehaviour
     {
         public Camera cam;
+        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
+        EntityQuery agentQuery => entityManager.CreateEntityQuery(typeof(NavAgent));
 
         void Update()
         {
@@ -14,7 +18,9 @@ namespace Reese.Demo
                 !Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out RaycastHit hit)
             ) return;
 
-            NavPointAndClickDestinationSystem.Destination = hit.point;
+            entityManager.AddComponentData(agentQuery.GetSingletonEntity(), new NavNeedsDestination{
+                Value = hit.point
+            });
         }
     }
 }

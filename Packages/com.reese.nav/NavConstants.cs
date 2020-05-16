@@ -14,11 +14,8 @@
 
         /// <summary>Upper limit on the raycast distance when searching for a
         /// surface below a given NavAgent.</summary>
+
         public const float SURFACE_RAYCAST_DISTANCE_MAX = 1000;
-
-        /// <summary>Upper limit when manually batching jobs.</summary>
-        public const int BATCH_MAX = 50;
-
         /// <summary>Upper limit on the iterations performed in a NavMeshQuery
         /// to find a path in the NavPlanSystem.</summary>
         public const int ITERATION_MAX = 1000;

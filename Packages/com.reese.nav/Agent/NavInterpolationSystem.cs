@@ -16,19 +16,12 @@ namespace Reese.Nav
     /// the jump buffer. "Walking" is a simple lerp via Vector3.MoveTowards,
     /// and it also includes appropriate "look at" rotation. Jumping and
     /// falling are accomplished with artificial gravity and projectile motion
-    /// math. For more info on how the jumping works, see
-    /// https://reeseschultz.com/projectile-motion-with-unity-dots. Similar
-    /// code supports the ProjectileDemo scene.
+    /// math.
     /// </summary>
     [UpdateAfter(typeof(BuildPhysicsWorld))]
     class NavInterpolationSystem : JobComponentSystem
     {
-        /// <summary>For raycasting in order to detect an obstacle in
-        /// front of the agent.</summary>
-        BuildPhysicsWorld buildPhysicsWorldSystem => World.GetExistingSystem<BuildPhysicsWorld>();
-
-        /// <summary>For adding and removing statuses to and from the agent.
-        /// </summary>
+        BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -36,16 +29,17 @@ namespace Reese.Nav
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var deltaSeconds = Time.DeltaTime;
-            var physicsWorld = buildPhysicsWorldSystem.PhysicsWorld;
+            var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
             var walkJob = Entities
                 .WithNone<NavPlanning, NavJumping>()
-                .WithAll<NavLerping, Parent, LocalToParent>()
+                .WithAll<NavLerping, LocalToParent>()
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation) =>
+                .WithReadOnly(physicsWorld)
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation, in Parent surface) =>
                 {
                     var pathBuffer = pathBufferFromEntity[entity];
 
@@ -57,31 +51,26 @@ namespace Reese.Nav
                         return;
                     }
 
-                    var destination = pathBuffer[agent.PathBufferIndex].Value;
+                    var localDestination = agent.LocalDestination;
 
-                    if (!agent.DestinationSurface.Equals(Entity.Null)) agent.WorldDestination = NavUtil.MultiplyPoint3x4(
-                        localToWorldFromEntity[agent.DestinationSurface].Value,
-                        agent.LocalDestination
-                    );
-
-                    var worldDestination = agent.WorldDestination;
-                    var worldPosition = localToWorldFromEntity[entity].Position;
+                    var localWaypoint = pathBuffer[agent.PathBufferIndex].Value;
+                    localWaypoint.y = agent.Offset.y;
 
                     if (
-                        NavUtil.ApproxEquals(translation.Value, destination, 1) &&
+                        NavUtil.ApproxEquals(translation.Value, localWaypoint, 1) &&
                         ++agent.PathBufferIndex > pathBuffer.Length - 1
                     )
                     {
                         var rayInput = new RaycastInput
                         {
-                            Start = translation.Value,
+                            Start = localToWorldFromEntity[entity].Position + agent.Offset,
                             End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
-                            Filter = CollisionFilter.Default
+                            Filter = CollisionFilter.Default // TODO : Resolve via Issue #3.
                         };
 
                         if (
                             !physicsWorld.CastRay(rayInput, out RaycastHit hit) &&
-                            !NavUtil.ApproxEquals(worldPosition, worldDestination, 1)
+                            !NavUtil.ApproxEquals(translation.Value, localDestination, 1)
                         )
                         {
                             agent.JumpSeconds = elapsedSeconds;
@@ -89,67 +78,82 @@ namespace Reese.Nav
                             commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                             return;
                         }
- 
+
                         commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
+                        commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
                         agent.PathBufferIndex = 0;
                         return;
                     }
 
-                    var lookAt = worldDestination;
-                    lookAt.y = worldPosition.y;
-                    rotation.Value = quaternion.LookRotationSafe(lookAt - worldPosition, math.up());
+                    var lookAt = localDestination;
+                    lookAt.y = translation.Value.y;
+                    rotation.Value = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
 
-                    translation.Value = Vector3.MoveTowards(translation.Value, destination, agent.TranslationSpeed * deltaSeconds);
-
-                    agent.LastDestination = agent.WorldDestination;
+                    translation.Value = Vector3.MoveTowards(translation.Value, localWaypoint, agent.TranslationSpeed * deltaSeconds);
                 })
                 .WithName("NavWalkJob")
                 .Schedule(
                     JobHandle.CombineDependencies(
                         inputDeps,
-                        buildPhysicsWorldSystem.FinalJobHandle
+                        buildPhysicsWorld.FinalJobHandle
                     )
                 );
 
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
+            var parentFromEntity = GetComponentDataFromEntity<Parent>();
             var fallingFromEntity = GetComponentDataFromEntity<NavFalling>();
 
             var artificialGravityJob = Entities
                 .WithAny<NavFalling, NavJumping>()
-                .WithAll<Parent, LocalToParent>()
+                .WithAll<LocalToParent>()
                 .WithReadOnly(fallingFromEntity)
-                .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation) =>
+                .WithReadOnly(jumpBufferFromEntity)
+                .WithReadOnly(parentFromEntity)
+                .WithReadOnly(localToWorldFromEntity)
+                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in NavAgent agent) =>
                 {
-                    commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity); // For sticking the landing.
+                    commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
 
                     var jumpBuffer = jumpBufferFromEntity[entity];
 
                     if (jumpBuffer.Length == 0 && !fallingFromEntity.Exists(entity)) return;
 
-                    var velocity = Vector3.Distance(translation.Value, agent.WorldDestination) / (math.sin(2 * math.radians(agent.JumpDegrees)) / agent.JumpGravity);
+                    var destination = localToWorldFromEntity[agent.Destination].Position;
+                    var velocity = Vector3.Distance(translation.Value, destination) / (math.sin(2 * math.radians(agent.JumpDegrees)) / agent.JumpGravity);
                     var yVelocity = math.sqrt(velocity) * math.sin(math.radians(agent.JumpDegrees));
-                    var destination = translation.Value + math.up() * float.NegativeInfinity;
+                    var waypoint = translation.Value + math.up() * float.NegativeInfinity;
 
-                    if (!fallingFromEntity.Exists(entity)) {
+                    if (!fallingFromEntity.Exists(entity))
+                    {
                         var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees));
-                        destination = jumpBuffer[0].Value;
-                        translation.Value = Vector3.MoveTowards(translation.Value, destination, xVelocity * deltaSeconds);
+                        var agentSurface = parentFromEntity[entity].Value;
+                        var destinationSurface = parentFromEntity[agent.Destination].Value;
+
+                        waypoint = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
+                            localToWorldFromEntity[destinationSurface].Value,
+                            jumpBuffer[0].Value
+                        );
+
+                        waypoint = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).
+                            math.inverse(localToWorldFromEntity[agentSurface].Value),
+                            waypoint
+                        );
+
+                        translation.Value = Vector3.MoveTowards(translation.Value, waypoint, xVelocity * deltaSeconds);
                     }
 
                     translation.Value.y += (yVelocity - (elapsedSeconds - agent.JumpSeconds) * agent.JumpGravity) * deltaSeconds;
 
-                    if (elapsedSeconds - agent.JumpSeconds >= NavConstants.JUMP_SECONDS_MAX) {
+                    if (elapsedSeconds - agent.JumpSeconds >= NavConstants.JUMP_SECONDS_MAX)
+                    {
                         commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
                         commandBuffer.AddComponent<NavFalling>(entityInQueryIndex, entity);
                     }
 
-                    if (!NavUtil.ApproxEquals(translation.Value, destination, 1)) return;
+                    if (!NavUtil.ApproxEquals(translation.Value, waypoint, 1)) return;
 
                     commandBuffer.AddComponent<NavNeedsSurface>(entityInQueryIndex, entity);
                     commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
-
-                    jumpBuffer.Clear();
                 })
                 .WithName("NavArtificialGravityJob")
                 .Schedule(walkJob);

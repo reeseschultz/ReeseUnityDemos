@@ -1,4 +1,5 @@
 ﻿using Unity.Entities;
+using Unity.Mathematics;
 
 namespace Reese.Nav
 {
@@ -16,6 +17,11 @@ namespace Reese.Nav
     /// agent jumps. When this component exists, the NavSurfaceSystem will try
     /// to raycast for a new surface potentially underneath said agent.</summary>
     public struct NavNeedsSurface : IComponentData { }
+
+    /// <summary>Exists if the agent needs a destination.</summary>
+    public struct NavNeedsDestination : IComponentData {
+        public float3 Value;
+    }
 
     /// <summary>Exists if the agent is planning paths or jumps.</summary>
     public struct NavPlanning : IComponentData { }

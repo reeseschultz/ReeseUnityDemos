@@ -38,21 +38,6 @@ namespace Reese.Nav
         /// reasonable value to try.</summary>
         public float TranslationSpeed;
 
-        /// <summary>Writing to this *or* the WorldDestination is *required*
-        /// when spawning an agent. If you write to this, then you *must*
-        /// set the DestinationSurface as well! After all, this is a
-        /// destination that is relative to the provided DestinationSurface.
-        /// This is how random positions are set as destinations in the
-        /// MovingJumpDemo scene with the NavDestinationSystem.
-        /// </summary>
-        public float3 LocalDestination;
-
-        /// <summary>Writing to this *or* the LocalDestination is *required*
-        /// when spawning an agent. An example of usage is in the
-        /// NavPointAndClick demo with the NavPointAndClickDestinationSystem.
-        /// </summary>
-        public float3 WorldDestination;
-
         /// <summary>You should *probably* write to this when spawning an
         /// agent. If you don't get this right, then raycasts below the agent
         /// may entirely overshoot the surface, which will eventually mean that
@@ -91,30 +76,14 @@ namespace Reese.Nav
         /// for setting the type in NavUtil called GetAgentType.</summary>
         public int TypeID;
 
-        /// <summary>This is the last, as in prior, (world) destination.
-        /// Outside the nav systems and debugging, this is only intended to be
-        /// read, not written. Note that this isn't really valid until after
-        /// the first destination has been set. An example of usage is in the
-        /// NavPointAndClick demo with the NavPointAndClickDestinationSystem.
-        /// </summary>
-        public float3 LastDestination;
+        /// <summary>This is the destination entity that the agent moves toward.
+        /// Outside the nav systems and debugging, this is not intended to be
+        /// read nor written.</summary>
+        public Entity Destination;
 
-        /// <summary>Writing to this is *required* if and only if you also
-        /// write to the LocalDestination. This is intended to be an Entity
-        /// with a NavSurface component. The set LocalDestination is thus
-        /// locally relative to this surface, meaning the matrix math to
-        /// figure that out is done for you. This is how random positions are
-        /// set as destinations in the MovingJumpDemo scene with the
-        /// NavDestinationSystem.</summary>
-        public Entity DestinationSurface;
-
-        /// <summary>This is the currently detected surface underneath the
-        /// agent. The surface is detected with the NavSurfaceSystem. Outside
-        /// the nav systems and debugging, this is only intended to be read,
-        /// not written. An example of such a read is in the
-        /// NavDestinationSystem example. **Using this surface is how you
-        /// determine which other surfaces are "jumpable" for a given
-        /// NavAgent, by querying *this* surface's jumpable buffer.**</summary>
-        public Entity Surface;
+        /// <summary>This is the local destination that the agent moves toward.
+        /// Outside the nav systems and debugging, this is not intended to be
+        /// read nor written.</summary>
+        public float3 LocalDestination;
     }
 }
