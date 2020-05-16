@@ -7,6 +7,7 @@ using Unity.Collections;
 using Collider = Unity.Physics.Collider;
 using SphereCollider = Unity.Physics.SphereCollider;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
+using UnityEngine;
 
 namespace Reese.Nav
 {
@@ -54,7 +55,10 @@ namespace Reese.Nav
                             Orientation = quaternion.identity
                         };
 
-                        if (!physicsWorld.CastCollider(castInput, out ColliderCastHit hit) || hit.RigidBodyIndex == -1) return;
+                        if (!physicsWorld.CastCollider(castInput, out ColliderCastHit hit) || hit.RigidBodyIndex == -1) {
+                            commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity); // Ignore invalid destinations.
+                            return;
+                        }
 
                         var surfaceEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
 
