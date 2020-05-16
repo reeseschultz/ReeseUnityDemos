@@ -69,8 +69,7 @@ namespace Reese.Nav
 
             // Below job is needed because Unity.Transforms assumes that
             // children should be scaled by their surface by automatically
-            // providing them with a CompositeScale. This is a default that
-            // probably doesn't reflect 99% of use cases.
+            // providing them with a CompositeScale.
             var removeCompositeScaleJob = Entities
                 .WithAll<CompositeScale>()
                 .WithAny<NavSurface, NavBasis>()
