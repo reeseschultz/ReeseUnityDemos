@@ -90,6 +90,7 @@ namespace Reese.Nav
                 .WithNone<NavFalling, NavJumping>()
                 .WithAll<NavNeedsSurface, LocalToParent>()
                 .WithReadOnly(localToWorldFromEntity)
+                .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation) =>
                 {

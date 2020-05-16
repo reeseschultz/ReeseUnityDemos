@@ -45,6 +45,7 @@ namespace Reese.Nav
                 .WithAll<NavLerping, LocalToParent>()
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
+                .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation, in Parent surface) =>
                 {
                     var pathBuffer = pathBufferFromEntity[entity];
