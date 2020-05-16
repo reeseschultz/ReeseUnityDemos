@@ -11,9 +11,8 @@ using System.Collections.Concurrent;
 namespace Reese.Nav
 {
     /// <summary>The primary responsibility of this system is to track the
-    /// surface (or lack thereof) underneath a given NavAgent. It also ensures
-    /// surface-child relationships are maintained in lieu of Unity.Physics'
-    /// efforts to destroy them.</summary>
+    /// surface (or lack thereof) underneath a given NavAgent. It also maintains
+    /// parent-child relationships.</summary>
     [UpdateAfter(typeof(NavBasisSystem))]
     class NavSurfaceSystem : JobComponentSystem
     {
