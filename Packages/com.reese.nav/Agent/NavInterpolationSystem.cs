@@ -99,6 +99,8 @@ namespace Reese.Nav
                     )
                 );
 
+            barrier.AddJobHandleForProducer(walkJob);
+
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var parentFromEntity = GetComponentDataFromEntity<Parent>();
             var fallingFromEntity = GetComponentDataFromEntity<NavFalling>();
