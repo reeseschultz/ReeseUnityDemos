@@ -17,9 +17,6 @@ namespace Reese.Nav
     [UpdateBefore(typeof(NavDestinationSystem))]
     unsafe class NavPlanSystem : JobComponentSystem
     {
-        /// <summary>For removing the NavPlanning component and adding the
-        /// NavLerping component on completion of a successful "plan."
-        /// </summary>
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)

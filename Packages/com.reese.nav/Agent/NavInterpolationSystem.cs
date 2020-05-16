@@ -16,19 +16,12 @@ namespace Reese.Nav
     /// the jump buffer. "Walking" is a simple lerp via Vector3.MoveTowards,
     /// and it also includes appropriate "look at" rotation. Jumping and
     /// falling are accomplished with artificial gravity and projectile motion
-    /// math. For more info on how the jumping works, see
-    /// https://reeseschultz.com/projectile-motion-with-unity-dots. Similar
-    /// code supports the ProjectileDemo scene.
+    /// math.
     /// </summary>
     [UpdateAfter(typeof(BuildPhysicsWorld))]
     class NavInterpolationSystem : JobComponentSystem
     {
-        /// <summary>For raycasting in order to detect an obstacle in
-        /// front of the agent.</summary>
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
-
-        /// <summary>For adding and removing statuses to and from the agent.
-        /// </summary>
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -72,7 +65,7 @@ namespace Reese.Nav
                         {
                             Start = localToWorldFromEntity[entity].Position + agent.Offset,
                             End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
-                            Filter = CollisionFilter.Default
+                            Filter = CollisionFilter.Default // TODO : Resolve via Issue #3.
                         };
 
                         if (

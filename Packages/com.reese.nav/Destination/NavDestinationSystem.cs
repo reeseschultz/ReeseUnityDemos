@@ -10,6 +10,8 @@ using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 
 namespace Reese.Nav
 {
+    /// <summary>Creates and updates destinations as persistent entities that
+    /// retain location information pertinent to nav agents.</summary>
     [UpdateAfter(typeof(BuildPhysicsWorld))]
     class NavDestinationSystem : JobComponentSystem
     {
@@ -38,7 +40,7 @@ namespace Reese.Nav
                             Center = destination.Value,
                             Radius = 1
                         },
-                        new CollisionFilter()
+                        new CollisionFilter() // TODO : Resolve via Issue #3.
                         {
                             BelongsTo = ~0u,
                             CollidesWith = ~0u,

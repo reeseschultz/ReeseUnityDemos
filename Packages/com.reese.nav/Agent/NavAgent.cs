@@ -76,17 +76,14 @@ namespace Reese.Nav
         /// for setting the type in NavUtil called GetAgentType.</summary>
         public int TypeID;
 
-        /// <summary>TODO</summary>
+        /// <summary>This is the destination entity that the agent moves toward.
+        /// Outside the nav systems and debugging, this is not intended to be
+        /// read nor written.</summary>
         public Entity Destination;
 
-        /// <summary>TODO</summary>
+        /// <summary>This is the local destination that the agent moves toward.
+        /// Outside the nav systems and debugging, this is not intended to be
+        /// read nor written.</summary>
         public float3 LocalDestination;
-
-        /// <summary>TODO</summary>
-        public float3 GetWorldDestination(float4x4 transform)
-            => NavUtil.MultiplyPoint3x4(
-                transform,
-                this.LocalDestination
-            );
     }
 }

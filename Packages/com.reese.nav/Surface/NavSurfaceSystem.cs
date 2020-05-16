@@ -16,20 +16,8 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavBasisSystem))]
     class NavSurfaceSystem : JobComponentSystem
     {
-        /// <summary>For knowing whether or not the NavAgent has attempted
-        /// jumping since the last time this system ran. Helps filter out
-        /// agents to prevent unnecessary raycasts checking for a surface
-        /// below. In other words, if the agent didn't jump and the system
-        /// isn't starting up for the first time, then the surface is known.
-        /// </summary>
         static ConcurrentDictionary<int, bool> needsSurfaceDictionary = new ConcurrentDictionary<int, bool>();
-
-        /// <summary>For raycasting in order to detect a surface below a
-        /// given NavAgent.</summary>
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
-
-        /// <summary>For adding Parent and LocalToParent components when they
-        /// or the Parent.Value are nonexistent on a given NavSurface.</summary>
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -103,7 +91,7 @@ namespace Reese.Nav
                     {
                         Start = localToWorldFromEntity[entity].Position + agent.Offset,
                         End = -math.up() * NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
-                        Filter = CollisionFilter.Default
+                        Filter = CollisionFilter.Default // TODO : Resolve via Issue #3.
                     };
 
                     if (!physicsWorld.CastRay(rayInput, out RaycastHit hit) || hit.RigidBodyIndex == -1)
