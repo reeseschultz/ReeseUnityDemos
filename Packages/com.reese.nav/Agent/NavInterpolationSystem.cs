@@ -18,7 +18,7 @@ namespace Reese.Nav
     /// falling are accomplished with artificial gravity and projectile motion
     /// math.
     /// </summary>
-    [UpdateAfter(typeof(BuildPhysicsWorld))]
+    [UpdateAfter(typeof(NavDestinationSystem))]
     class NavInterpolationSystem : JobComponentSystem
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
