@@ -3,8 +3,7 @@
 namespace Reese.Nav
 {
     /// <summary>A buffer of "jumpable" surfaces from a given surface. These
-    /// can be queried from the current NavAgent.Surface to determine which
-    /// other surfaces are jumpable for said agent.</summary>
+    /// can be queried from the current parent of an agent.</summary>
     [InternalBufferCapacity(NavConstants.JUMPABLE_SURFACE_MAX)]
     public struct NavJumpableBufferElement : IBufferElementData
     {

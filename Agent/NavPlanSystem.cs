@@ -10,15 +10,13 @@ using UnityEngine.Experimental.AI;
 
 namespace Reese.Nav
 {
-    /// <summary>A hacky system for planning paths and "jumpable" positions
-    /// using UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery
-    /// by thread index. NavMeshQuery orchestration here appears to be exemplary
+    /// <summary>Plans paths and "jumpable" positions using
+    /// UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery by
+    /// thread index. NavMeshQuery orchestration here appears to be exemplary
     /// usage. Note that it depends on the third-party PathUtils.</summary>
+    [UpdateBefore(typeof(NavDestinationSystem))]
     unsafe class NavPlanSystem : JobComponentSystem
     {
-        /// <summary>For removing the NavPlanning component and adding the
-        /// NavLerping component on completion of a successful "plan."
-        /// </summary>
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -26,43 +24,51 @@ namespace Reese.Nav
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var parentFromEntity = GetComponentDataFromEntity<Parent>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
+            var translationFromEntity = GetComponentDataFromEntity<Translation>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var navMeshQueryPointerArray = World.GetExistingSystem<NavMeshQuerySystem>().PointerArray;
 
             var job = Entities
-                .WithAll<NavPlanning, Parent, LocalToParent>()
+                .WithAll<NavPlanning, LocalToParent>()
                 .WithReadOnly(parentFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
+                .WithReadOnly(translationFromEntity)
                 .WithReadOnly(jumpingFromEntity)
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in NavNeedsDestination destination) =>
                 {
-                    if (agent.Surface.Equals(Entity.Null)) return;
+                    if (
+                        !parentFromEntity.Exists(entity) ||
+                        agent.Destination.Equals(Entity.Null) ||
+                        !parentFromEntity.Exists(agent.Destination)
+                    ) return;
 
-                    var parent = parentFromEntity[agent.Surface].Value;
+                    var agentSurface = parentFromEntity[entity].Value;
+                    var destinationSurface = parentFromEntity[agent.Destination].Value;
 
-                    if (!agent.DestinationSurface.Equals(Entity.Null))
-                    {
-                        var destinationTransform = localToWorldFromEntity[agent.DestinationSurface].Value;
-                        agent.WorldDestination = NavUtil.MultiplyPoint3x4(destinationTransform, agent.LocalDestination);
-                    }
+                    if (
+                        agentSurface.Equals(Entity.Null) ||
+                        destinationSurface.Equals(Entity.Null) ||
+                        !translationFromEntity.Exists(agent.Destination) ||
+                        !localToWorldFromEntity.Exists(agentSurface) ||
+                        !localToWorldFromEntity.Exists(destinationSurface)
+                    ) return;
 
-                    var childTransform = localToWorldFromEntity[entity];
-                    var parentTransform = localToWorldFromEntity[parent];
+                    agent.LocalDestination = translationFromEntity[agent.Destination].Value;
 
-                    var worldPosition = childTransform.Position;
-                    var worldDestination = (Vector3)agent.WorldDestination;
-
+                    var agentPosition = localToWorldFromEntity[entity].Position;
+                    var worldPosition = agentPosition;
+                    var worldDestination = localToWorldFromEntity[agent.Destination].Position;
                     var jumping = jumpingFromEntity.Exists(entity);
 
                     if (jumping)
                     {
-                        worldPosition = agent.WorldDestination;
-                        worldDestination = childTransform.Position;
+                        worldPosition = worldDestination;
+                        worldDestination = agentPosition;
                     }
 
                     var navMeshQueryPointer = navMeshQueryPointerArray[nativeThreadIndex];
@@ -115,14 +121,16 @@ namespace Reese.Nav
                     if (jumping)
                     {
                         var lastValidPoint = float3.zero;
-                        for (int j = 0; j < straightPath.Length; ++j)
-                            if (navMeshQuery.IsValid(straightPath[j].polygon)) lastValidPoint = straightPath[j].position;
+                        for (int i = 0; i < straightPath.Length; ++i)
+                            if (navMeshQuery.IsValid(straightPath[i].polygon)) lastValidPoint = straightPath[i].position;
                             else break;
 
-                        jumpBuffer.Add(NavUtil.MultiplyPoint3x4(
-                            math.inverse(parentTransform.Value),
-                            (float3)lastValidPoint + agent.Offset
-                        ));
+                        jumpBuffer.Add(
+                            NavUtil.MultiplyPoint3x4(
+                                math.inverse(localToWorldFromEntity[destinationSurface].Value),
+                                (float3)lastValidPoint + agent.Offset
+                            )
+                        );
 
                         if (jumpBuffer.Length > 0)
                         {
@@ -134,10 +142,12 @@ namespace Reese.Nav
                     {
                         pathBuffer.Clear();
 
-                        for (int j = 0; j < straightPathCount; ++j) pathBuffer.Add(NavUtil.MultiplyPoint3x4(
-                            math.inverse(parentTransform.Value),
-                            (float3)straightPath[j].position + agent.Offset
-                        ));
+                        for (int i = 0; i < straightPathCount; ++i) pathBuffer.Add(
+                            NavUtil.MultiplyPoint3x4(
+                                math.inverse(localToWorldFromEntity[agentSurface].Value),
+                                (float3)straightPath[i].position + agent.Offset
+                            )
+                        );
 
                         if (pathBuffer.Length > 0)
                         {
