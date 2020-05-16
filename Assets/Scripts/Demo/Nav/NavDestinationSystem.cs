@@ -23,12 +23,14 @@ namespace Reese.Demo
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var jumpableBufferFromEntity = GetBufferFromEntity<NavJumpableBufferElement>(true);
             var renderBoundsFromEntity = GetComponentDataFromEntity<RenderBounds>(true);
+            var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
             var job = Entities
                 .WithNone<NavNeedsDestination>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
+                .WithReadOnly(localToWorldFromEntity)
                 .WithNativeDisableParallelForRestriction(randomArray)
                 .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface) =>
                 {
@@ -55,13 +57,20 @@ namespace Reese.Demo
                     { // For the NavMovingJumpDemo scene.
                         var destinationSurface = jumpableSurfaces[random.NextInt(0, jumpableSurfaces.Length)];
 
+                        var localPoint = NavUtil.GetRandomPointInBounds(
+                            ref random,
+                            renderBoundsFromEntity[destinationSurface].Value,
+                            agent.Offset,
+                            0.7f
+                        );
+
+                        var worldPoint = NavUtil.MultiplyPoint3x4(
+                            localToWorldFromEntity[destinationSurface.Value].Value,
+                            localPoint
+                        );
+
                         commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination{
-                            Value = NavUtil.GetRandomPointInBounds(
-                                ref random,
-                                renderBoundsFromEntity[destinationSurface].Value,
-                                agent.Offset,
-                                0.7f
-                            )
+                            Value = worldPoint
                         });
                     }
 
