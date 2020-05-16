@@ -14,18 +14,22 @@ namespace Reese.Nav
     class NavDestinationSystem : JobComponentSystem
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
-        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
+        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
+            var parentFromEntity = GetComponentDataFromEntity<Parent>();
+            var translationFromEntity = GetComponentDataFromEntity<Translation>();
 
             var createJob = Entities
                 .WithChangeFilter<NavNeedsDestination>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(physicsWorld)
+                .WithNativeDisableParallelForRestriction(parentFromEntity)
+                .WithNativeDisableParallelForRestriction(translationFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination destination) =>
                 {
                     var collider = SphereCollider.Create(
@@ -53,29 +57,45 @@ namespace Reese.Nav
                         if (!physicsWorld.CastCollider(castInput, out ColliderCastHit hit) || hit.RigidBodyIndex == -1) return;
 
                         var surfaceEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-                        var destinationEntity = commandBuffer.CreateEntity(entityInQueryIndex);
 
-                        commandBuffer.AddComponent(entityInQueryIndex, destinationEntity, new NavDestination
-                        {
-                            Agent = entity
-                        });
+                        if (agent.Destination.Equals(Entity.Null)) {
+                            var destinationEntity = commandBuffer.CreateEntity(entityInQueryIndex);
 
-                        commandBuffer.AddComponent(entityInQueryIndex, destinationEntity, new Parent
-                        {
-                            Value = surfaceEntity
-                        });
+                            commandBuffer.AddComponent(entityInQueryIndex, destinationEntity, new NavDestination
+                            {
+                                Agent = entity
+                            });
 
-                        commandBuffer.AddComponent<LocalToParent>(entityInQueryIndex, destinationEntity);
-                        commandBuffer.AddComponent<LocalToWorld>(entityInQueryIndex, destinationEntity);
-                        commandBuffer.AddComponent<Translation>(entityInQueryIndex, destinationEntity);
+                            commandBuffer.AddComponent(entityInQueryIndex, destinationEntity, new Parent
+                            {
+                                Value = surfaceEntity
+                            });
 
-                        commandBuffer.AddComponent(entityInQueryIndex, destinationEntity, new Translation
-                        {
-                            Value = NavUtil.MultiplyPoint3x4(
+                            commandBuffer.AddComponent<LocalToParent>(entityInQueryIndex, destinationEntity);
+                            commandBuffer.AddComponent<LocalToWorld>(entityInQueryIndex, destinationEntity);
+                            commandBuffer.AddComponent<Translation>(entityInQueryIndex, destinationEntity);
+
+                            commandBuffer.AddComponent(entityInQueryIndex, destinationEntity, new Translation
+                            {
+                                Value = NavUtil.MultiplyPoint3x4(
+                                    math.inverse(localToWorldFromEntity[surfaceEntity].Value),
+                                    destination.Value
+                                ) + agent.Offset
+                            });
+                        } else {
+                            var destinationParent = parentFromEntity[agent.Destination];
+                            destinationParent.Value = surfaceEntity;
+                            parentFromEntity[agent.Destination] = destinationParent;
+
+                            var destinationTranslation = translationFromEntity[agent.Destination];
+                            destinationTranslation.Value = NavUtil.MultiplyPoint3x4(
                                 math.inverse(localToWorldFromEntity[surfaceEntity].Value),
                                 destination.Value
-                            ) + agent.Offset
-                        });
+                            ) + agent.Offset;
+                            translationFromEntity[agent.Destination] = destinationTranslation;
+                        }
+
+                        commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                     }
                 })
                 .WithName("CreateDestinationJob")
@@ -98,6 +118,9 @@ namespace Reese.Nav
                     ) return;
 
                     var agent = agentFromEntity[destination.Agent];
+
+                    if (!agent.Destination.Equals(Entity.Null)) return;
+
                     agent.Destination = entity;
                     agentFromEntity[destination.Agent] = agent;
                 })

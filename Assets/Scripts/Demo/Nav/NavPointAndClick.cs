@@ -21,8 +21,6 @@ namespace Reese.Demo
             entityManager.AddComponentData(agentQuery.GetSingletonEntity(), new NavNeedsDestination{
                 Value = hit.point
             });
-
-            entityManager.AddComponent<NavPlanning>(agentQuery.GetSingletonEntity());
         }
     }
 }

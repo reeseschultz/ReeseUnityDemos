@@ -65,7 +65,6 @@ namespace Reese.Demo
                         });
                     }
 
-                    commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                     randomArray[nativeThreadIndex] = random;
                 })
                 .WithName("NavDestinationJob")

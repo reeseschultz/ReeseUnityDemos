@@ -14,6 +14,7 @@ namespace Reese.Nav
     /// UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery by
     /// thread index. NavMeshQuery orchestration here appears to be exemplary
     /// usage. Note that it depends on the third-party PathUtils.</summary>
+    [UpdateBefore(typeof(NavDestinationSystem))]
     unsafe class NavPlanSystem : JobComponentSystem
     {
         /// <summary>For removing the NavPlanning component and adding the
