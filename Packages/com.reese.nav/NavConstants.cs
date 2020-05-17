@@ -10,12 +10,21 @@
 
         /// <summary>Upper limit on the raycast distance when searching
         /// for an obstacle in front of a given NavAgent.</summary>
-        public const float OBSTACLE_RAYCAST_DISTANCE_MAX = 1000;
+        public const float OBSTACLE_RAYCAST_DISTANCE_MAX = 100;
 
         /// <summary>Upper limit on the raycast distance when searching for a
         /// surface below a given NavAgent.</summary>
+        public const float SURFACE_RAYCAST_DISTANCE_MAX = 100;
 
-        public const float SURFACE_RAYCAST_DISTANCE_MAX = 1000;
+        /// <summary>The layer for surfaces.</summary>
+        public const int SURFACE_LAYER = 28;
+
+        /// <summary>The layer for obstacles.</summary>
+        public const int OBSTACLE_LAYER = 29;
+
+        /// <summary>The layer for colliders.</summary>
+        public const int COLLIDER_LAYER = 30;
+
         /// <summary>Upper limit on the iterations performed in a NavMeshQuery
         /// to find a path in the NavPlanSystem.</summary>
         public const int ITERATION_MAX = 1000;

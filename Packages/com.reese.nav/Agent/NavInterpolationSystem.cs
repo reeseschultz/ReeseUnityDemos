@@ -65,7 +65,11 @@ namespace Reese.Nav
                         {
                             Start = localToWorldFromEntity[entity].Position + agent.Offset,
                             End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
-                            Filter = CollisionFilter.Default // TODO : Resolve via Issue #3.
+                            Filter = new CollisionFilter
+                            {
+                                BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
+                                CollidesWith = NavUtil.ToBitMask(NavConstants.OBSTACLE_LAYER)
+                            }
                         };
 
                         if (
