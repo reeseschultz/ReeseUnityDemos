@@ -15,10 +15,12 @@ Here are the design goals of this navigation package:
 5. Support **complex parenting of surfaces** to so-called *bases*, uninformly updating their transforms as a group.
 6. **Parent agents to surfaces** so that agents may navigate across surfaces moving independently of one another.
 7. Support **UPM** via Git and [OpenUPM](https://openupm.com/).
-8. **Include demo scenes** in [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.nav).
+8. **Include demo scenes** in [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scenes/Nav).
 9. **Extensively document** everything.
 
 I care more about usability than performance. The navigation code should be reasonably easy to use and work as expected. Performance is highly important, just not as much as delivering the jumping and parenting features.
+
+Want to know more about why and how I designed this package? Read [this blog post](https://reeseschultz.com/dots-navigation-with-auto-jumping-agents-and-movable-surfaces/).
 
 ## Prerequisites
 
