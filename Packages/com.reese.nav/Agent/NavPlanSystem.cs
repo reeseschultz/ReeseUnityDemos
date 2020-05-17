@@ -22,7 +22,6 @@ namespace Reese.Nav
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
-            var parentFromEntity = GetComponentDataFromEntity<Parent>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var translationFromEntity = GetComponentDataFromEntity<Translation>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
@@ -32,37 +31,27 @@ namespace Reese.Nav
 
             var job = Entities
                 .WithAll<NavPlanning, LocalToParent>()
-                .WithReadOnly(parentFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
-                .WithReadOnly(translationFromEntity)
                 .WithReadOnly(jumpingFromEntity)
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in NavNeedsDestination destination) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in NavNeedsDestination destination, in Parent surface) =>
                 {
                     if (
-                        !parentFromEntity.Exists(entity) ||
-                        agent.Destination.Equals(Entity.Null) ||
-                        !parentFromEntity.Exists(agent.Destination)
+                        surface.Value.Equals(Entity.Null) ||
+                        agent.DestinationSurface.Equals(Entity.Null) ||
+                        !localToWorldFromEntity.Exists(surface.Value) ||
+                        !localToWorldFromEntity.Exists(agent.DestinationSurface)
                     ) return;
-
-                    var agentSurface = parentFromEntity[entity].Value;
-                    var destinationSurface = parentFromEntity[agent.Destination].Value;
-
-                    if (
-                        agentSurface.Equals(Entity.Null) ||
-                        destinationSurface.Equals(Entity.Null) ||
-                        !translationFromEntity.Exists(agent.Destination) ||
-                        !localToWorldFromEntity.Exists(agentSurface) ||
-                        !localToWorldFromEntity.Exists(destinationSurface)
-                    ) return;
-
-                    agent.LocalDestination = translationFromEntity[agent.Destination].Value;
 
                     var agentPosition = localToWorldFromEntity[entity].Position;
                     var worldPosition = agentPosition;
-                    var worldDestination = localToWorldFromEntity[agent.Destination].Position;
+                    var worldDestination = NavUtil.MultiplyPoint3x4(
+                        localToWorldFromEntity[agent.DestinationSurface].Value,
+                        agent.LocalDestination
+                    );
+
                     var jumping = jumpingFromEntity.Exists(entity);
 
                     if (jumping)
@@ -127,7 +116,7 @@ namespace Reese.Nav
 
                         jumpBuffer.Add(
                             NavUtil.MultiplyPoint3x4(
-                                math.inverse(localToWorldFromEntity[destinationSurface].Value),
+                                math.inverse(localToWorldFromEntity[agent.DestinationSurface].Value),
                                 (float3)lastValidPoint + agent.Offset
                             )
                         );
@@ -144,7 +133,7 @@ namespace Reese.Nav
 
                         for (int i = 0; i < straightPathCount; ++i) pathBuffer.Add(
                             NavUtil.MultiplyPoint3x4(
-                                math.inverse(localToWorldFromEntity[agentSurface].Value),
+                                math.inverse(localToWorldFromEntity[surface.Value].Value),
                                 (float3)straightPath[i].position + agent.Offset
                             )
                         );
