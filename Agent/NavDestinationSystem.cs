@@ -36,11 +36,10 @@ namespace Reese.Nav
                             Center = destination.Value,
                             Radius = 1
                         },
-                        new CollisionFilter() // TODO : Resolve via Issue #3.
+                        new CollisionFilter()
                         {
-                            BelongsTo = ~0u,
-                            CollidesWith = ~0u,
-                            GroupIndex = 0
+                            BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
+                            CollidesWith = NavUtil.ToBitMask(NavConstants.SURFACE_LAYER),
                         }
                     );
 
