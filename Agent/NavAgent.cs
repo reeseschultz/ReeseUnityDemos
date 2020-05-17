@@ -76,10 +76,8 @@ namespace Reese.Nav
         /// for setting the type in NavUtil called GetAgentType.</summary>
         public int TypeID;
 
-        /// <summary>This is the destination entity that the agent moves toward.
-        /// Outside the nav systems and debugging, this is not intended to be
-        /// read nor written.</summary>
-        public Entity Destination;
+        /// <summary>This is the destination entity's surface.</summary>
+        public Entity DestinationSurface;
 
         /// <summary>This is the local destination that the agent moves toward.
         /// Outside the nav systems and debugging, this is not intended to be

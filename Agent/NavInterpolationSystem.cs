@@ -22,7 +22,7 @@ namespace Reese.Nav
     class NavInterpolationSystem : JobComponentSystem
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
-        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
@@ -69,8 +69,9 @@ namespace Reese.Nav
                         };
 
                         if (
-                            !physicsWorld.CastRay(rayInput, out RaycastHit hit) &&
-                            !NavUtil.ApproxEquals(translation.Value, localDestination, 1)
+                            !surface.Value.Equals(agent.DestinationSurface) &&
+                            !NavUtil.ApproxEquals(translation.Value, localDestination, 1) &&
+                            !physicsWorld.CastRay(rayInput, out RaycastHit hit)
                         )
                         {
                             agent.JumpSeconds = elapsedSeconds;
@@ -102,7 +103,6 @@ namespace Reese.Nav
             barrier.AddJobHandleForProducer(walkJob);
 
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
-            var parentFromEntity = GetComponentDataFromEntity<Parent>();
             var fallingFromEntity = GetComponentDataFromEntity<NavFalling>();
 
             var artificialGravityJob = Entities
@@ -110,9 +110,8 @@ namespace Reese.Nav
                 .WithAll<LocalToParent>()
                 .WithReadOnly(fallingFromEntity)
                 .WithReadOnly(jumpBufferFromEntity)
-                .WithReadOnly(parentFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in NavAgent agent) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in NavAgent agent, in Parent surface) =>
                 {
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
 
@@ -120,7 +119,11 @@ namespace Reese.Nav
 
                     if (jumpBuffer.Length == 0 && !fallingFromEntity.Exists(entity)) return;
 
-                    var destination = localToWorldFromEntity[agent.Destination].Position;
+                    var destination = NavUtil.MultiplyPoint3x4(
+                        localToWorldFromEntity[agent.DestinationSurface].Value,
+                        agent.LocalDestination
+                    );
+
                     var velocity = Vector3.Distance(translation.Value, destination) / (math.sin(2 * math.radians(agent.JumpDegrees)) / agent.JumpGravity);
                     var yVelocity = math.sqrt(velocity) * math.sin(math.radians(agent.JumpDegrees));
                     var waypoint = translation.Value + math.up() * float.NegativeInfinity;
@@ -128,16 +131,14 @@ namespace Reese.Nav
                     if (!fallingFromEntity.Exists(entity))
                     {
                         var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees));
-                        var agentSurface = parentFromEntity[entity].Value;
-                        var destinationSurface = parentFromEntity[agent.Destination].Value;
 
                         waypoint = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
-                            localToWorldFromEntity[destinationSurface].Value,
+                            localToWorldFromEntity[agent.DestinationSurface].Value,
                             jumpBuffer[0].Value
                         );
 
                         waypoint = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).
-                            math.inverse(localToWorldFromEntity[agentSurface].Value),
+                            math.inverse(localToWorldFromEntity[surface.Value].Value),
                             waypoint
                         );
 
