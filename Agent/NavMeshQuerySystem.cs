@@ -31,7 +31,7 @@ namespace Reese.Nav
     /// But here we index each query by native thread, taking thread
     /// safety into our own hands.</summary>
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    unsafe class NavMeshQuerySystem : ComponentSystem
+    unsafe public class NavMeshQuerySystem : ComponentSystem
     {
         /// <summary>An array of structs containing pointers, each referencing
         /// its own respective NavMeshQuery.</summary>

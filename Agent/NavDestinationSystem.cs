@@ -13,7 +13,7 @@ namespace Reese.Nav
     /// <summary>Creates and updates destinations as persistent entities that
     /// retain location information pertinent to nav agents.</summary>
     [UpdateAfter(typeof(NavSurfaceSystem))]
-    class NavDestinationSystem : JobComponentSystem
+    public class NavDestinationSystem : JobComponentSystem
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();

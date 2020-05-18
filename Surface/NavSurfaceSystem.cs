@@ -14,7 +14,7 @@ namespace Reese.Nav
     /// surface (or lack thereof) underneath a given NavAgent. It also maintains
     /// parent-child relationships.</summary>
     [UpdateAfter(typeof(NavBasisSystem))]
-    class NavSurfaceSystem : JobComponentSystem
+    public class NavSurfaceSystem : JobComponentSystem
     {
         static ConcurrentDictionary<int, bool> needsSurfaceDictionary = new ConcurrentDictionary<int, bool>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
