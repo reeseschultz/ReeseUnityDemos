@@ -10,7 +10,7 @@ namespace Reese.Nav
     /// <summary>This struct is intended to hold a pointer to a NavMeshQuery.
     /// It's annotated with [NativeDisableUnsafePtrRestriction] so any job that
     /// interfaces with said pointer does not complain.</summary>
-    unsafe struct NavMeshQueryPointer
+    unsafe public struct NavMeshQueryPointer
     {
         [NativeDisableUnsafePtrRestriction]
         public void* Value;
@@ -35,7 +35,7 @@ namespace Reese.Nav
     {
         /// <summary>An array of structs containing pointers, each referencing
         /// its own respective NavMeshQuery.</summary>
-        public NativeArray<NavMeshQueryPointer> PointerArray { get; private set; }
+        internal NativeArray<NavMeshQueryPointer> PointerArray { get; private set; }
 
         /// <summary>This list exists because the queries must be disposed from
         /// it, *not* via pointer from the PointerArray, because otherwise the
