@@ -26,6 +26,12 @@ namespace Reese.Nav
         /// written.</summary>
         public float JumpSeconds;
 
+        /// <summary>Jump speed of the agent along the horizontal axis.</summary>
+        public float JumpSpeedMultiplierX;
+
+        /// <summary>Jump speed of the agent along the vertical axis.</summary>
+        public float JumpSpeedMultiplierY;
+
         /// <summary>Writing to this is *required* when spawning an agent. It's
         /// artifical gravity used specifically for the NavInterpolationSystem
         /// to calculate projectile motion. 200 is a reasonable value to try.

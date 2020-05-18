@@ -79,6 +79,8 @@ The [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packa
 
 * `JumpDegrees`: `float` - It's the jump angle in degrees. `45` is a reasonable value to try.
 * `JumpGravity`: `float` - It's artifical gravity used specifically for the projectile motion calculations during jumping. `200` is a reasonable value to try.
+* `JumpSpeedMultiplierX`: `float` - The jump speed. `1.5f` is a reasonable value to try.
+* `JumpSpeedMultiplierY`: `float` - The jump speed. `2` is a reasonable value to try.
 * `TranslationSpeed`: `float` - This is the translation (movement) speed of the agent. `20` is a reasonable value to try.
 * `TypeID`: `int` - This is the type of agent, in terms of the NavMesh system. See examples of use in the demo spawners. There is also a helper method for setting the type from a `string` in the [NavUtil](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/NavUtil.cs) called `GetAgentType`.
 * `Offset`: `float3` - This is the offset of the agent from the basis. It's a `float3` and not a mere float representing the y-component from the surface, which you may find odd. But the idea here is to provide flexibility. While you may usually only set the y-component, there could be situations where you want to set x or z.

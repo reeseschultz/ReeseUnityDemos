@@ -61,7 +61,7 @@ namespace Reese.Demo
                             ref random,
                             renderBoundsFromEntity[destinationSurface].Value,
                             agent.Offset,
-                            0.7f
+                            3
                         );
 
                         var worldPoint = NavUtil.MultiplyPoint3x4(

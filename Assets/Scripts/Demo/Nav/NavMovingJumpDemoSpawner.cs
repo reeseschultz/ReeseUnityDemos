@@ -21,7 +21,9 @@ namespace Reese.Demo
                     new NavAgent
                     {
                         JumpDegrees = 45,
-                        JumpGravity = 200,
+                        JumpGravity = 100,
+                        JumpSpeedMultiplierX = 1.5f,
+                        JumpSpeedMultiplierY = 2,
                         TranslationSpeed = 20,
                         TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
                         Offset = new float3(0, 1, 0)

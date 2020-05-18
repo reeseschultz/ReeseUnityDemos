@@ -134,7 +134,7 @@ namespace Reese.Nav
 
                     if (!fallingFromEntity.Exists(entity))
                     {
-                        var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees));
+                        var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees)) * agent.JumpSpeedMultiplierX;
 
                         waypoint = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
                             localToWorldFromEntity[agent.DestinationSurface].Value,
@@ -149,7 +149,7 @@ namespace Reese.Nav
                         translation.Value = Vector3.MoveTowards(translation.Value, waypoint, xVelocity * deltaSeconds);
                     }
 
-                    translation.Value.y += (yVelocity - (elapsedSeconds - agent.JumpSeconds) * agent.JumpGravity) * deltaSeconds;
+                    translation.Value.y += (yVelocity - (elapsedSeconds - agent.JumpSeconds) * agent.JumpGravity) * deltaSeconds * agent.JumpSpeedMultiplierY;
 
                     if (elapsedSeconds - agent.JumpSeconds >= NavConstants.JUMP_SECONDS_MAX)
                     {
