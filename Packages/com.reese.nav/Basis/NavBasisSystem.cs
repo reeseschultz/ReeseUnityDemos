@@ -10,7 +10,7 @@ namespace Reese.Nav
     /// that parent-child relationships are maintained in lieu of
     /// Unity.Physics' efforts to destroy them.</summary>
     [UpdateAfter(typeof(BuildPhysicsWorld))]
-    class NavBasisSystem : JobComponentSystem
+    public class NavBasisSystem : JobComponentSystem
     {
         /// <summary>The default basis that all other bases and basis-lacking
         /// surfaces are parented to.</summary>

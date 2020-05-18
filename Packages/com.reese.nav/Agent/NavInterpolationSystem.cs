@@ -19,7 +19,7 @@ namespace Reese.Nav
     /// math.
     /// </summary>
     [UpdateAfter(typeof(NavDestinationSystem))]
-    class NavInterpolationSystem : JobComponentSystem
+    public class NavInterpolationSystem : JobComponentSystem
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();

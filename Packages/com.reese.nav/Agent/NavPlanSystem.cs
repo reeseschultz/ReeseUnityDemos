@@ -15,7 +15,7 @@ namespace Reese.Nav
     /// thread index. NavMeshQuery orchestration here appears to be exemplary
     /// usage. Note that it depends on the third-party PathUtils.</summary>
     [UpdateBefore(typeof(NavDestinationSystem))]
-    unsafe class NavPlanSystem : JobComponentSystem
+    unsafe public class NavPlanSystem : JobComponentSystem
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
