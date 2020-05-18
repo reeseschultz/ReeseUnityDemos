@@ -104,7 +104,6 @@ namespace Reese.Nav
                     {
                         if (++agent.SurfaceRaycastCount >= NavConstants.SURFACE_RAYCAST_MAX)
                         {
-                            surface.Value = defaultBasis; // Do *not* set to Entity.Null or else the built-in ChangeParents job *can* throw exceptions.
                             agent.FallSeconds = elapsedSeconds;
 
                             commandBuffer.RemoveComponent<NavNeedsSurface>(entityInQueryIndex, entity);
