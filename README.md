@@ -30,24 +30,26 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 ## Usage
 
 ```csharp
-class SomeJobSystem : JobComponentSystem
-{
-    protected override JobHandle OnUpdate(JobHandle inputDeps)
+namespace YourNamespace {
+    class YourJobSystem : JobComponentSystem
     {
-        var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
+        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        {
+            var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
-        return Entities
-            .WithNativeDisableParallelForRestriction(randomArray)
-            .ForEach((int nativeThreadIndex, ref SomeComponent someComponent) =>
-            {
-                var random = RandomArray[nativeThreadIndex];
+            return Entities
+                .WithNativeDisableParallelForRestriction(randomArray)
+                .ForEach((int nativeThreadIndex, ref YourComponent yourComponent) =>
+                {
+                    var random = randomArray[nativeThreadIndex];
 
-                someComponent.SomeField = random.Next(0, 1000);
+                    yourComponent.SomeField = random.Next(0, 1000);
 
-                RandomArray[nativeThreadIndex] = random; // This is NECESSARY.
-            })
-            .WithName("SomeJob")
-            .Schedule(inputDeps);
+                    randomArray[nativeThreadIndex] = random; // This is NECESSARY.
+                })
+                .WithName("SomeJob")
+                .Schedule(inputDeps);
+        }
     }
 }
 ```
