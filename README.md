@@ -36,27 +36,22 @@ using Reese.Spawning;
 using Unity.Entities;
 using UnityEngine;
 
-namespace SomeNamespace {
+namespace YourNamespace {
     class SomeSpawner : MonoBehaviour
     {
         // Get the default world containing all entities:
-        EntityManager entityManager => World
-            .DefaultGameObjectInjectionWorld
-            .EntityManager;
+        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
         void Start()
         {
-            // Get the entity associated with the prefab:
-            var prefabEntity = entityManager
-                .CreateEntityQuery(typeof(SomePrefab))
-                .GetSingleton<SomePrefab>()
-                .Value;
+            // Get the prefab entity:
+            var prefabEntity = entityManager.CreateEntityQuery(typeof(SomePrefab)).GetSingletonEntity()
 
             // Enqueue spawning (SpawnSystem and Spawn are from Reese.Spawning):
             SpawnSystem.Enqueue(new Spawn()
                 .WithPrefab(prefabEntity) //  Optional prefab entity.
                 .WithComponentList( // Optional comma-delimited list of IComponentData.
-                    new SomeComponent
+                    new YourComponent
                     {
                         Charisma = 6,
                         Intelligence = 3,
@@ -75,4 +70,4 @@ namespace SomeNamespace {
 }
 ```
 
-Spawning on `Update` is easy too, perhaps via button click. For an example of that, see the redundantly-named [SpawnDemoSpawner](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/SpawnDemoSpawner.cs).
+Spawning on `Update` is easy too, perhaps triggered via button click. For an example of that, see the redundantly-named [SpawnDemoSpawner](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/SpawnDemoSpawner.cs).
