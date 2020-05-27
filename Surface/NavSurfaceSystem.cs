@@ -100,7 +100,7 @@ namespace Reese.Nav
                         }
                     };
 
-                    if (!physicsWorld.CastRay(rayInput, out RaycastHit hit) || hit.RigidBodyIndex == -1)
+                    if (!physicsWorld.CastRay(rayInput, out RaycastHit hit))
                     {
                         if (++agent.SurfaceRaycastCount >= NavConstants.SURFACE_RAYCAST_MAX)
                         {

@@ -10,11 +10,11 @@
 
         /// <summary>Upper limit on the raycast distance when searching
         /// for an obstacle in front of a given NavAgent.</summary>
-        public const float OBSTACLE_RAYCAST_DISTANCE_MAX = 100;
+        public const float OBSTACLE_RAYCAST_DISTANCE_MAX = 1000;
 
         /// <summary>Upper limit on the raycast distance when searching for a
         /// surface below a given NavAgent.</summary>
-        public const float SURFACE_RAYCAST_DISTANCE_MAX = 100;
+        public const float SURFACE_RAYCAST_DISTANCE_MAX = 1000;
 
         /// <summary>The layer for surfaces.</summary>
         public const int SURFACE_LAYER = 28;
