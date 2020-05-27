@@ -51,7 +51,7 @@ namespace Reese.Nav
                             Orientation = quaternion.identity
                         };
 
-                        if (!physicsWorld.CastCollider(castInput, out ColliderCastHit hit) || hit.RigidBodyIndex == -1)
+                        if (!physicsWorld.CastCollider(castInput, out ColliderCastHit hit))
                         {
                             commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity); // Ignore invalid destinations.
                             return;
