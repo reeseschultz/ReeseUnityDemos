@@ -34,7 +34,7 @@ namespace Reese.Nav
                         new SphereGeometry()
                         {
                             Center = destination.Value,
-                            Radius = 1
+                            Radius = NavConstants.DESTINATION_SURFACE_COLLIDER_RADIUS
                         },
                         new CollisionFilter()
                         {

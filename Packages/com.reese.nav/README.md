@@ -138,6 +138,7 @@ The nav package handles bit masking so you don't have to.
 
 Additionally, there are other user-facing constants you may need to change:
 
+* `DESTINATION_SURFACE_COLLIDER_RADIUS`: `float` - Default is `1`. A sphere collider of the specified radius is used to detect the destination surface.
 * `JUMP_SECONDS_MAX`: `float` - Default is `5`. Upper limit on the *duration* spent jumping before the agent is actually considered falling. This limit can be reached when the agent tries to jump too close to the edge of a surface and misses.
 * `OBSTACLE_RAYCAST_DISTANCE_MAX`: `float` - Default is `100`. Upper limit on the [raycast](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts) distance when searching for an obstacle in front of a given NavAgent.
 * `SURFACE_RAYCAST_DISTANCE_MAX`: `float` - Default is `100`. Upper limit on the [raycast](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts) distance when searching for a surface below a given [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs).
