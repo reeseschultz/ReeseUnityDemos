@@ -48,7 +48,6 @@ namespace Reese.Demo
                             Value = NavUtil.GetRandomPointInBounds(
                                 ref random,
                                 renderBoundsFromEntity[surface.Value].Value,
-                                agent.Offset,
                                 99
                             )
                         });
@@ -60,7 +59,6 @@ namespace Reese.Demo
                         var localPoint = NavUtil.GetRandomPointInBounds(
                             ref random,
                             renderBoundsFromEntity[destinationSurface].Value,
-                            agent.Offset,
                             3
                         );
 

@@ -22,7 +22,7 @@ namespace Reese.Nav
         /// to ensure the state of the random number generator is updated--that
         /// way the job this is called from can ensure that state change is
         /// preserved for the next job using said generator.</summary>
-        public static float3 GetRandomPointInBounds(ref Unity.Mathematics.Random random, AABB aabb, float3 offset, float scale)
+        public static float3 GetRandomPointInBounds(ref Unity.Mathematics.Random random, AABB aabb, float scale)
         {
             var extents = aabb.Center + aabb.Extents * scale;
 
@@ -32,7 +32,7 @@ namespace Reese.Nav
                 random.NextFloat(-extents.z, extents.z)
             );
 
-            return position + offset;
+            return position;
         }
 
         /// <summary>Transforms a point, reimplementing the old
