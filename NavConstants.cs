@@ -2,6 +2,10 @@
 {
     public static class NavConstants
     {
+        /// <summary>A sphere collider of the specified radius is used to
+        /// detect the destination surface.</summary>
+        public const float DESTINATION_SURFACE_COLLIDER_RADIUS = 1;
+
         /// <summary>Upper limit on the *duration* spent jumping before the
         /// agent is actually considered falling. This limit can be reached 
         /// when the agent tries to jump too close to the edge of a surface
