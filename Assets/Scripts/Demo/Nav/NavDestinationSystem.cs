@@ -45,7 +45,7 @@ namespace Reese.Demo
                     if (jumpableSurfaces.Length == 0)
                     { // For the NavPerformanceDemo scene.
                         commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination{
-                            Value = NavUtil.GetRandomPointInBounds(
+                            Destination = NavUtil.GetRandomPointInBounds(
                                 ref random,
                                 renderBoundsFromEntity[surface.Value].Value,
                                 99
@@ -68,7 +68,7 @@ namespace Reese.Demo
                         );
 
                         commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination{
-                            Value = worldPoint
+                            Destination = worldPoint
                         });
                     }
 

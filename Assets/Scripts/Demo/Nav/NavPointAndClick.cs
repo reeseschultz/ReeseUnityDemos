@@ -1,34 +1,51 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Reese.Nav;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Reese.Demo
 {
     class NavPointAndClick : MonoBehaviour
     {
-        public Camera cam;
+        public Camera Cam;
+        public Text TeleportationText;
+
+        bool teleport;
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
         EntityQuery agentQuery => entityManager.CreateEntityQuery(typeof(NavAgent));
         GameObject agentTransformGameObject;
 
-        void Start() {
+        void Start()
+        {
             agentTransformGameObject = new GameObject("Agent Transform GameObject");
 
-            if (cam == null) return;
+            if (Cam == null) return;
 
-            cam.transform.SetParent(agentTransformGameObject.transform);
+            Cam.transform.SetParent(agentTransformGameObject.transform);
         }
 
         void LateUpdate()
         {
-            if (cam == null) return;
+            if (Cam == null || TeleportationText == null) return;
+
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                teleport = !teleport;
+
+                if (teleport) TeleportationText.text = "Press <b>T</b> to toggle teleportation. It's <b>on</b>.";
+                else TeleportationText.text = "Press <b>T</b> to toggle teleportation. It's <b>off</b>.";
+            }
 
             Entity agentEntity;
-            try {
+            try
+            {
                 agentEntity = agentQuery.GetSingletonEntity();
-            } catch {
+            }
+            catch
+            {
                 return;
             }
 
@@ -36,15 +53,17 @@ namespace Reese.Demo
 
             var agentPosition = entityManager.GetComponentData<LocalToWorld>(agentEntity).Position;
             agentTransformGameObject.transform.SetPositionAndRotation(agentPosition, Quaternion.identity);
-            cam.gameObject.transform.LookAt(agentTransformGameObject.transform, Vector3.up);
+            Cam.gameObject.transform.LookAt(agentTransformGameObject.transform, Vector3.up);
 
             if (
                 !Input.GetMouseButtonDown(0) ||
-                !Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out RaycastHit hit)
+                !Physics.Raycast(Cam.ScreenPointToRay(Input.mousePosition), out RaycastHit hit)
             ) return;
 
-            entityManager.AddComponentData(agentEntity, new NavNeedsDestination{
-                Value = hit.point
+            entityManager.AddComponentData(agentEntity, new NavNeedsDestination
+            {
+                Destination = hit.point,
+                Teleport = teleport
             });
         }
     }
