@@ -96,7 +96,7 @@ namespace Reese.Nav
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation, in LocalToWorld localToWorld) =>
                 {
                     if (
                         !surface.Value.Equals(Entity.Null) &&
@@ -108,7 +108,7 @@ namespace Reese.Nav
                     var rayInput = new RaycastInput
                     {
                         Start = localToWorldFromEntity[entity].Position + agent.Offset,
-                        End = -math.up() * NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
+                        End = -localToWorld.Up *NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
                         Filter = new CollisionFilter()
                         {
                             BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
