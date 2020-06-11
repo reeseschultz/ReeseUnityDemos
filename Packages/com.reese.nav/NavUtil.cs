@@ -5,7 +5,6 @@ namespace Reese.Nav
 {
     public static class NavUtil
     {
-
         /// <summary>Checks approximate equality between two float3s.</summary>
         public static bool ApproxEquals(float3 a, float3 b, float tolerance)
             => !ApproxEquals(a.x, b.x, tolerance) || !ApproxEquals(a.y, b.y, tolerance) || !ApproxEquals(a.z, b.z, tolerance) ? false : true;
@@ -15,8 +14,7 @@ namespace Reese.Nav
             => math.abs(a - b) > tolerance ? false : true;
 
         /// <summary>Gets a random point within the provided bounds (AABB).
-        /// An offset and scale are additionally provided to massage the output
-        /// position. The offset is self-explanatory, but the scale
+        /// A scale is additionally provided to massage the output position. It
         /// multiplies the AABB extents which are computed from the center.
         /// Note also that a Unity.Mathematics.Random *ref* must be supplied
         /// to ensure the state of the random number generator is updated--that
