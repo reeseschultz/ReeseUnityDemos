@@ -20,7 +20,11 @@ namespace Reese.Nav
 
     /// <summary>Exists if the agent needs a destination.</summary>
     public struct NavNeedsDestination : IComponentData {
+        /// <summary>The 3D destination coordinate.</summary>
         public float3 Destination;
+
+        /// <summary>True if teleporting to the specified destination, false if
+        /// not (the default).</summary>
         public bool Teleport;
     }
 
