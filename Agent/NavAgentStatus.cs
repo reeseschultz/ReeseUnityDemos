@@ -20,7 +20,8 @@ namespace Reese.Nav
 
     /// <summary>Exists if the agent needs a destination.</summary>
     public struct NavNeedsDestination : IComponentData {
-        public float3 Value;
+        public float3 Destination;
+        public bool Teleport;
     }
 
     /// <summary>Exists if the agent is planning paths or jumps.</summary>

@@ -28,12 +28,12 @@ namespace Reese.Nav
                 .WithChangeFilter<NavNeedsDestination>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(physicsWorld)
-                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination destination) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination needsDestination) =>
                 {
                     var collider = SphereCollider.Create(
                         new SphereGeometry()
                         {
-                            Center = destination.Value,
+                            Center = needsDestination.Destination,
                             Radius = NavConstants.DESTINATION_SURFACE_COLLIDER_RADIUS
                         },
                         new CollisionFilter()
@@ -57,12 +57,30 @@ namespace Reese.Nav
                             return;
                         }
 
-                        agent.DestinationSurface = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-
-                        agent.LocalDestination = NavUtil.MultiplyPoint3x4(
-                            math.inverse(localToWorldFromEntity[agent.DestinationSurface].Value),
-                            destination.Value
+                        var destination = NavUtil.MultiplyPoint3x4(
+                            math.inverse(localToWorldFromEntity[hit.Entity].Value),
+                            needsDestination.Destination
                         ) + agent.Offset;
+
+                        if (needsDestination.Teleport)
+                        {
+                            commandBuffer.SetComponent<Parent>(entityInQueryIndex, entity, new Parent
+                            {
+                                Value = hit.Entity
+                            });
+
+                            commandBuffer.SetComponent<Translation>(entityInQueryIndex, entity, new Translation
+                            {
+                                Value = destination
+                            });
+
+                            commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
+
+                            return;
+                        }
+
+                        agent.DestinationSurface = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
+                        agent.LocalDestination = destination;
 
                         commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                     }

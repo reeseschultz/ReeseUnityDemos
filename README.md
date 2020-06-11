@@ -99,7 +99,7 @@ Here are the internally-managed component tags (defined in [NavAgentStatus](http
 
 You should, however, write to the following component in your user code:
 
-* `NavNeedsDestination` - Exists if the agent needs a destination. There's field in here named `Value` of type `float3` which comprises your requested destination as a 3D coordinate.
+* `NavNeedsDestination` - Exists if the agent needs a destination. In this `struct`, there's a self-explanatory `float3` named `Destination`. There's also an optional `bool` named `Teleport`, which toggles teleportation to the provided `Destination`.
 
 See the [NavDestinationSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/Nav/NavDestinationSystem.cs) and [NavPointAndClickDestinationSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/Nav/NavPointAndClickDestinationSystem.cs) in [Assets/Scripts/Demo/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Demo/Nav) for examples of querying and reading information out of agents to determine when and how to assign destinations.
 
