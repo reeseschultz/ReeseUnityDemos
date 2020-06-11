@@ -77,8 +77,6 @@ namespace Reese.Demo
                         Offset = new float3(0, 1, 0)
                     },
                     new NavNeedsSurface { },
-                    new Parent { },
-                    new LocalToParent { },
                     new Translation
                     {
                         Value = new float3(0, 1, 0)
