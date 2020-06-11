@@ -17,6 +17,7 @@ namespace Reese.Nav
     public class NavSurfaceSystem : JobComponentSystem
     {
         static ConcurrentDictionary<int, bool> needsSurfaceDictionary = new ConcurrentDictionary<int, bool>();
+
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
@@ -27,7 +28,7 @@ namespace Reese.Nav
 
             // Below job is needed because Unity.Physics removes the Parent
             // component for dynamic bodies.
-            var addParentJob = Entities
+            var addParentToSurfaceJob = Entities
                 .WithNone<Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavSurface surface) =>
                 {
@@ -46,13 +47,28 @@ namespace Reese.Nav
                         });
                     }
 
-                    commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(LocalToParent));
+                    commandBuffer.AddComponent<LocalToParent>(entityInQueryIndex, entity);
                 })
                 .WithoutBurst()
                 .WithName("NavAddParentToSurfaceJob")
                 .Schedule(inputDeps);
 
-            barrier.AddJobHandleForProducer(addParentJob);
+            barrier.AddJobHandleForProducer(addParentToSurfaceJob);
+
+            // Below job is needed so users don't have to manually add the
+            // Parent and LocalToParent components when spawning agents.
+            var addParentToAgentJob = Entities
+                .WithNone<Parent>()
+                .ForEach((Entity entity, int entityInQueryIndex, in NavAgent agent) =>
+                {
+                    commandBuffer.AddComponent<Parent>(entityInQueryIndex, entity);
+                    commandBuffer.AddComponent<LocalToParent>(entityInQueryIndex, entity);
+                })
+                .WithoutBurst()
+                .WithName("NavAddParentToAgentJob")
+                .Schedule(addParentToSurfaceJob);
+
+            barrier.AddJobHandleForProducer(addParentToAgentJob);
 
             // Below job is needed because Unity.Transforms assumes that
             // children should be scaled by their surface by automatically
@@ -65,7 +81,7 @@ namespace Reese.Nav
                     commandBuffer.RemoveComponent<CompositeScale>(entityInQueryIndex, entity);
                 })
                 .WithName("NavRemoveCompositeScaleJob")
-                .Schedule(addParentJob);
+                .Schedule(addParentToAgentJob);
 
             barrier.AddJobHandleForProducer(removeCompositeScaleJob);
 
