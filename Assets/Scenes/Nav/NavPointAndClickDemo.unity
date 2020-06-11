@@ -664,7 +664,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e018c9cb94a9441b193fface4acbd848, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 1201142297}
+  Cam: {fileID: 1201142297}
+  TeleportationText: {fileID: 1336197620}
 --- !u!114 &550583990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1605,7 +1606,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Press <b>T</b> to toggle teleportation. It's off.
+  m_Text: Press <b>T</b> to toggle teleportation. It's <b>off</b>.
 --- !u!222 &1336197621
 CanvasRenderer:
   m_ObjectHideFlags: 0
