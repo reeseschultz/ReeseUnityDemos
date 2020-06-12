@@ -41,6 +41,7 @@ namespace Reese.Nav
                 .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation, in Parent surface) =>
                 {
+                    if (!pathBufferFromEntity.Exists(entity)) return;
                     var pathBuffer = pathBufferFromEntity[entity];
 
                     if (pathBuffer.Length == 0) return;
@@ -119,6 +120,7 @@ namespace Reese.Nav
                 {
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
 
+                    if (!jumpBufferFromEntity.Exists(entity)) return;
                     var jumpBuffer = jumpBufferFromEntity[entity];
 
                     if (jumpBuffer.Length == 0 && !fallingFromEntity.Exists(entity)) return;
