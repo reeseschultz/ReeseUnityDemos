@@ -10,7 +10,7 @@ namespace Reese.Nav
     /// that parent-child relationships are maintained in lieu of
     /// Unity.Physics' efforts to destroy them.</summary>
     [UpdateAfter(typeof(BuildPhysicsWorld))]
-    public class NavBasisSystem : JobComponentSystem
+    public class NavBasisSystem : SystemBase
     {
         /// <summary>The default basis that all other bases and basis-lacking
         /// surfaces are parented to.</summary>
@@ -29,13 +29,13 @@ namespace Reese.Nav
             // entityManager.SetName(defaultBasis, "DefaultBasis"); // Used to make builds fail. Not sure if it still does.
         }
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
 
             // Below job is needed because Unity.Physics removes the Parent
             // component for dynamic bodies.
-            var addParentJob = Entities
+            Entities
                 .WithNone<Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavBasis basis) =>
                 {
@@ -50,11 +50,9 @@ namespace Reese.Nav
                 })
                 .WithoutBurst()
                 .WithName("NavAddParentToBasisJob")
-                .Schedule(inputDeps);
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(addParentJob);
-
-            return addParentJob;
+            barrier.AddJobHandleForProducer(Dependency);
         }
     }
 }

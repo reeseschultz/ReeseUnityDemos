@@ -1,11 +1,9 @@
 ﻿using Unity.Entities;
 using Unity.Jobs;
-using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
 using RaycastHit = Unity.Physics.RaycastHit;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
-using Unity.Collections;
 using System.Collections.Concurrent;
 
 namespace Reese.Nav
@@ -14,21 +12,21 @@ namespace Reese.Nav
     /// surface (or lack thereof) underneath a given NavAgent. It also maintains
     /// parent-child relationships.</summary>
     [UpdateAfter(typeof(NavBasisSystem))]
-    public class NavSurfaceSystem : JobComponentSystem
+    public class NavSurfaceSystem : SystemBase
     {
         static ConcurrentDictionary<int, bool> needsSurfaceDictionary = new ConcurrentDictionary<int, bool>();
 
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var defaultBasis = World.GetExistingSystem<NavBasisSystem>().DefaultBasis;
 
             // Below job is needed because Unity.Physics removes the Parent
             // component for dynamic bodies.
-            var addParentToSurfaceJob = Entities
+            Entities
                 .WithNone<Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavSurface surface) =>
                 {
@@ -51,13 +49,13 @@ namespace Reese.Nav
                 })
                 .WithoutBurst()
                 .WithName("NavAddParentToSurfaceJob")
-                .Schedule(inputDeps);
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(addParentToSurfaceJob);
+            barrier.AddJobHandleForProducer(Dependency);
 
             // Below job is needed so users don't have to manually add the
             // Parent and LocalToParent components when spawning agents.
-            var addParentToAgentJob = Entities
+            Entities
                 .WithNone<Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavAgent agent) =>
                 {
@@ -66,14 +64,14 @@ namespace Reese.Nav
                 })
                 .WithoutBurst()
                 .WithName("NavAddParentToAgentJob")
-                .Schedule(addParentToSurfaceJob);
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(addParentToAgentJob);
+            barrier.AddJobHandleForProducer(Dependency);
 
             // Below job is needed because Unity.Transforms assumes that
             // children should be scaled by their surface by automatically
             // providing them with a CompositeScale.
-            var removeCompositeScaleJob = Entities
+            Entities
                 .WithAll<CompositeScale>()
                 .WithAny<NavSurface, NavBasis>()
                 .ForEach((Entity entity, int entityInQueryIndex) =>
@@ -81,19 +79,19 @@ namespace Reese.Nav
                     commandBuffer.RemoveComponent<CompositeScale>(entityInQueryIndex, entity);
                 })
                 .WithName("NavRemoveCompositeScaleJob")
-                .Schedule(addParentToAgentJob);
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(removeCompositeScaleJob);
+            barrier.AddJobHandleForProducer(Dependency);
 
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
-            var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
-            var navSurfaceTrackingJob = Entities
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+
+            Entities
                 .WithNone<NavFalling, NavJumping>()
                 .WithAll<NavNeedsSurface, LocalToParent>()
-                .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation, in LocalToWorld localToWorld) =>
@@ -107,7 +105,7 @@ namespace Reese.Nav
 
                     var rayInput = new RaycastInput
                     {
-                        Start = localToWorldFromEntity[entity].Position + agent.Offset,
+                        Start = localToWorld.Position + agent.Offset,
                         End = -localToWorld.Up *NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
                         Filter = new CollisionFilter()
                         {
@@ -145,16 +143,9 @@ namespace Reese.Nav
                 })
                 .WithoutBurst()
                 .WithName("NavSurfaceTrackingJob")
-                .Schedule(
-                    JobHandle.CombineDependencies(
-                        removeCompositeScaleJob,
-                        buildPhysicsWorld.FinalJobHandle
-                    )
-                );
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(navSurfaceTrackingJob);
-
-            return navSurfaceTrackingJob;
+            barrier.AddJobHandleForProducer(Dependency);
         }
     }
 }
