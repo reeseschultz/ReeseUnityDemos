@@ -15,11 +15,11 @@ namespace Reese.Nav
     /// thread index. NavMeshQuery orchestration here appears to be exemplary
     /// usage. Note that it depends on the third-party PathUtils.</summary>
     [UpdateBefore(typeof(NavDestinationSystem))]
-    unsafe public class NavPlanSystem : JobComponentSystem
+    unsafe public class NavPlanSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
@@ -29,7 +29,7 @@ namespace Reese.Nav
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var navMeshQueryPointerArray = World.GetExistingSystem<NavMeshQuerySystem>().PointerArray;
 
-            var job = Entities
+            Entities
                 .WithAll<NavPlanning, LocalToParent>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(jumpingFromEntity)
@@ -151,12 +151,10 @@ namespace Reese.Nav
                     vertexSide.Dispose();
                 })
                 .WithName("NavPlanJob")
-                .Schedule(inputDeps);
+                .ScheduleParallel();
 
-            NavMeshWorld.GetDefaultWorld().AddDependency(job);
-            barrier.AddJobHandleForProducer(job);
-
-            return job;
+            NavMeshWorld.GetDefaultWorld().AddDependency(Dependency);
+            barrier.AddJobHandleForProducer(Dependency);
         }
     }
 }

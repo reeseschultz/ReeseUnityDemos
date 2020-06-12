@@ -31,9 +31,9 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 
 ```csharp
 namespace YourNamespace {
-    class YourJobSystem : JobComponentSystem
+    class YourJobSystem : SystemBase
     {
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
@@ -48,7 +48,7 @@ namespace YourNamespace {
                     randomArray[nativeThreadIndex] = random; // This is NECESSARY.
                 })
                 .WithName("SomeJob")
-                .Schedule(inputDeps);
+                .ScheduleParallel();
         }
     }
 }

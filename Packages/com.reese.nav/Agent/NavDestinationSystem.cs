@@ -3,7 +3,6 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
-using Unity.Collections;
 using Collider = Unity.Physics.Collider;
 using SphereCollider = Unity.Physics.SphereCollider;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
@@ -13,18 +12,20 @@ namespace Reese.Nav
     /// <summary>Creates and updates destinations as persistent entities that
     /// retain location information pertinent to nav agents.</summary>
     [UpdateAfter(typeof(NavSurfaceSystem))]
-    public class NavDestinationSystem : JobComponentSystem
+    public class NavDestinationSystem : SystemBase
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
-            var createJob = Entities
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+
+            Entities
                 .WithChangeFilter<NavNeedsDestination>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(physicsWorld)
@@ -86,14 +87,9 @@ namespace Reese.Nav
                     }
                 })
                 .WithName("CreateDestinationJob")
-                .Schedule(JobHandle.CombineDependencies(
-                    inputDeps,
-                    buildPhysicsWorld.FinalJobHandle
-                ));
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(createJob);
-
-            return createJob;
+            barrier.AddJobHandleForProducer(Dependency);
         }
     }
 }

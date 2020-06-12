@@ -1,26 +1,25 @@
-﻿using Unity.Collections;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace Reese.Demo
 {
-    class NavTranslatorSystem : JobComponentSystem
+    class NavTranslatorSystem : SystemBase
     {
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
             var elapsedSeconds = (float)Time.ElapsedTime;
             var deltaSeconds = Time.DeltaTime;
 
-            return Entities
+            Entities
                 .WithAny<NavTranslator>()
                 .ForEach((ref Translation translation, ref Rotation rotation) =>
                 {
                     translation.Value.y = math.sin(elapsedSeconds) * 10;
                 })
                 .WithName("NavTranslatorJob")
-                .Schedule(inputDeps);
+                .ScheduleParallel();
         }
     }
 }

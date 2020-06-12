@@ -1,6 +1,5 @@
 ﻿using Reese.Nav;
 using Reese.Random;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Rendering;
@@ -9,16 +8,16 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
-    class NavDestinationSystem : JobComponentSystem
+    class NavDestinationSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
             if (
                 !SceneManager.GetActiveScene().name.Equals("NavPerformanceDemo") &&
                 !SceneManager.GetActiveScene().name.Equals("NavMovingJumpDemo")
-            ) return inputDeps;
+            ) return;
 
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var jumpableBufferFromEntity = GetBufferFromEntity<NavJumpableBufferElement>(true);
@@ -26,7 +25,7 @@ namespace Reese.Demo
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
-            var job = Entities
+            Entities
                 .WithNone<NavNeedsDestination>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
@@ -75,11 +74,9 @@ namespace Reese.Demo
                     randomArray[nativeThreadIndex] = random;
                 })
                 .WithName("NavDestinationJob")
-                .Schedule(inputDeps);
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(job);
-
-            return job;
+            barrier.AddJobHandleForProducer(Dependency);
         }
     }
 }

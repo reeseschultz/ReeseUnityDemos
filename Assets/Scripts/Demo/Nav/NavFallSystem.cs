@@ -6,32 +6,31 @@ using UnityEngine;
 
 namespace Reese.Demo
 {
-    class NavFallSystem : JobComponentSystem
+    class NavFallSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var fallSecondsMax = 5;
 
-            var job = Entities
+            Entities
                 .WithAll<NavFalling>()
-                .ForEach((Entity entity, int entityInQueryIndex, in NavAgent agent) => {
+                .ForEach((Entity entity, int entityInQueryIndex, in NavAgent agent) =>
+                {
                     if (elapsedSeconds - agent.FallSeconds >= fallSecondsMax)
                     {
                         commandBuffer.DestroyEntity(entityInQueryIndex, entity);
                         Debug.Log("Agent with entity ID = " + entity.Index + " has fallen to their death.");
-                    }                   
+                    }
                 })
                 .WithoutBurst()
                 .WithName("NavFallJob")
-                .Schedule(inputDeps);
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(job);
-
-            return job;
+            barrier.AddJobHandleForProducer(Dependency);
         }
     }
 }

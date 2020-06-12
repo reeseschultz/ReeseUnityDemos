@@ -19,12 +19,12 @@ namespace Reese.Nav
     /// math.
     /// </summary>
     [UpdateAfter(typeof(NavDestinationSystem))]
-    public class NavInterpolationSystem : JobComponentSystem
+    public class NavInterpolationSystem : SystemBase
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var elapsedSeconds = (float)Time.ElapsedTime;
@@ -33,7 +33,9 @@ namespace Reese.Nav
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
-            var walkJob = Entities
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+
+            Entities
                 .WithNone<NavPlanning, NavJumping>()
                 .WithAll<NavLerping, LocalToParent>()
                 .WithReadOnly(pathBufferFromEntity)
@@ -98,19 +100,14 @@ namespace Reese.Nav
                     translation.Value = Vector3.MoveTowards(translation.Value, localWaypoint, agent.TranslationSpeed * deltaSeconds);
                 })
                 .WithName("NavWalkJob")
-                .Schedule(
-                    JobHandle.CombineDependencies(
-                        inputDeps,
-                        buildPhysicsWorld.FinalJobHandle
-                    )
-                );
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(walkJob);
+            barrier.AddJobHandleForProducer(Dependency);
 
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var fallingFromEntity = GetComponentDataFromEntity<NavFalling>();
 
-            var artificialGravityJob = Entities
+            Entities
                 .WithAny<NavFalling, NavJumping>()
                 .WithAll<LocalToParent>()
                 .WithReadOnly(fallingFromEntity)
@@ -165,11 +162,9 @@ namespace Reese.Nav
                     commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
                 })
                 .WithName("NavArtificialGravityJob")
-                .Schedule(walkJob);
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(artificialGravityJob);
-
-            return artificialGravityJob;
+            barrier.AddJobHandleForProducer(Dependency);
         }
     }
 }

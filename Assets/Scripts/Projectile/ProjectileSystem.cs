@@ -9,18 +9,18 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
-    class ProjectileSystem : JobComponentSystem
+    class ProjectileSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        protected override void OnUpdate()
         {
-            if (!SceneManager.GetActiveScene().name.Equals("ProjectileDemo")) return inputDeps;
+            if (!SceneManager.GetActiveScene().name.Equals("ProjectileDemo")) return;
 
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
 
-            var setProjectileJob = Entities
+            Entities
                 .WithNativeDisableParallelForRestriction(randomArray)
                 .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, in Projectile projectile) =>
                 {
@@ -42,14 +42,13 @@ namespace Reese.Demo
                     randomArray[nativeThreadIndex] = random;
                 })
                 .WithName("SetProjectileJob")
-                .Schedule(inputDeps);
+                .ScheduleParallel();
 
-            barrier.AddJobHandleForProducer(setProjectileJob);
-            setProjectileJob.Complete();
+            barrier.AddJobHandleForProducer(Dependency);
 
             var deltaSeconds = Time.DeltaTime;
 
-            var launchJob = Entities
+            Entities
                 .ForEach((ref Projectile projectile, ref Translation translation) =>
                 {
                     if (!projectile.HasTarget) return;
@@ -69,9 +68,7 @@ namespace Reese.Demo
                     projectile.HasTarget = false;
                 })
                 .WithName("LaunchJob")
-                .Schedule(inputDeps);
-
-            return JobHandle.CombineDependencies(setProjectileJob, launchJob);
+                .ScheduleParallel();
         }
     }
 }
