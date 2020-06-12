@@ -37,7 +37,7 @@ namespace YourNamespace {
         {
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
-            return Entities
+            Entities
                 .WithNativeDisableParallelForRestriction(randomArray)
                 .ForEach((int nativeThreadIndex, ref YourComponent yourComponent) =>
                 {
