@@ -92,13 +92,13 @@ Install Mono by following [these directions](https://www.mono-project.com/downlo
 
 ### Burst Prerequisite Setup
 
-On Ubuntu I couldn't use the [Burst compiler](https://docs.unity3d.com/Packages/com.unity.burst@1.2/manual/index.html) until I manually installed `gcc-multilib` and `libncurses5` with:
+Avoid sandboxing Unity Hub and Unity with Flatpak or Snap, otherwise `libdl.so` may be inaccessible to the editor.
+
+Also, on Ubuntu, you may need to manually install `gcc-multilib` and `libncurses5` with:
 
 ```sh
 sudo apt install gcc-multilib libncurses5
 ```
-
-You may have these libraries already, or you could be experiencing a different problem. Be sure to read any error messages the Unity Editor outputs.
 
 ### Contributor Agreement
 
