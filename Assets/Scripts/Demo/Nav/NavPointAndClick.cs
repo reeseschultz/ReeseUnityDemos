@@ -10,10 +10,14 @@ namespace Reese.Demo
 {
     class NavPointAndClick : MonoBehaviour
     {
-        public Camera Cam = null;
-        public Text TeleportationText = null;
+        [SerializeField]
+        Camera Cam = null;
 
-        bool teleport;
+        [SerializeField]
+        Text TeleportationText = null;
+
+        bool teleport = false;
+
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
         EntityQuery agentQuery => entityManager.CreateEntityQuery(typeof(NavAgent));
         GameObject agentTransformGameObject;

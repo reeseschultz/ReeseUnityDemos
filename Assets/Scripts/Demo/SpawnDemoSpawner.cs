@@ -10,10 +10,17 @@ namespace Reese.Demo
 {
     class SpawnDemoSpawner : MonoBehaviour
     {
-        public bool IsForAgents = false;
-        public Button Button = null;
-        public Text SpawnText = null;
-        public Slider Slider = null;
+        [SerializeField]
+        bool IsForAgents = false;
+
+        [SerializeField]
+        Button Button = null;
+
+        [SerializeField]
+        Text SpawnText = null;
+
+        [SerializeField]
+        Slider Slider = null;
 
         int enqueueCount = 1;
 
@@ -45,7 +52,8 @@ namespace Reese.Demo
 
         void Enqueue()
         {
-            if (!IsForAgents) {
+            if (!IsForAgents)
+            {
                 var random = new Unity.Mathematics.Random((uint)new System.Random().Next());
 
                 for (int i = 0; i < enqueueCount; ++i) SpawnSystem.Enqueue(new Spawn()
