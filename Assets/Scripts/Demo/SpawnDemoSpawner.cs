@@ -10,10 +10,10 @@ namespace Reese.Demo
 {
     class SpawnDemoSpawner : MonoBehaviour
     {
-        public bool IsForAgents;
-        public Button Button;
-        public Text SpawnText;
-        public Slider Slider;
+        public bool IsForAgents = false;
+        public Button Button = null;
+        public Text SpawnText = null;
+        public Slider Slider = null;
 
         int enqueueCount = 1;
 

@@ -1,4 +1,6 @@
-﻿using Unity.Entities;
+﻿#pragma warning disable 0649
+
+using Unity.Entities;
 
 namespace Reese.Demo
 {
