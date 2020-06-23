@@ -8,17 +8,18 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
-    class NavDestinationSystem : SystemBase
+    class NavMovingJumpDestinationSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
+        protected override void OnCreate()
+        {
+            if (!SceneManager.GetActiveScene().name.Equals("NavMovingJumpDemo"))
+                Enabled = false;
+        }
+
         protected override void OnUpdate()
         {
-            if (
-                !SceneManager.GetActiveScene().name.Equals("NavPerformanceDemo") &&
-                !SceneManager.GetActiveScene().name.Equals("NavMovingJumpDemo")
-            ) return;
-
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var jumpableBufferFromEntity = GetBufferFromEntity<NavJumpableBufferElement>(true);
             var renderBoundsFromEntity = GetComponentDataFromEntity<RenderBounds>(true);
@@ -41,39 +42,27 @@ namespace Reese.Demo
                     var jumpableSurfaces = jumpableBufferFromEntity[surface.Value];
                     var random = randomArray[nativeThreadIndex];
 
-                    if (jumpableSurfaces.Length == 0)
-                    { // For the NavPerformanceDemo scene.
-                        commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination{
-                            Destination = NavUtil.GetRandomPointInBounds(
-                                ref random,
-                                renderBoundsFromEntity[surface.Value].Value,
-                                99
-                            )
-                        });
-                    }
-                    else
-                    { // For the NavMovingJumpDemo scene.
-                        var destinationSurface = jumpableSurfaces[random.NextInt(0, jumpableSurfaces.Length)];
+                    var destinationSurface = jumpableSurfaces[random.NextInt(0, jumpableSurfaces.Length)];
 
-                        var localPoint = NavUtil.GetRandomPointInBounds(
-                            ref random,
-                            renderBoundsFromEntity[destinationSurface].Value,
-                            3
-                        );
+                    var localPoint = NavUtil.GetRandomPointInBounds(
+                        ref random,
+                        renderBoundsFromEntity[destinationSurface].Value,
+                        3
+                    );
 
-                        var worldPoint = NavUtil.MultiplyPoint3x4(
-                            localToWorldFromEntity[destinationSurface.Value].Value,
-                            localPoint
-                        );
+                    var worldPoint = NavUtil.MultiplyPoint3x4(
+                        localToWorldFromEntity[destinationSurface.Value].Value,
+                        localPoint
+                    );
 
-                        commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination{
-                            Destination = worldPoint
-                        });
-                    }
+                    commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination
+                    {
+                        Destination = worldPoint
+                    });
 
                     randomArray[nativeThreadIndex] = random;
                 })
-                .WithName("NavDestinationJob")
+                .WithName("NavMovingJumpDestinationJob")
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
