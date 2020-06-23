@@ -1,5 +1,4 @@
-﻿using Reese.Nav;
-using Reese.Spawning;
+﻿using Reese.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Mathematics;
@@ -10,9 +9,6 @@ namespace Reese.Demo
 {
     class SpawnDemoSpawner : MonoBehaviour
     {
-        [SerializeField]
-        bool IsForAgents = false;
-
         [SerializeField]
         Button Button = null;
 
@@ -34,8 +30,7 @@ namespace Reese.Demo
             Button.onClick.AddListener(Enqueue);
             Slider.onValueChanged.AddListener(UpdateEnqueueCount);
 
-            if (!IsForAgents) prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
-            else prefabEntity = entityManager.CreateEntityQuery(typeof(NavAgentPrefab)).GetSingleton<NavAgentPrefab>().Value;
+            prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
         }
 
         void UpdateEnqueueCount(float count)
@@ -52,45 +47,20 @@ namespace Reese.Demo
 
         void Enqueue()
         {
-            if (!IsForAgents)
-            {
-                var random = new Unity.Mathematics.Random((uint)new System.Random().Next());
+            var random = new Unity.Mathematics.Random((uint)new System.Random().Next());
 
-                for (int i = 0; i < enqueueCount; ++i) SpawnSystem.Enqueue(new Spawn()
-                    .WithPrefab(prefabEntity)
-                    .WithComponentList(
-                        new Translation
-                        {
-                            Value = new float3(
-                                random.NextInt(-25, 25),
-                                2,
-                                random.NextInt(-25, 25)
-                            )
-                        }
-                    )
-                );
-
-                return;
-            }
-
-            SpawnSystem.Enqueue(new Spawn()
+            for (int i = 0; i < enqueueCount; ++i) SpawnSystem.Enqueue(new Spawn()
                 .WithPrefab(prefabEntity)
                 .WithComponentList(
-                    new NavAgent
-                    {
-                        JumpDegrees = 45,
-                        JumpGravity = 200,
-                        TranslationSpeed = 20,
-                        TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
-                        Offset = new float3(0, 1, 0)
-                    },
-                    new NavNeedsSurface { },
                     new Translation
                     {
-                        Value = new float3(0, 1, 0)
+                        Value = new float3(
+                            random.NextInt(-25, 25),
+                            2,
+                            random.NextInt(-25, 25)
+                        )
                     }
-                ),
-                enqueueCount
+                )
             );
         }
     }

@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using Unity.Mathematics;
 using Reese.Nav;
-using Reese.Spawning;
 using Unity.Entities;
+using Reese.Spawning;
 using Unity.Transforms;
 
 namespace Reese.Demo
 {
-    class NavMovingJumpDemoSpawner : MonoBehaviour
+    class NavPointAndClickSpawner : MonoBehaviour
     {
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
@@ -22,9 +22,9 @@ namespace Reese.Demo
                     {
                         JumpDegrees = 45,
                         JumpGravity = 100,
-                        JumpSpeedMultiplierX = 1.5f,
-                        JumpSpeedMultiplierY = 2,
-                        TranslationSpeed = 20,
+                        JumpSpeedMultiplierX = 2,
+                        JumpSpeedMultiplierY = 4,
+                        TranslationSpeed = 40,
                         TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
                         Offset = new float3(0, 1, 0)
                     },
@@ -33,8 +33,7 @@ namespace Reese.Demo
                     {
                         Value = new float3(0, 1, 0)
                     }
-                ),
-                50
+                )
             );
         }
     }
