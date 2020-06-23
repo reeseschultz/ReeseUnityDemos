@@ -44,8 +44,8 @@ namespace YourNamespace {
 
         void Start()
         {
-            // Get the prefab entity:
-            var prefabEntity = entityManager.CreateEntityQuery(typeof(SomePrefab)).GetSingletonEntity()
+            // Get the prefab entity (GetSingletonEntity doesn't work for some reason):
+            prefabEntity = entityManager.CreateEntityQuery(typeof(SomePrefab)).GetSingleton<SomePrefab>().Value;
 
             // Enqueue spawning (SpawnSystem and Spawn are from Reese.Spawning):
             SpawnSystem.Enqueue(new Spawn()
