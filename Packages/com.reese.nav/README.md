@@ -71,7 +71,7 @@ So how's this thing work? The navigation systems process entities with **three k
 
 ### 1. The [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs)
 
-No effort was made attempting parity between Unity's concept of the [NavMeshAgent](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/AI.NavMeshAgent.html) and this one. In fact, it's expected that you do *not* use the [NavMeshAgent](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/AI.NavMeshAgent.html) component. Thus, the only authoring script related to the [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) is the [NavAgentPrefab](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentPrefab.cs), which is an optional helper that can be used along with [ConvertToEntity](https://docs.unity3d.com/Packages/com.unity.entities@0.5/api/Unity.Entities.ConvertToEntity.html?q=convert%20to%20ent).
+No effort was made attempting parity between Unity's concept of the [NavMeshAgent](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/AI.NavMeshAgent.html) and this one—in fact, it's expected that you do *not* use the aforementioned component.
 
 #### Initialization Variables
 

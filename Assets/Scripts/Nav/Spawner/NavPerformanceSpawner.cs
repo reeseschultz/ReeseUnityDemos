@@ -11,10 +11,16 @@ namespace Reese.Demo
     class NavPerformanceSpawner : MonoBehaviour
     {
         [SerializeField]
-        Button Button = null;
+        Button SpawnButton = null;
+
+        [SerializeField]
+        Button PrefabButton = null;
 
         [SerializeField]
         Text SpawnText = null;
+
+        [SerializeField]
+        Text PrefabText = null;
 
         [SerializeField]
         Slider Slider = null;
@@ -22,16 +28,20 @@ namespace Reese.Demo
         int enqueueCount = 1;
 
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
-        Entity prefabEntity;
+        Entity cylinderPrefab;
+        Entity dinosaurPrefab;
+        Entity currentPrefab;
 
         void Start()
         {
-            if (Button == null || Slider == null) return;
+            if (SpawnButton == null || Slider == null) return;
 
-            Button.onClick.AddListener(Enqueue);
+            SpawnButton.onClick.AddListener(Enqueue);
+            PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateEnqueueCount);
 
-            prefabEntity = entityManager.CreateEntityQuery(typeof(NavAgentPrefab)).GetSingleton<NavAgentPrefab>().Value;
+            currentPrefab = cylinderPrefab = entityManager.CreateEntityQuery(typeof(CylinderPrefab)).GetSingleton<CylinderPrefab>().Value;
+            dinosaurPrefab = entityManager.CreateEntityQuery(typeof(DinosaurPrefab)).GetSingleton<DinosaurPrefab>().Value;
         }
 
         void UpdateEnqueueCount(float count)
@@ -46,10 +56,20 @@ namespace Reese.Demo
             else SpawnText.text += " Entities";
         }
 
+        void TogglePrefab() {
+            if (currentPrefab.Equals(dinosaurPrefab)) {
+                currentPrefab = cylinderPrefab;
+                PrefabText.text = "Spawning Cylinders";
+            } else {
+                currentPrefab = dinosaurPrefab;
+                PrefabText.text = "Spawning Dinosaurs";
+            }
+        }
+
         void Enqueue()
         {
             SpawnSystem.Enqueue(new Spawn()
-                .WithPrefab(prefabEntity)
+                .WithPrefab(currentPrefab)
                 .WithComponentList(
                     new NavAgent
                     {

@@ -13,7 +13,7 @@ namespace Reese.Demo
 
         void Start()
         {
-            var prefabEntity = entityManager.CreateEntityQuery(typeof(NavAgentPrefab)).GetSingleton<NavAgentPrefab>().Value;
+            var prefabEntity = entityManager.CreateEntityQuery(typeof(DinosaurPrefab)).GetSingleton<DinosaurPrefab>().Value;
 
             SpawnSystem.Enqueue(new Spawn()
                 .WithPrefab(prefabEntity)
