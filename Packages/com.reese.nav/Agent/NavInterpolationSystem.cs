@@ -93,7 +93,16 @@ namespace Reese.Nav
                         return;
                     }
 
-                    var lookAt = localDestination;
+                    var lookAt = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
+                        localToWorldFromEntity[agent.DestinationSurface].Value,
+                        localDestination
+                    );
+
+                    lookAt = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).
+                        math.inverse(localToWorldFromEntity[surface.Value].Value),
+                        lookAt
+                    );
+
                     lookAt.y = translation.Value.y;
                     rotation.Value = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
 
