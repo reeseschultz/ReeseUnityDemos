@@ -6,6 +6,10 @@
 
 Generic DOTS runtime spawning for any combination of prefab, components, and buffers.
 
+## IL2CPP
+
+This package is **NOT** compatible with [IL2CPP](https://docs.unity3d.com/Manual/IL2CPP.html) due to use of reflection (see Unity's guidance on [scripting restrictions](https://docs.unity3d.com/Manual/ScriptingRestrictions.html)). [Mono](https://www.mono-project.com/) works fine, however. Preferably reflection would never be used for anything, but there appears to be no way to achieve generic runtime spawning without modifying the `Entities` package to publicly expose internal methods such as `SetComponentDataRaw`.
+
 ## Import
 
 There are two ways to import this package, one being with [OpenUPM](https://openupm.com/), the preferred method, and the other via Git URL:
@@ -29,7 +33,7 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 
 ## Usage
 
-If you're unfamiliar with converting prefabs into entities, please see [this tutorial](https://reeseschultz.com/spawning-prefabs-with-unity-ecs/), which covers that *and* how to use this package. Otherwise, see below:
+If you're unfamiliar with ECS prefab conversion, see [this tutorial](https://reeseschultz.com/spawning-prefabs-with-unity-ecs/). Otherwise, see below:
 
 ```csharp
 using Reese.Spawning;
@@ -70,4 +74,4 @@ namespace YourNamespace {
 }
 ```
 
-Spawning on `Update` is easy too, perhaps triggered via button click. For an example of that, see the redundantly-named [SpawnDemoSpawner](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/SpawnDemoSpawner.cs).
+Spawning can be done in many ways. To see how to trigger it via button click, see the redundantly-named [SpawnDemoSpawner](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Demo/SpawnDemoSpawner.cs).
