@@ -24,10 +24,10 @@ Steps to reproduce the behavior:
 
 A clear and concise description of what you expected to happen.
 
-**Screenshots:**
+**Describe alternatives or workarounds you've considered:**
 
-If applicable, add screenshots to help explain your problem.
+A clear and concise description of any alternative solutions or workarounds you've considered.
 
 **Additional context:**
 
-Add contextual details if you want.
+Add contextual details or screenshots if applicable.
