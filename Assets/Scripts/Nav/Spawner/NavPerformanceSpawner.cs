@@ -25,6 +25,9 @@ namespace Reese.Demo
         [SerializeField]
         Slider Slider = null;
 
+        [SerializeField]
+        float3 SpawnOffset = new float3(500, 1, 500);
+
         int enqueueCount = 1;
 
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
@@ -84,10 +87,14 @@ namespace Reese.Demo
                     new LocalToWorld
                     {
                         Value = float4x4.TRS(
-                            new float3(0, 1, 0),
+                            SpawnOffset,
                             quaternion.identity,
                             1
                         )
+                    },
+                    new Translation
+                    {
+                        Value = SpawnOffset
                     },
                     new NavNeedsSurface { }
                 ),
