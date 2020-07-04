@@ -57,7 +57,7 @@ namespace Reese.Nav
                     var localDestination = agent.LocalDestination;
 
                     var localWaypoint = pathBuffer[agent.PathBufferIndex].Value;
-                    localWaypoint.y = agent.Offset.y;
+                    //localWaypoint.y = agent.Offset.y; // Commenting this out seems to allow it to follow the terrain, but does it affect anything else?
 
                     if (
                         NavUtil.ApproxEquals(translation.Value, localWaypoint, 1) &&
@@ -104,6 +104,7 @@ namespace Reese.Nav
                     );
 
                     lookAt.y = translation.Value.y;
+                    //var up = math.mul(rotation.Value, math.up()); // Rotate based on agent's up?
                     rotation.Value = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
 
                     translation.Value = Vector3.MoveTowards(translation.Value, localWaypoint, agent.TranslationSpeed * deltaSeconds);
