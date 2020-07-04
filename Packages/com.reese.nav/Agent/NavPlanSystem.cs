@@ -74,7 +74,12 @@ namespace Reese.Nav
                         out int iterationsPerformed
                     );
 
-                    if (status != PathQueryStatus.Success) return;
+                    if (status != PathQueryStatus.Success && status != PathQueryStatus.InProgress)
+                    {
+                        //Debug.Log("Bad destination, removing plan. Status: " + status);
+                        commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
+                        return;
+                    }
 
                     navMeshQuery.EndFindPath(out int pathLength);
 
