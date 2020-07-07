@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
-    [UpdateAfter(typeof(NavSurfaceSystem))]
+    [UpdateAfter(typeof(ExportPhysicsWorld))]
     class NavTerrainDestinationSystem : SystemBase
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
