@@ -25,7 +25,7 @@ namespace Reese.Demo
 
         protected override void OnUpdate()
         {
-            var collisionWorld = buildPhysicsWorld.PhysicsWorld.CollisionWorld;
+            var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
             var jumpableBufferFromEntity = GetBufferFromEntity<NavJumpableBufferElement>(true);
             var renderBoundsFromEntity = GetComponentDataFromEntity<RenderBounds>(true);
@@ -50,7 +50,7 @@ namespace Reese.Demo
                     var random = randomArray[nativeThreadIndex];
 
                     if (
-                        collisionWorld.GetValidDestination(
+                        physicsWorld.GetPointOnSurfaceLayer(
                             localToWorld,
                             NavUtil.GetRandomPointInBounds(
                                 ref random,
@@ -72,31 +72,5 @@ namespace Reese.Demo
 
             barrier.AddJobHandleForProducer(Dependency);
         }
-    }
-
-    public static class CollisionWorldExtentions
-    {
-        public static bool GetValidDestination(this CollisionWorld collisionWorld, LocalToWorld localToWorld, float3 position, out float3 validPosition)
-        {
-            var rayInput = new RaycastInput()
-            {
-                Start = position + localToWorld.Up * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
-                End = position + -localToWorld.Up * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
-                Filter = new CollisionFilter()
-                {
-                    BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
-                    CollidesWith = NavUtil.ToBitMask(NavConstants.SURFACE_LAYER),
-                    GroupIndex = 0
-                }
-            };
-
-            validPosition = float3.zero;
-            if (collisionWorld.CastRay(rayInput, out var hit))
-            {
-                validPosition = hit.Position;
-                return true;
-            }
-            return false;
-        }
-    }
+    }   
 }

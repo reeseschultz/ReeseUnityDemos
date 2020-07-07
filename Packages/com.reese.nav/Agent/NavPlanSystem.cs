@@ -78,6 +78,7 @@ namespace Reese.Nav
                     {
                         //Debug.Log("Bad destination, removing plan. Status: " + status);
                         commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
+                        commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
                         return;
                     }
 

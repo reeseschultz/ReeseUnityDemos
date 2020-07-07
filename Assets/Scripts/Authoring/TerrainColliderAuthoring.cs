@@ -35,6 +35,7 @@ public class TerrainColliderAuthoring : MonoBehaviour, IConvertGameObjectToEntit
         /* dstManager.AddComponentData(entity,
             new RenderBounds { Value = terrain.terrainData.bounds.ToAABB() }); */
 
+        // TODO: How to generate correct bounds? The above terrainData bounds is not the same as render bounds.
         dstManager.AddComponentData(entity,
             new RenderBounds { Value = new AABB { Center = float3.zero, Extents = new float3(5, 0, 5) } });
     }

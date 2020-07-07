@@ -57,7 +57,6 @@ namespace Reese.Nav
                     var localDestination = agent.LocalDestination;
 
                     var localWaypoint = pathBuffer[agent.PathBufferIndex].Value;
-                    //localWaypoint.y = agent.Offset.y; // Commenting this out seems to allow it to follow the terrain, but does it affect anything else?
 
                     if (
                         NavUtil.ApproxEquals(translation.Value, localWaypoint, 1) &&

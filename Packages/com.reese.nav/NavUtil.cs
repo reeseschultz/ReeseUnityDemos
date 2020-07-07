@@ -1,5 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine.AI;
+using Unity.Transforms;
+using Unity.Physics;
 
 namespace Reese.Nav
 {
@@ -31,6 +33,34 @@ namespace Reese.Nav
             );
 
             return position;
+        }
+
+        /// <summary>Extention method for PhysicsWorld to check for a valid
+        /// position using raycast onto the surface layer based on the position
+        /// passed in. bool returned based on if the raycast was successful and 
+        /// Valid position returned in the Out parameter same as the standard 
+        /// raycast methods.</summary>
+        public static bool GetPointOnSurfaceLayer(this PhysicsWorld physicsWorld, LocalToWorld localToWorld, float3 position, out float3 pointOnSurface)
+        {
+            var rayInput = new RaycastInput()
+            {
+                Start = position + localToWorld.Up * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
+                End = position + -localToWorld.Up * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
+                Filter = new CollisionFilter()
+                {
+                    BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
+                    CollidesWith = NavUtil.ToBitMask(NavConstants.SURFACE_LAYER),
+                    GroupIndex = 0
+                }
+            };
+
+            pointOnSurface = float3.zero;
+            if (physicsWorld.CastRay(rayInput, out var hit))
+            {
+                pointOnSurface = hit.Position;
+                return true;
+            }
+            return false;
         }
 
         /// <summary>Transforms a point, reimplementing the old

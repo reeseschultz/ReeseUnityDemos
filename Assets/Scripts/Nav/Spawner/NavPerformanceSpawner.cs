@@ -26,7 +26,7 @@ namespace Reese.Demo
         Slider Slider = null;
 
         [SerializeField]
-        float3 SpawnOffset = new float3(500, 1, 500);
+        float3 SpawnOffset = new float3(0, 1, 0);
 
         int enqueueCount = 1;
 
