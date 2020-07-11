@@ -33,7 +33,7 @@ namespace Reese.Nav
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
                 .WithNone<NavPlanning, NavJumping>()

@@ -87,7 +87,7 @@ namespace Reese.Nav
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
 
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
                 .WithNone<NavFalling, NavJumping>()
