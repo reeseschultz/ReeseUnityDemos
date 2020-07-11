@@ -23,7 +23,7 @@ namespace Reese.Nav
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
                 .WithChangeFilter<NavNeedsDestination>()
