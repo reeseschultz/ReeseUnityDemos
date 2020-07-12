@@ -130,6 +130,7 @@ namespace Reese.Nav
                     else if (status == PathQueryStatus.Success)
                     {
                         pathBuffer.Clear();
+                        agent.PathBufferIndex = 0;
 
                         for (int i = 0; i < straightPathCount; ++i) pathBuffer.Add(
                             NavUtil.MultiplyPoint3x4(
