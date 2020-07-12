@@ -55,9 +55,7 @@ namespace Reese.Nav
                     }
 
                     var localDestination = agent.LocalDestination;
-
                     var localWaypoint = pathBuffer[agent.PathBufferIndex].Value;
-                    localWaypoint.y = agent.Offset.y;
 
                     if (
                         NavUtil.ApproxEquals(translation.Value, localWaypoint, 1) &&
