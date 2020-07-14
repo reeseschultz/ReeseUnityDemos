@@ -5,7 +5,7 @@ You can contribute to this project by submitting:
 1. [Pull requests](https://github.com/reeseschultz/ReeseUnityDemos/pulls) (PRs) for fixing bugs and adding features.
 2. [Issues](https://github.com/reeseschultz/ReeseUnityDemos/issues/new/choose) for reporting bugs and suggesting features.
 
-I, Reese, the owner of this project, prefer that you **submit PRs instead of issues**. Otherwise, you're entirely dependent on me. I offer no assurance that I will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever. Well, unless you want to give me money. In that case, [contact me](reeseblog@outlook.com) and we can arrange prioritized support.
+I, Reese, the owner of this project, prefer that you **submit PRs instead of issues**. Otherwise, you're entirely dependent on me. I offer no assurance that I will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever. Well, unless you want to give me money. In that case, contact me at reeseblog@outlook.com and we can arrange prioritized support.
 
 ## What I Look for in [Pull Requests](https://github.com/reeseschultz/ReeseUnityDemos/pulls)
 
