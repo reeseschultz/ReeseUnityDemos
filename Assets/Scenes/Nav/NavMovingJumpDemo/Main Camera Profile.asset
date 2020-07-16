@@ -1,20 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e6292b2c06870d4495f009f912b9600, type: 3}
-  m_Name: Main Camera Profile
-  m_EditorClassIdentifier: 
-  settings:
-  - {fileID: 9163986028264398012}
---- !u!114 &9163986028264398012
+--- !u!114 &-6105233866236235025
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -67,43 +53,43 @@ MonoBehaviour:
     value: 1
   temperature:
     overrideState: 1
-    value: 67
+    value: -31
   tint:
-    overrideState: 0
-    value: 24
+    overrideState: 1
+    value: 61
   colorFilter:
     overrideState: 0
-    value: {r: 1, g: 1, b: 1, a: 1}
+    value: {r: 0, g: 1, b: 0.3288908, a: 1}
   hueShift:
-    overrideState: 0
-    value: 28
+    overrideState: 1
+    value: -10
   saturation:
     overrideState: 0
-    value: 10
+    value: -5
   brightness:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: -5
   postExposure:
     overrideState: 0
     value: 0
   contrast:
-    overrideState: 0
-    value: 19.2
+    overrideState: 1
+    value: 1
   mixerRedOutRedIn:
-    overrideState: 0
-    value: 100
+    overrideState: 1
+    value: 150
   mixerRedOutGreenIn:
     overrideState: 0
     value: 0
   mixerRedOutBlueIn:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 13
   mixerGreenOutRedIn:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: -1
   mixerGreenOutGreenIn:
-    overrideState: 0
-    value: 100
+    overrideState: 1
+    value: 75
   mixerGreenOutBlueIn:
     overrideState: 0
     value: 0
@@ -117,14 +103,14 @@ MonoBehaviour:
     overrideState: 0
     value: 100
   lift:
-    overrideState: 0
-    value: {x: 0.77981913, y: 0.7888875, z: 1, w: 0}
+    overrideState: 1
+    value: {x: 0.5221236, y: 1, z: 0.84131014, w: 0}
   gamma:
-    overrideState: 0
-    value: {x: 1, y: 0.7798182, z: 0.8989776, w: 0}
+    overrideState: 1
+    value: {x: 0.9651588, y: 0.5573157, z: 1, w: 0}
   gain:
-    overrideState: 0
-    value: {x: 0.72728133, y: 0.7897593, z: 1, w: 0}
+    overrideState: 1
+    value: {x: 1, y: 0.80043584, z: 0.18429083, w: 0}
   masterCurve:
     overrideState: 0
     value:
@@ -1325,3 +1311,17 @@ MonoBehaviour:
       - 0.5
       - 0.5
       - 0.5
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e6292b2c06870d4495f009f912b9600, type: 3}
+  m_Name: Main Camera Profile
+  m_EditorClassIdentifier: 
+  settings:
+  - {fileID: -6105233866236235025}
