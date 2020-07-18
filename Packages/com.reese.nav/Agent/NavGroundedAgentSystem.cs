@@ -19,8 +19,8 @@ namespace Reese.Nav
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
 
             Entities
-               .WithNone<NavPlanning, NavJumping>()
-               .WithAll<NavLerping, LocalToParent>()
+               .WithNone<NavPlanning, NavJumping, NavFalling>()
+               .WithAll<NavLerping, LocalToParent, NavTerrainCapable>()
                .WithReadOnly(physicsWorld)
                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, ref Rotation rotation, in NavAgent agent, in LocalToWorld localToWorld, in Parent surface) =>
                {
@@ -37,16 +37,8 @@ namespace Reese.Nav
 
                    if (physicsWorld.CastRay(rayInput, out RaycastHit hit))
                    {
-                       // Rotate entity so it is level with the surface it is on.
-                       //var currentRotation = rotation.Value;
-                       //var up = hit.SurfaceNormal;
-                       //var rotationUp = quaternion.EulerXYZ(up.x, 0, up.z);
-                       //currentRotation = math.mul(rotationUp, currentRotation);
-
-                       //rotation.Value = currentRotation;
-
                        var currentPosition = translation.Value;
-                       currentPosition.y = hit.Position.y + agent.Offset.y;
+                       currentPosition = hit.Position + agent.Offset;
 
                        translation.Value = currentPosition;
                    }

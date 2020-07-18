@@ -3586,7 +3586,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 550583985}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ffec9416c766ccf48d61c08ca1ea69f, type: 3}
+  m_Script: {fileID: 11500000, guid: 486c9be25daa42644b9f2e28408dc6c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   SpawnButton: {fileID: 1643126542}
@@ -7578,6 +7578,7 @@ GameObject:
   - component: {fileID: 1201142295}
   - component: {fileID: 1201142297}
   - component: {fileID: 1201142296}
+  - component: {fileID: 1201142298}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -7650,6 +7651,18 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1201142298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1201142294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00047786ab51d6d41880bdd226e121b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1208067329
 GameObject:
   m_ObjectHideFlags: 0
