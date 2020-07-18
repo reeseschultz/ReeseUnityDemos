@@ -147,7 +147,6 @@ namespace Reese.Nav
 
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                 })
-                .WithoutBurst()
                 .WithName("NavSurfaceTrackingJob")
                 .ScheduleParallel();
 
