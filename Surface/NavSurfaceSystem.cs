@@ -4,7 +4,7 @@ using Unity.Physics;
 using Unity.Transforms;
 using RaycastHit = Unity.Physics.RaycastHit;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
-using System.Collections.Concurrent;
+using Unity.Collections;
 
 namespace Reese.Nav
 {
@@ -14,10 +14,15 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavBasisSystem))]
     public class NavSurfaceSystem : SystemBase
     {
-        static ConcurrentDictionary<int, bool> needsSurfaceDictionary = new ConcurrentDictionary<int, bool>();
-
+        NativeHashMap<int, bool> needsSurfaceMap = default;
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+
+        protected override void OnCreate()
+            => needsSurfaceMap = new NativeHashMap<int, bool>(
+                NavConstants.NEEDS_SURFACE_MAP_SIZE,
+                Allocator.Persistent
+            );
 
         protected override void OnUpdate()
         {
@@ -86,6 +91,7 @@ namespace Reese.Nav
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
+            var map = needsSurfaceMap;
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
@@ -94,14 +100,14 @@ namespace Reese.Nav
                 .WithAll<NavNeedsSurface, LocalToParent>()
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
+                .WithNativeDisableContainerSafetyRestriction(map)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation, in LocalToWorld localToWorld) =>
                 {
                     if (
                         !surface.Value.Equals(Entity.Null) &&
-                        needsSurfaceDictionary.GetOrAdd(entity.Index, true)
+                        map.TryGetValue(entity.Index, out bool needsSurface) &&
+                        !map.TryAdd(entity.Index, false)
                     ) return;
-
-                    needsSurfaceDictionary[entity.Index] = false;
 
                     var rayInput = new RaycastInput
                     {
@@ -147,5 +153,8 @@ namespace Reese.Nav
 
             barrier.AddJobHandleForProducer(Dependency);
         }
+
+        protected override void OnDestroy()
+            => needsSurfaceMap.Dispose();
     }
 }
