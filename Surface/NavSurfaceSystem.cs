@@ -112,7 +112,7 @@ namespace Reese.Nav
                     var rayInput = new RaycastInput
                     {
                         Start = localToWorld.Position + agent.Offset,
-                        End = -localToWorld.Up *NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
+                        End = -localToWorld.Up * NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
                         Filter = new CollisionFilter()
                         {
                             BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
