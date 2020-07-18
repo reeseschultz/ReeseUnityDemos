@@ -92,12 +92,13 @@ See the [NavMovingJumpSpawner](https://github.com/reeseschultz/ReeseUnityDemos/b
 Here are the internally-managed component tags (defined in [NavAgentStatus](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentStatus.cs)) that are applied to [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) throughout the navigation lifecycle. Do *not* write to these, just use them for querying:
 
 * `NavFalling` - Exists if the agent is falling.
+* `NavHasProblem` - Exists if the agent has a problematic [PathQueryStatus](https://docs.unity3d.com/ScriptReference/Experimental.AI.PathQueryStatus.html) preventing further path planning. The navigation package will not process agents with this component. You need to handle and remove the component as needed. Problems tend to arise to due incorrect values set in `NavConstants`, which is discussed later in this guide.
 * `NavJumping` - Exists if the agent is jumping.
 * `NavLerping` - Exists if the agent is lerping.
 * `NavNeedsSurface` - Exists if the agent needs a surface. This component should be added when spawning an agent. It's also automatically added after the agent jumps. When this component exists, the [NavSurfaceSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurfaceSystem.cs) will try to [raycast](https://docs.unity3d.com/Packages/com.unity.physics@0.2/manual/collision_queries.html#ray-casts) for a new surface potentially underneath said agent.
 * `NavPlanning` - Exists if the agent is planning paths or jumps.
 
-You should, however, write to the following component in your user code:
+Finally, you should write to the following component:
 
 * `NavNeedsDestination` - Exists if the agent needs a destination. In this `struct`, there's a self-explanatory `float3` named `Destination`. There's also an optional `bool` named `Teleport`, which toggles teleportation to the provided `Destination`.
 

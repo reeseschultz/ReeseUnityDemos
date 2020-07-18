@@ -30,6 +30,7 @@ namespace Reese.Nav
             var navMeshQueryPointerArray = World.GetExistingSystem<NavMeshQuerySystem>().PointerArray;
 
             Entities
+                .WithNone<NavHasProblem>()
                 .WithAll<NavPlanning, LocalToParent>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(jumpingFromEntity)
@@ -69,12 +70,22 @@ namespace Reese.Nav
                         NavMesh.AllAreas
                     );
 
-                    while (status == PathQueryStatus.InProgress) status = navMeshQuery.UpdateFindPath(
+                    while (NavUtil.HasStatus(status, PathQueryStatus.InProgress)) status = navMeshQuery.UpdateFindPath(
                         NavConstants.ITERATION_MAX,
                         out int iterationsPerformed
                     );
 
-                    if (status != PathQueryStatus.Success) return;
+                    if (!NavUtil.HasStatus(status, PathQueryStatus.Success))
+                    {
+                        commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
+                        commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
+                        commandBuffer.AddComponent<NavHasProblem>(entityInQueryIndex, entity, new NavHasProblem
+                        {
+                            Value = status
+                        });
+
+                        return;
+                    }
 
                     navMeshQuery.EndFindPath(out int pathLength);
 

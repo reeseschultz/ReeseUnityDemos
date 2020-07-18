@@ -1,5 +1,6 @@
 ﻿using Unity.Mathematics;
 using UnityEngine.AI;
+using UnityEngine.Experimental.AI;
 
 namespace Reese.Nav
 {
@@ -61,5 +62,11 @@ namespace Reese.Nav
         /// *except* for the one expressed in said mask.</summary>
         public static uint InvertBitMask(uint bitMask)
             => ~bitMask;
+
+        /// <summary>Returns true if a status `a` has `b`. Note that a
+        /// PathQueryStatus is a set of flags which can be simultaneously
+        /// active.</summary>
+        public static bool HasStatus(PathQueryStatus a, PathQueryStatus b)
+            => (a & b) == a;
     }
 }

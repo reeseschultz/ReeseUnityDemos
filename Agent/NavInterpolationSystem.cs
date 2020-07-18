@@ -36,7 +36,7 @@ namespace Reese.Nav
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithNone<NavPlanning, NavJumping>()
+                .WithNone<NavHasProblem, NavPlanning, NavJumping>()
                 .WithAll<NavLerping, LocalToParent>()
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
@@ -115,6 +115,7 @@ namespace Reese.Nav
             var fallingFromEntity = GetComponentDataFromEntity<NavFalling>();
 
             Entities
+                .WithNone<NavHasProblem>()
                 .WithAny<NavFalling, NavJumping>()
                 .WithAll<LocalToParent>()
                 .WithReadOnly(fallingFromEntity)
