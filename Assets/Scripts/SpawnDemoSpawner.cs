@@ -10,13 +10,13 @@ namespace Reese.Demo
     class SpawnDemoSpawner : MonoBehaviour
     {
         [SerializeField]
-        Button Button = null;
+        Button Button = default;
 
         [SerializeField]
-        Text SpawnText = null;
+        Text SpawnText = default;
 
         [SerializeField]
-        Slider Slider = null;
+        Slider Slider = default;
 
         int enqueueCount = 1;
 

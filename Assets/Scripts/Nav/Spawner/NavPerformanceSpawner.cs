@@ -11,19 +11,19 @@ namespace Reese.Demo
     class NavPerformanceSpawner : MonoBehaviour
     {
         [SerializeField]
-        Button SpawnButton = null;
+        Button SpawnButton = default;
 
         [SerializeField]
-        Button PrefabButton = null;
+        Button PrefabButton = default;
 
         [SerializeField]
-        Text SpawnText = null;
+        Text SpawnText = default;
 
         [SerializeField]
-        Text PrefabText = null;
+        Text PrefabText = default;
 
         [SerializeField]
-        Slider Slider = null;
+        Slider Slider = default;
 
         int enqueueCount = 1;
 
