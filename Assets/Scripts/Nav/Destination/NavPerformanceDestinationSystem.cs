@@ -26,7 +26,7 @@ namespace Reese.Demo
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
             Entities
-                .WithNone<NavNeedsDestination>()
+                .WithNone<NavHasProblem, NavNeedsDestination>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
                 .WithNativeDisableParallelForRestriction(randomArray)

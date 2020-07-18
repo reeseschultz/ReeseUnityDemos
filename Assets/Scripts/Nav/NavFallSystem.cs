@@ -17,6 +17,7 @@ namespace Reese.Demo
             var fallSecondsMax = 5;
 
             Entities
+                .WithNone<NavHasProblem>()
                 .WithAll<NavFalling>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavAgent agent) =>
                 {
