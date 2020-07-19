@@ -103,7 +103,6 @@ namespace Reese.Nav
                     );
 
                     lookAt.y = translation.Value.y;
-                    //var up = math.mul(rotation.Value, math.up()); // Rotate based on agent's up?
                     rotation.Value = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
 
                     translation.Value = Vector3.MoveTowards(translation.Value, localWaypoint, agent.TranslationSpeed * deltaSeconds);

@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using Reese.Demo;
+using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
@@ -17,6 +18,9 @@ namespace Reese.Nav
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+
+            var isDebugging = DebugMode.IsDebugging;
+            var drawUnitVectors = DebugMode.DrawUnitVectors;
 
             Entities
                .WithNone<NavPlanning, NavJumping, NavFalling>()
@@ -37,6 +41,19 @@ namespace Reese.Nav
 
                    if (physicsWorld.CastRay(rayInput, out RaycastHit hit))
                    {
+                       var currentForward = math.forward(rotation.Value);
+                       rotation.Value = quaternion.LookRotationSafe(currentForward, hit.SurfaceNormal);
+
+                       if (isDebugging && drawUnitVectors)
+                       {
+                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + hit.SurfaceNormal * 15, UnityEngine.Color.green);
+
+                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Right * 5, UnityEngine.Color.cyan);
+
+                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + math.forward(rotation.Value) * 15, UnityEngine.Color.white);
+                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + currentForward * 7, UnityEngine.Color.blue);
+                       }
+
                        var currentPosition = translation.Value;
                        currentPosition.y = hit.Position.y + agent.Offset.y;
                        translation.Value = currentPosition;

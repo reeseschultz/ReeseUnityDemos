@@ -10,9 +10,16 @@ namespace Reese.Demo {
     public class DebugMode : MonoBehaviour
     {
         public static bool IsDebugging = false;
+        public static bool DrawUnitVectors = false;
 
         [SerializeField]
         bool isDebugging = false;
+
+        [SerializeField]
+        bool drawnPath = false;
+
+        [SerializeField]
+        bool drawUnitVectors = false;
 
         [SerializeField]
         float3 offset = new float3(-500, 0f, -500);
@@ -34,7 +41,8 @@ namespace Reese.Demo {
         private void OnGUI()
         {
             IsDebugging = isDebugging;
-            if (!isDebugging) return;
+            DrawUnitVectors = drawUnitVectors;
+            if (!isDebugging || !drawnPath) return;
 
             var entityArray = entityQuery.ToEntityArray(Allocator.TempJob);
             foreach (Entity entity in entityArray)
