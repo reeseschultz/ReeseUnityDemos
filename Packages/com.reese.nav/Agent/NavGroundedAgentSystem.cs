@@ -38,8 +38,7 @@ namespace Reese.Nav
                    if (physicsWorld.CastRay(rayInput, out RaycastHit hit))
                    {
                        var currentPosition = translation.Value;
-                       currentPosition = hit.Position + agent.Offset;
-
+                       currentPosition.y = hit.Position.y + agent.Offset.y;
                        translation.Value = currentPosition;
                    }
                })
