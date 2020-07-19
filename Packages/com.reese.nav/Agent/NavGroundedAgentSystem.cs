@@ -1,5 +1,4 @@
-﻿using Reese.Demo;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
@@ -11,6 +10,9 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavInterpolationSystem))]
     public class NavGroundedAgentSystem : SystemBase
     {
+        public bool IsDebugging = false;
+        public bool DrawUnitVectors = false;
+
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
 
         protected override void OnUpdate()
@@ -19,8 +21,8 @@ namespace Reese.Nav
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
 
-            var isDebugging = DebugMode.IsDebugging;
-            var drawUnitVectors = DebugMode.DrawUnitVectors;
+            bool isDebugging = IsDebugging;
+            bool drawUnitVectors = DrawUnitVectors;
 
             Entities
                .WithNone<NavPlanning, NavJumping, NavFalling>()
@@ -47,11 +49,12 @@ namespace Reese.Nav
                        if (isDebugging && drawUnitVectors)
                        {
                            UnityEngine.Debug.DrawLine(hit.Position, hit.Position + hit.SurfaceNormal * 15, UnityEngine.Color.green);
+                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Up * 7, UnityEngine.Color.cyan);
 
-                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Right * 5, UnityEngine.Color.cyan);
+                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Right * 7, UnityEngine.Color.cyan);
 
-                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + math.forward(rotation.Value) * 15, UnityEngine.Color.white);
-                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + currentForward * 7, UnityEngine.Color.blue);
+                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + currentForward * 15, UnityEngine.Color.white);
+                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Forward * 7, UnityEngine.Color.blue);
                        }
 
                        var currentPosition = translation.Value;

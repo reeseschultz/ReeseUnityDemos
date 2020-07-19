@@ -10,7 +10,6 @@ namespace Reese.Demo {
     public class DebugMode : MonoBehaviour
     {
         public static bool IsDebugging = false;
-        public static bool DrawUnitVectors = false;
 
         [SerializeField]
         bool isDebugging = false;
@@ -27,6 +26,8 @@ namespace Reese.Demo {
         EntityManager entityManager;
         EntityQuery entityQuery;
 
+        NavGroundedAgentSystem groundedAgentSystem;
+
         private void OnEnable()
         {
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
@@ -36,12 +37,13 @@ namespace Reese.Demo {
                     All = new ComponentType[] { typeof(NavLerping), typeof(LocalToParent) },
                     None = new ComponentType[] { typeof(NavPlanning), typeof(NavJumping) }
                 });
+            groundedAgentSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavGroundedAgentSystem>();
         }
 
         private void OnGUI()
         {
-            IsDebugging = isDebugging;
-            DrawUnitVectors = drawUnitVectors;
+            groundedAgentSystem.IsDebugging = IsDebugging = isDebugging;
+            groundedAgentSystem.DrawUnitVectors = drawUnitVectors;
             if (!isDebugging || !drawnPath) return;
 
             var entityArray = entityQuery.ToEntityArray(Allocator.TempJob);
