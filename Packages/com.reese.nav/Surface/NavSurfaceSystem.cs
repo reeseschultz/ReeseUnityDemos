@@ -12,7 +12,6 @@ namespace Reese.Nav
     /// surface (or lack thereof) underneath a given NavAgent. It also maintains
     /// parent-child relationships.</summary>
     [UpdateAfter(typeof(NavBasisSystem))]
-    [UpdateAfter(typeof(Unity.Physics.Systems.ExportPhysicsWorld))]
     public class NavSurfaceSystem : SystemBase
     {
         static ConcurrentDictionary<int, bool> needsSurfaceDictionary = new ConcurrentDictionary<int, bool>();
@@ -90,7 +89,7 @@ namespace Reese.Nav
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
 
-            Dependency = Entities
+            Entities
                 .WithNone<NavFalling, NavJumping>()
                 .WithAll<NavNeedsSurface, LocalToParent>()
                 .WithReadOnly(physicsWorld)
@@ -144,7 +143,7 @@ namespace Reese.Nav
                 })
                 .WithoutBurst()
                 .WithName("NavSurfaceTrackingJob")
-                .ScheduleParallel(Dependency);
+                .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
         }
