@@ -1,6 +1,6 @@
 {
 	"name": "com.reese.spawning",
-	"version": "0.5.7",
+	"version": "0.5.8",
 	"displayName": "Reese's DOTS Spawning",
 	"description": "Generic DOTS runtime spawning for any combination of prefab, components, and buffers.",
 	"dependencies": {
