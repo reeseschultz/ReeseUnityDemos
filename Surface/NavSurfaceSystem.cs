@@ -26,7 +26,7 @@ namespace Reese.Nav
 
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var defaultBasis = World.GetExistingSystem<NavBasisSystem>().DefaultBasis;
 
             // Below job is needed because Unity.Physics removes the Parent
@@ -137,7 +137,7 @@ namespace Reese.Nav
                     surface.Value = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                     commandBuffer.RemoveComponent<NavNeedsSurface>(entityInQueryIndex, entity);
 
-                    if (!jumpBufferFromEntity.Exists(entity)) return;
+                    if (!jumpBufferFromEntity.HasComponent(entity)) return;
                     var jumpBuffer = jumpBufferFromEntity[entity];
                     if (jumpBuffer.Length < 1) return;
 
