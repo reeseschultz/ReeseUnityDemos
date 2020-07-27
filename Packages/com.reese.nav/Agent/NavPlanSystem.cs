@@ -21,7 +21,7 @@ namespace Reese.Nav
 
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var translationFromEntity = GetComponentDataFromEntity<Translation>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
@@ -42,8 +42,8 @@ namespace Reese.Nav
                     if (
                         surface.Value.Equals(Entity.Null) ||
                         agent.DestinationSurface.Equals(Entity.Null) ||
-                        !localToWorldFromEntity.Exists(surface.Value) ||
-                        !localToWorldFromEntity.Exists(agent.DestinationSurface)
+                        !localToWorldFromEntity.HasComponent(surface.Value) ||
+                        !localToWorldFromEntity.HasComponent(agent.DestinationSurface)
                     ) return;
 
                     var agentPosition = localToWorldFromEntity[entity].Position;
@@ -53,7 +53,7 @@ namespace Reese.Nav
                         agent.LocalDestination
                     );
 
-                    var jumping = jumpingFromEntity.Exists(entity);
+                    var jumping = jumpingFromEntity.HasComponent(entity);
 
                     if (jumping)
                     {
@@ -115,8 +115,8 @@ namespace Reese.Nav
                         NavConstants.PATH_NODE_MAX
                     );
 
-                    var jumpBuffer = !jumpBufferFromEntity.Exists(entity) ? commandBuffer.AddBuffer<NavJumpBufferElement>(entityInQueryIndex, entity) : jumpBufferFromEntity[entity];
-                    var pathBuffer = !pathBufferFromEntity.Exists(entity) ? commandBuffer.AddBuffer<NavPathBufferElement>(entityInQueryIndex, entity) : pathBufferFromEntity[entity];
+                    var jumpBuffer = !jumpBufferFromEntity.HasComponent(entity) ? commandBuffer.AddBuffer<NavJumpBufferElement>(entityInQueryIndex, entity) : jumpBufferFromEntity[entity];
+                    var pathBuffer = !pathBufferFromEntity.HasComponent(entity) ? commandBuffer.AddBuffer<NavPathBufferElement>(entityInQueryIndex, entity) : pathBufferFromEntity[entity];
 
                     if (jumping)
                     {

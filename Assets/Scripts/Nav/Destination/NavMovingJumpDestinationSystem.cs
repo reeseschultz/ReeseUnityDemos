@@ -20,7 +20,7 @@ namespace Reese.Demo
 
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var jumpableBufferFromEntity = GetBufferFromEntity<NavJumpableBufferElement>(true);
             var renderBoundsFromEntity = GetComponentDataFromEntity<RenderBounds>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
@@ -36,7 +36,7 @@ namespace Reese.Demo
                 {
                     if (
                         surface.Value.Equals(Entity.Null) ||
-                        !jumpableBufferFromEntity.Exists(surface.Value)
+                        !jumpableBufferFromEntity.HasComponent(surface.Value)
                     ) return;
 
                     var jumpableSurfaces = jumpableBufferFromEntity[surface.Value];

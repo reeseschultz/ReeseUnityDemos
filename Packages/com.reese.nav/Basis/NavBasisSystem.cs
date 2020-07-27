@@ -30,7 +30,7 @@ namespace Reese.Nav
 
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
             // Below job is needed because Unity.Physics removes the Parent
             // component for dynamic bodies.

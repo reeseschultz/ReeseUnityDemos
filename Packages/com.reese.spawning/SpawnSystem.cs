@@ -25,7 +25,7 @@ namespace Reese.Spawning
         /// <summary>Reflected EntityCommandBuffer.Concurrent.AddBuffer for
         /// casting with runtime types instead of being restricted to
         /// compile-time.</summary>
-        static MethodInfo addBuffer = typeof(EntityCommandBuffer.Concurrent)
+        static MethodInfo addBuffer = typeof(EntityCommandBuffer.ParallelWriter)
             .GetMethods()
             .Where(method => method.Name == "AddBuffer")
             .Select(method => new
@@ -41,7 +41,7 @@ namespace Reese.Spawning
         /// <summary>Reflected EntityCommandBuffer.Concurrent.AddComponent for
         /// casting with runtime types instead of being restricted to
         /// compile-time.</summary>
-        static MethodInfo addComponent = typeof(EntityCommandBuffer.Concurrent)
+        static MethodInfo addComponent = typeof(EntityCommandBuffer.ParallelWriter)
             .GetMethods()
             .Where(method => method.Name == "AddComponent")
             .Select(method => new
@@ -78,7 +78,7 @@ namespace Reese.Spawning
         struct SpawnJob : IJob
         {
             [WriteOnly]
-            public EntityCommandBuffer.Concurrent CommandBuffer;
+            public EntityCommandBuffer.ParallelWriter CommandBuffer;
 
             [NativeSetThreadIndex]
             int nativeThreadIndex;
@@ -110,7 +110,7 @@ namespace Reese.Spawning
             {
                 job = new SpawnJob
                 {
-                    CommandBuffer = barrier.CreateCommandBuffer().ToConcurrent()
+                    CommandBuffer = barrier.CreateCommandBuffer().AsParallelWriter()
                 }.Schedule(job);
 
                 barrier.AddJobHandleForProducer(job);

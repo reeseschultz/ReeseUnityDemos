@@ -19,7 +19,7 @@ namespace Reese.Nav
 
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 

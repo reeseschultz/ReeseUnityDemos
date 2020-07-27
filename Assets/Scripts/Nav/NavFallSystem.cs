@@ -12,7 +12,7 @@ namespace Reese.Demo
 
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var fallSecondsMax = 5;
 

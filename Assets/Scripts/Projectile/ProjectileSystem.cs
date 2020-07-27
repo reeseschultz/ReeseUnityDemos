@@ -18,7 +18,7 @@ namespace Reese.Demo
             if (!SceneManager.GetActiveScene().name.Equals("ProjectileDemo")) return;
 
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
             Entities
                 .WithNativeDisableParallelForRestriction(randomArray)
