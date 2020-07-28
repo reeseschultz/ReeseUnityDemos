@@ -13,7 +13,7 @@ namespace Reese.Demo
     class PointAndClick : MonoBehaviour
     {
         [SerializeField]
-        Camera Cam = null;
+        Camera Cam = default;
 
         const float RAYCAST_DISTANCE = 1000;
         PhysicsWorld physicsWorld => World.DefaultGameObjectInjectionWorld.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;

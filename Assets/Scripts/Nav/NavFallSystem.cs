@@ -12,11 +12,12 @@ namespace Reese.Demo
 
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var fallSecondsMax = 5;
 
             Entities
+                .WithNone<NavHasProblem>()
                 .WithAll<NavFalling>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavAgent agent) =>
                 {

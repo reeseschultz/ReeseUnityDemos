@@ -4,7 +4,7 @@ using Unity.Physics;
 using Unity.Transforms;
 using RaycastHit = Unity.Physics.RaycastHit;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
-using System.Collections.Concurrent;
+using Unity.Collections;
 
 namespace Reese.Nav
 {
@@ -14,14 +14,19 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavBasisSystem))]
     public class NavSurfaceSystem : SystemBase
     {
-        static ConcurrentDictionary<int, bool> needsSurfaceDictionary = new ConcurrentDictionary<int, bool>();
-
+        NativeHashMap<int, bool> needsSurfaceMap = default;
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
+        protected override void OnCreate()
+            => needsSurfaceMap = new NativeHashMap<int, bool>(
+                NavConstants.NEEDS_SURFACE_MAP_SIZE,
+                Allocator.Persistent
+            );
+
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var defaultBasis = World.GetExistingSystem<NavBasisSystem>().DefaultBasis;
 
             // Below job is needed because Unity.Physics removes the Parent
@@ -56,7 +61,7 @@ namespace Reese.Nav
             // Below job is needed so users don't have to manually add the
             // Parent and LocalToParent components when spawning agents.
             Entities
-                .WithNone<Parent>()
+                .WithNone<NavHasProblem, Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavAgent agent) =>
                 {
                     commandBuffer.AddComponent<Parent>(entityInQueryIndex, entity);
@@ -86,27 +91,28 @@ namespace Reese.Nav
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
+            var map = needsSurfaceMap;
 
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithNone<NavFalling, NavJumping>()
+                .WithNone<NavHasProblem, NavFalling, NavJumping>()
                 .WithAll<NavNeedsSurface, LocalToParent>()
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
+                .WithNativeDisableContainerSafetyRestriction(map)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation, in LocalToWorld localToWorld) =>
                 {
                     if (
                         !surface.Value.Equals(Entity.Null) &&
-                        needsSurfaceDictionary.GetOrAdd(entity.Index, true)
+                        map.TryGetValue(entity.Index, out bool needsSurface) &&
+                        !map.TryAdd(entity.Index, false)
                     ) return;
-
-                    needsSurfaceDictionary[entity.Index] = false;
 
                     var rayInput = new RaycastInput
                     {
                         Start = localToWorld.Position + agent.Offset,
-                        End = -localToWorld.Up *NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
+                        End = -localToWorld.Up * NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
                         Filter = new CollisionFilter()
                         {
                             BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
@@ -131,7 +137,7 @@ namespace Reese.Nav
                     surface.Value = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                     commandBuffer.RemoveComponent<NavNeedsSurface>(entityInQueryIndex, entity);
 
-                    if (!jumpBufferFromEntity.Exists(entity)) return;
+                    if (!jumpBufferFromEntity.HasComponent(entity)) return;
                     var jumpBuffer = jumpBufferFromEntity[entity];
                     if (jumpBuffer.Length < 1) return;
 
@@ -141,11 +147,13 @@ namespace Reese.Nav
 
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                 })
-                .WithoutBurst()
                 .WithName("NavSurfaceTrackingJob")
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
         }
+
+        protected override void OnDestroy()
+            => needsSurfaceMap.Dispose();
     }
 }

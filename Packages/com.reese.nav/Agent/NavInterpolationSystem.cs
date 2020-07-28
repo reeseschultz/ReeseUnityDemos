@@ -26,24 +26,24 @@ namespace Reese.Nav
 
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var deltaSeconds = Time.DeltaTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(true);
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithNone<NavPlanning, NavJumping>()
+                .WithNone<NavHasProblem, NavPlanning, NavJumping>()
                 .WithAll<NavLerping, LocalToParent>()
                 .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation, in Parent surface) =>
                 {
-                    if (!pathBufferFromEntity.Exists(entity)) return;
+                    if (!pathBufferFromEntity.HasComponent(entity)) return;
                     var pathBuffer = pathBufferFromEntity[entity];
 
                     if (pathBuffer.Length == 0) return;
@@ -55,7 +55,6 @@ namespace Reese.Nav
                     }
 
                     var localDestination = agent.LocalDestination;
-
                     var localWaypoint = pathBuffer[agent.PathBufferIndex].Value;
 
                     if (
@@ -122,6 +121,7 @@ namespace Reese.Nav
             var fallingFromEntity = GetComponentDataFromEntity<NavFalling>();
 
             Entities
+                .WithNone<NavHasProblem>()
                 .WithAny<NavFalling, NavJumping>()
                 .WithAll<LocalToParent>()
                 .WithReadOnly(fallingFromEntity)
@@ -131,10 +131,10 @@ namespace Reese.Nav
                 {
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
 
-                    if (!jumpBufferFromEntity.Exists(entity)) return;
+                    if (!jumpBufferFromEntity.HasComponent(entity)) return;
                     var jumpBuffer = jumpBufferFromEntity[entity];
 
-                    if (jumpBuffer.Length == 0 && !fallingFromEntity.Exists(entity)) return;
+                    if (jumpBuffer.Length == 0 && !fallingFromEntity.HasComponent(entity)) return;
 
                     var destination = NavUtil.MultiplyPoint3x4(
                         localToWorldFromEntity[agent.DestinationSurface].Value,
@@ -145,7 +145,7 @@ namespace Reese.Nav
                     var yVelocity = math.sqrt(velocity) * math.sin(math.radians(agent.JumpDegrees));
                     var waypoint = translation.Value + math.up() * float.NegativeInfinity;
 
-                    if (!fallingFromEntity.Exists(entity))
+                    if (!fallingFromEntity.HasComponent(entity))
                     {
                         var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees)) * agent.JumpSpeedMultiplierX;
 

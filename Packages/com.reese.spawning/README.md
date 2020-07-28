@@ -43,7 +43,7 @@ using UnityEngine;
 namespace YourNamespace {
     class SomeSpawner : MonoBehaviour
     {
-        // Get the default world containing all entities:
+        // Get the default world:
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
         void Start()

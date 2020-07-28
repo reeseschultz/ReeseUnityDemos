@@ -1,6 +1,8 @@
 # ReeseUnityDemos
 
-Unity packages and demos—emphasizing ECS, jobs, and the Burst compiler—by me, Reese.
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/dQkjpKT)
+
+Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by me, Reese.
 
 ## Packages
 

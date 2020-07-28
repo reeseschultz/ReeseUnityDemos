@@ -1,15 +1,15 @@
 {
 	"name": "com.reese.nav",
-	"version": "0.10.2",
+	"version": "0.11.2",
 	"displayName": "Reese's DOTS Navigation",
 	"description": "DOTS navigation with auto-jumping agents and movable surfaces.",
 	"dependencies": {
-		"com.unity.entities": "0.11.1-preview.4",
-		"com.unity.physics": "0.3.2-preview",
-		"com.unity.rendering.hybrid": "0.5.2-preview.4"
+		"com.unity.entities": "0.13.0-preview.24",
+		"com.unity.physics": "0.4.0-preview.5",
+		"com.unity.rendering.hybrid": "0.7.0-preview.24"
 	},
 	"unity": "2020.1",
-	"unityRelease": "0b13",
+	"unityRelease": "0f1",
 	"author": {
 		"name": "Reese Schultz",
 		"email": "reeseschultz@gmail.com",
