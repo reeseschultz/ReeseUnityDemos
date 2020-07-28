@@ -26,7 +26,7 @@ namespace Reese.Demo {
         EntityManager entityManager;
         EntityQuery entityQuery;
 
-        NavGroundedAgentSystem groundedAgentSystem;
+        NavGroundingSystem navGroundingSystem;
 
         private void OnEnable()
         {
@@ -37,13 +37,13 @@ namespace Reese.Demo {
                     All = new ComponentType[] { typeof(NavLerping), typeof(LocalToParent) },
                     None = new ComponentType[] { typeof(NavPlanning), typeof(NavJumping) }
                 });
-            groundedAgentSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavGroundedAgentSystem>();
+            navGroundingSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavGroundingSystem>();
         }
 
         private void OnGUI()
         {
-            groundedAgentSystem.IsDebugging = IsDebugging = isDebugging;
-            groundedAgentSystem.DrawUnitVectors = drawUnitVectors;
+            navGroundingSystem.IsDebugging = IsDebugging = isDebugging;
+            navGroundingSystem.DrawUnitVectors = drawUnitVectors;
             if (!isDebugging || !drawnPath) return;
 
             var entityArray = entityQuery.ToEntityArray(Allocator.TempJob);

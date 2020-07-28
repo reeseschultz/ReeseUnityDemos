@@ -8,7 +8,7 @@ using Unity.Transforms;
 namespace Reese.Nav
 {
     [UpdateAfter(typeof(NavInterpolationSystem))]
-    public class NavGroundedAgentSystem : SystemBase
+    public class NavGroundingSystem : SystemBase
     {
         public bool IsDebugging = false;
         public bool DrawUnitVectors = false;
@@ -28,7 +28,7 @@ namespace Reese.Nav
                .WithNone<NavPlanning, NavJumping, NavFalling>()
                .WithAll<NavLerping, LocalToParent, NavTerrainCapable>()
                .WithReadOnly(physicsWorld)
-               .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, ref Rotation rotation, in NavAgent agent, in LocalToWorld localToWorld, in Parent surface) =>
+               .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, ref NavAgent agent, in LocalToWorld localToWorld, in Parent surface) =>
                {
                    var rayInput = new RaycastInput
                    {
@@ -43,26 +43,23 @@ namespace Reese.Nav
 
                    if (physicsWorld.CastRay(rayInput, out RaycastHit hit))
                    {
-                       var currentForward = math.forward(rotation.Value);
-                       rotation.Value = quaternion.LookRotationSafe(currentForward, hit.SurfaceNormal);
-
                        if (isDebugging && drawUnitVectors)
                        {
                            UnityEngine.Debug.DrawLine(hit.Position, hit.Position + hit.SurfaceNormal * 15, UnityEngine.Color.green);
+
                            UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Up * 7, UnityEngine.Color.cyan);
-
                            UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Right * 7, UnityEngine.Color.cyan);
-
-                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + currentForward * 15, UnityEngine.Color.white);
-                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Forward * 7, UnityEngine.Color.blue);
+                           UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Forward * 7, UnityEngine.Color.cyan);
                        }
+
+                       agent.SurfacePointNormal = hit.SurfaceNormal;
 
                        var currentPosition = translation.Value;
                        currentPosition.y = hit.Position.y + agent.Offset.y;
                        translation.Value = currentPosition;
                    }
                })
-               .WithName("Set_grounded_height_and_rotation")
+               .WithName("GroundingJob")
                .ScheduleParallel();
         }
     }
