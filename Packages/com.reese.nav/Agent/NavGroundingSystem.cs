@@ -11,7 +11,6 @@ namespace Reese.Nav
     public class NavGroundingSystem : SystemBase
     {
         public bool IsDebugging = false;
-        public bool DrawUnitVectors = false;
 
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
 
@@ -19,10 +18,9 @@ namespace Reese.Nav
         {
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
 
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             bool isDebugging = IsDebugging;
-            bool drawUnitVectors = DrawUnitVectors;
 
             Entities
                .WithNone<NavPlanning, NavJumping, NavFalling>()
@@ -43,7 +41,7 @@ namespace Reese.Nav
 
                    if (physicsWorld.CastRay(rayInput, out RaycastHit hit))
                    {
-                       if (isDebugging && drawUnitVectors)
+                       if (isDebugging)
                        {
                            UnityEngine.Debug.DrawLine(hit.Position, hit.Position + hit.SurfaceNormal * 15, UnityEngine.Color.green);
 
@@ -55,7 +53,7 @@ namespace Reese.Nav
                        agent.SurfacePointNormal = hit.SurfaceNormal;
 
                        var currentPosition = translation.Value;
-                       currentPosition.y = hit.Position.y + agent.Offset.y;
+                       currentPosition.y = hit.Position.y;
                        translation.Value = currentPosition;
                    }
                })

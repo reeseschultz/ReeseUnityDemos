@@ -79,6 +79,7 @@ namespace Reese.Demo
                         JumpDegrees = 45,
                         JumpGravity = 200,
                         TranslationSpeed = 20,
+                        RotationSpeed = 0.3f,
                         TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
                         Offset = new float3(0, 1, 0)
                     },

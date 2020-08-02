@@ -26,12 +26,12 @@ namespace Reese.Demo
         protected override void OnUpdate()
         {
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
-            var commandBuffer = barrier.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var jumpableBufferFromEntity = GetBufferFromEntity<NavJumpableBufferElement>(true);
             var renderBoundsFromEntity = GetComponentDataFromEntity<RenderBounds>(true);
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.FinalJobHandle);
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
                 .WithNone<NavNeedsDestination>()
@@ -43,7 +43,7 @@ namespace Reese.Demo
                 {
                     if (
                         surface.Value.Equals(Entity.Null) ||
-                        !jumpableBufferFromEntity.Exists(surface.Value)
+                        !jumpableBufferFromEntity.HasComponent(surface.Value)
                     ) return;
 
                     var jumpableSurfaces = jumpableBufferFromEntity[surface.Value];

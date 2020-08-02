@@ -42,7 +42,7 @@
         /// NavMeshQuery created in the NavMeshQuerySystem. May need to be
         /// increased if an OutOfNodes error arises while finding a path.
         /// </summary>
-        public const int NAV_MESH_QUERY_NODE_MAX = 1000;
+        public const int NAV_MESH_QUERY_NODE_MAX = 5000;
 
         /// <summary>The initial capacity of the map tracking agents that need
         /// a surface.</summary>

@@ -75,7 +75,6 @@ namespace Reese.Nav
                         out int iterationsPerformed
                     );
 
-
                     if (!NavUtil.HasStatus(status, PathQueryStatus.Success))
                     {
                         commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);

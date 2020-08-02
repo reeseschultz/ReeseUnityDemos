@@ -14346,9 +14346,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDebugging: 1
-  drawnPath: 0
   drawUnitVectors: 1
-  offset:
+  logNavError: 1
+  drawnPath: 0
+  offsetForDrawPath:
     x: -500
     y: 0
     z: -500

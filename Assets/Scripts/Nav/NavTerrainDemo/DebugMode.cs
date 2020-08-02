@@ -9,24 +9,26 @@ namespace Reese.Demo {
 
     public class DebugMode : MonoBehaviour
     {
-        public static bool IsDebugging = false;
-
         [SerializeField]
         bool isDebugging = false;
-
-        [SerializeField]
-        bool drawnPath = false;
 
         [SerializeField]
         bool drawUnitVectors = false;
 
         [SerializeField]
-        float3 offset = new float3(-500, 0f, -500);
+        bool logNavError = false;
+
+        [SerializeField]
+        bool drawnPath = false;
+
+        [SerializeField]
+        float3 offsetForDrawPath = new float3(-500, 0f, -500);
 
         EntityManager entityManager;
         EntityQuery entityQuery;
 
         NavGroundingSystem navGroundingSystem;
+        DebugSystems debugSystems;
 
         private void OnEnable()
         {
@@ -38,26 +40,49 @@ namespace Reese.Demo {
                     None = new ComponentType[] { typeof(NavPlanning), typeof(NavJumping) }
                 });
             navGroundingSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavGroundingSystem>();
+            debugSystems = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<DebugSystems>();
+            debugSystems.DrawPathOffset = offsetForDrawPath;
         }
 
-        private void OnGUI()
+        private void Update()
         {
-            navGroundingSystem.IsDebugging = IsDebugging = isDebugging;
-            navGroundingSystem.DrawUnitVectors = drawUnitVectors;
-            if (!isDebugging || !drawnPath) return;
+            navGroundingSystem.IsDebugging = isDebugging && drawUnitVectors;
+            debugSystems.LogNavError = isDebugging && logNavError;
+            debugSystems.DrawPath = isDebugging && drawnPath;
+        }
+    }
 
-            var entityArray = entityQuery.ToEntityArray(Allocator.TempJob);
-            foreach (Entity entity in entityArray)
+    public class DebugSystems : SystemBase
+    {
+        public bool LogNavError = false;
+        public bool DrawPath = false;
+        public float3 DrawPathOffset = default;
+
+        protected override void OnUpdate()
+        {
+            if (LogNavError)
             {
-                var pathBuffer = entityManager.GetBuffer<NavPathBufferElement>(entity);
-                for (int i = 0; i < pathBuffer.Length - 1; ++i)
+                Entities.ForEach((Entity entity, in NavHasProblem navHasProblem) =>
                 {
-                    var node = pathBuffer[i];
-
-                    Debug.DrawLine(node.Value + offset, pathBuffer[i + 1].Value + offset, Color.red);
-                }
+                    Debug.Log(string.Format("{0} has a nav problem! {1}", entity, navHasProblem.Value));
+                }).Run();
             }
-            entityArray.Dispose();
+
+            if (DrawPath)
+            {
+                float3 drawPathOffset = DrawPathOffset;
+                Entities.ForEach((Entity entity, in DynamicBuffer<NavPathBufferElement> pathBuffer) =>
+                {
+
+                    for (int i = 0; i < pathBuffer.Length - 1; ++i)
+                    {
+                        var node = pathBuffer[i];
+
+                        Debug.DrawLine(node.Value + drawPathOffset, pathBuffer[i + 1].Value + drawPathOffset, Color.red);
+                    }
+                }).Run();
+            }
+
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Reese.Nav
                     var localWaypoint = pathBuffer[agent.PathBufferIndex].Value;
 
                     if (
-                        NavUtil.ApproxEquals(translation.Value, localWaypoint, 1) &&
+                        NavUtil.ApproxEquals(translation.Value + agent.Offset, localWaypoint, 1) &&
                         ++agent.PathBufferIndex > pathBuffer.Length - 1
                     )
                     {
@@ -75,7 +75,7 @@ namespace Reese.Nav
 
                         if (
                             !surface.Value.Equals(agent.DestinationSurface) &&
-                            !NavUtil.ApproxEquals(translation.Value, localDestination, 1) &&
+                            !NavUtil.ApproxEquals(translation.Value + agent.Offset, localDestination, 1) &&
                             !physicsWorld.CastRay(rayInput, out RaycastHit hit)
                         )
                         {
@@ -170,7 +170,7 @@ namespace Reese.Nav
                         commandBuffer.AddComponent<NavFalling>(entityInQueryIndex, entity);
                     }
 
-                    if (!NavUtil.ApproxEquals(translation.Value, waypoint, 1)) return;
+                    if (!NavUtil.ApproxEquals(translation.Value + agent.Offset, waypoint, 1)) return;
 
                     commandBuffer.AddComponent<NavNeedsSurface>(entityInQueryIndex, entity);
                     commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
