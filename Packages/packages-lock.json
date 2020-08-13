@@ -6,7 +6,7 @@
       "source": "embedded",
       "dependencies": {
         "com.unity.entities": "0.13.0-preview.24",
-        "com.unity.physics": "0.4.0-preview.5",
+        "com.unity.physics": "0.4.1-preview",
         "com.unity.rendering.hybrid": "0.7.0-preview.24"
       }
     },
@@ -245,7 +245,8 @@
       "depth": 0,
       "source": "builtin",
       "dependencies": {
-        "com.unity.modules.ui": "1.0.0"
+        "com.unity.modules.ui": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0"
       }
     },
     "nuget.mono-cecil": {
