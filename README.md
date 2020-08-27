@@ -106,7 +106,7 @@ If, despite prior warning, you still want to use IL2CPP, note that you need to i
 sudo apt install clang
 ```
 
-### Contributor Agreement
+### Contributing
 
 Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever. All that said, [GitHub Issues](https://github.com/reeseschultz/ReeseUnityDemos/issues/new/choose) is fine for constructive discussion.
 
