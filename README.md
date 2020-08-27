@@ -12,7 +12,7 @@ This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [
 2. [Spawning](https://openupm.com/packages/com.reese.spawning/) - Generic DOTS runtime spawning for any combination of prefab, components, and buffers (not compatible with [IL2CPP](https://docs.unity3d.com/Manual/IL2CPP.html)).
 3. [Randomization](https://openupm.com/packages/com.reese.random/) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones.
 
-All of my packages are available on [OpenUPM](https://openupm.com/). Please [support](https://www.patreon.com/openupm) it and its maintainer, Favo. We depend on dedicated people like him.
+All of my packages are available on [OpenUPM](https://openupm.com/).
 
 ## Demos
 
@@ -78,7 +78,7 @@ Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to
 
 ## IL2CPP
 
-The demos use the [spawning package](https://openupm.com/packages/com.reese.spawning/), which isn't compatible with IL2CPP. Keep that in mind when building and running scenes.
+The demos may use the [spawning package](https://openupm.com/packages/com.reese.spawning/), which isn't compatible with IL2CPP. Keep that in mind when building and running scenes.
 
 ## Linux & You
 
@@ -107,5 +107,7 @@ sudo apt install clang
 ```
 
 ### Contributor Agreement
+
+Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever. All that said, [GitHub Issues](https://github.com/reeseschultz/ReeseUnityDemos/issues/new/choose) is fine for constructive discussion.
 
 By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
