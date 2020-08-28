@@ -4,6 +4,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 namespace Reese.Demo
 {
@@ -32,7 +33,11 @@ namespace Reese.Demo
             if (teleportationText == null)
                 teleportationText = GameObject.Find("Text").GetComponent<Text>();
 
-            if (Input.GetKeyDown(KeyCode.T))
+            var keyboard = Keyboard.current;
+
+            if (keyboard == null) return;
+
+            if (keyboard.tKey.wasPressedThisFrame)
             {
                 teleport = !teleport;
 
@@ -55,9 +60,12 @@ namespace Reese.Demo
             agentTransformGameObject.transform.SetPositionAndRotation(agentPosition, Quaternion.identity);
             Camera.main.transform.LookAt(agentTransformGameObject.transform, Vector3.up);
 
+            var mouse = Mouse.current;
+
             if (
-                !Input.GetMouseButtonDown(0) ||
-                !Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit)
+                mouse == null ||
+                !mouse.leftButton.wasPressedThisFrame ||
+                !Physics.Raycast(Camera.main.ScreenPointToRay(new Vector2(mouse.position.x.ReadValue(), mouse.position.y.ReadValue())), out RaycastHit hit)
             ) return;
 
             EntityManager.AddComponentData(agentEntity, new NavNeedsDestination

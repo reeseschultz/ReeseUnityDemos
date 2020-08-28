@@ -7,6 +7,7 @@ using Unity.Rendering;
 using Reese.Spawning;
 using Unity.Transforms;
 using Unity.Mathematics;
+using UnityEngine.InputSystem;
 
 namespace Reese.Demo
 {
@@ -56,9 +57,12 @@ namespace Reese.Demo
 
         void LateUpdate()
         {
-            if (!Input.GetMouseButtonDown(0) || Cam == null) return;
+            var mouse = Mouse.current;
 
-            var screenPointToRay = Cam.ScreenPointToRay(Input.mousePosition);
+            if (Cam == null || mouse == null || !mouse.leftButton.wasPressedThisFrame) return;
+
+            var position = new Vector3(mouse.position.x.ReadValue(), mouse.position.y.ReadValue());
+            var screenPointToRay = Cam.ScreenPointToRay(position);
             var rayInput = new RaycastInput
             {
                 Start = screenPointToRay.origin,
