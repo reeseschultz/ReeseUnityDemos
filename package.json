@@ -1,13 +1,13 @@
 {
 	"name": "com.reese.spawning",
-	"version": "0.5.8",
+	"version": "0.5.9",
 	"displayName": "Reese's DOTS Spawning",
 	"description": "Generic DOTS runtime spawning for any combination of prefab, components, and buffers.",
 	"dependencies": {
-		"com.unity.entities": "0.13.0-preview.24"
+		"com.unity.entities": "0.14.0-preview.18"
 	},
 	"unity": "2020.1",
-	"unityRelease": "0f1",
+	"unityRelease": "3f1",
 	"author": {
 		"name": "Reese Schultz",
 		"email": "reeseschultz@gmail.com",
