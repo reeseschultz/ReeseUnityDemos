@@ -14,7 +14,7 @@ public class DemoCameraControl : MonoBehaviour
     {
         Vector3 cameraMovement = Vector3.zero;
 
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse1))
         {
             transform.Rotate(Vector3.up, Input.GetAxis("Mouse X") * cameraRotateSpeed * Time.deltaTime, Space.World);
             transform.Rotate(-Input.GetAxis("Mouse Y") * cameraRotateSpeed * Time.deltaTime, 0, 0);

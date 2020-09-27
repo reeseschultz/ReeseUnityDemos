@@ -95,7 +95,7 @@ namespace Reese.Demo
                     },
                     new Translation
                     {
-                        Value = SpawnOffset
+                        //Value = SpawnOffset
                     },
                     new NavNeedsSurface { }
                 ),

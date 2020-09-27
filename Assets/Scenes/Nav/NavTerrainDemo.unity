@@ -12591,7 +12591,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: '* W/A/S/D keys to move camera
 
-    * Left click and move mouse to look
+    * Right click and move mouse to look
     around'
 --- !u!222 &1842874586
 CanvasRenderer:
