@@ -39,7 +39,7 @@ namespace Reese.Nav
         /// <summary>Extension method for PhysicsWorld, checking for a valid
         /// position by raycasting onto the surface layer from the passed
         /// position. Returns true if the raycast is successful and a position
-        /// via out.
+        /// via out.</summary>
         public static bool GetPointOnSurfaceLayer(this PhysicsWorld physicsWorld, LocalToWorld localToWorld, float3 position, out float3 pointOnSurface)
         {
             var rayInput = new RaycastInput()
