@@ -20,9 +20,10 @@ namespace Reese.Nav
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
-            bool isDebugging = IsDebugging;
+            var isDebugging = IsDebugging;
 
             Entities
+               .WithNone<NavHasProblem>()
                .WithNone<NavPlanning, NavJumping, NavFalling>()
                .WithAll<NavLerping, LocalToParent, NavTerrainCapable>()
                .WithReadOnly(physicsWorld)
@@ -44,7 +45,6 @@ namespace Reese.Nav
                        if (isDebugging)
                        {
                            UnityEngine.Debug.DrawLine(hit.Position, hit.Position + hit.SurfaceNormal * 15, UnityEngine.Color.green);
-
                            UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Up * 7, UnityEngine.Color.cyan);
                            UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Right * 7, UnityEngine.Color.cyan);
                            UnityEngine.Debug.DrawLine(hit.Position, hit.Position + localToWorld.Forward * 7, UnityEngine.Color.cyan);
@@ -57,7 +57,7 @@ namespace Reese.Nav
                        translation.Value = currentPosition;
                    }
                })
-               .WithName("GroundingJob")
+               .WithName("NavGroundingJob")
                .ScheduleParallel();
         }
     }

@@ -19,7 +19,7 @@ namespace Reese.Random
             var randomArray = new Unity.Mathematics.Random[JobsUtility.MaxJobThreadCount];
             var seed = new System.Random();
 
-            for (int i = 0; i < JobsUtility.MaxJobThreadCount; ++i)
+            for (var i = 0; i < JobsUtility.MaxJobThreadCount; ++i)
                 randomArray[i] = new Unity.Mathematics.Random((uint)seed.Next());
 
             RandomArray = new NativeArray<Unity.Mathematics.Random>(randomArray, Allocator.Persistent);

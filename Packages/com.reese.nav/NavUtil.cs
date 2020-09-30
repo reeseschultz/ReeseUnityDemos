@@ -36,10 +36,10 @@ namespace Reese.Nav
             return position;
         }
 
-        /// <summary>Extention method for PhysicsWorld to check for a valid
-        /// position by raycast onto the surface layer based on the position
-        /// passed in. bool returned based on if the raycast is successful and 
-        /// a position returned via out.
+        /// <summary>Extension method for PhysicsWorld, checking for a valid
+        /// position by raycasting onto the surface layer from the passed
+        /// position. Returns true if the raycast is successful and a position
+        /// via out.
         public static bool GetPointOnSurfaceLayer(this PhysicsWorld physicsWorld, LocalToWorld localToWorld, float3 position, out float3 pointOnSurface)
         {
             var rayInput = new RaycastInput()
@@ -70,7 +70,7 @@ namespace Reese.Nav
         /// <summary>Gets the agent type from the string name.</summary>
         public static int GetAgentType(string agentName)
         {
-            for (int i = 0; i < NavMesh.GetSettingsCount(); ++i)
+            for (var i = 0; i < NavMesh.GetSettingsCount(); ++i)
                 if (agentName == NavMesh.GetSettingsNameFromID(NavMesh.GetSettingsByIndex(i).agentTypeID))
                     return i;
 

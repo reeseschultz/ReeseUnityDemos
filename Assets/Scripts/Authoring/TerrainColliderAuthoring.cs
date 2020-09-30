@@ -6,65 +6,65 @@ using Unity.Physics.Authoring;
 using Unity.Rendering;
 using UnityEngine;
 
-public class TerrainColliderAuthoring : MonoBehaviour, IConvertGameObjectToEntity
-{
-    [SerializeField] PhysicsCategoryTags belongsTo;
-    [SerializeField] PhysicsCategoryTags collidesWith;
-    [SerializeField] int groupIndex;
-
-    public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+namespace Reese.Demo {
+    public class TerrainColliderAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
-        var terrain = GetComponent<Terrain>();
+        [SerializeField]
+        PhysicsCategoryTags belongsTo;
 
-        if (terrain == null)
+        [SerializeField]
+        PhysicsCategoryTags collidesWith;
+
+        [SerializeField]
+        int groupIndex;
+
+        public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            Debug.LogError("No terrain found!");
-            return;
-        }
+            var terrain = GetComponent<Terrain>();
 
-        CollisionFilter collisionFilter = new CollisionFilter
-        {
-            BelongsTo = belongsTo.Value,
-            CollidesWith = collidesWith.Value,
-            GroupIndex = groupIndex
-        };
-
-        dstManager.AddComponentData(entity,
-            CreateTerrainCollider(terrain.terrainData, collisionFilter));
-
-        /* dstManager.AddComponentData(entity,
-            new RenderBounds { Value = terrain.terrainData.bounds.ToAABB() }); */
-
-        // TODO: How to generate correct bounds? The above terrainData bounds is not the same as render bounds.
-        dstManager.AddComponentData(entity,
-            new RenderBounds { Value = new AABB { Center = float3.zero, Extents = new float3(5, 0, 5) } });
-    }
-
-    public static PhysicsCollider CreateTerrainCollider(TerrainData terrainData, CollisionFilter filter)
-    {
-        var physicsCollider = new PhysicsCollider();
-        var scale = terrainData.heightmapScale;
-
-        var size = new int2(terrainData.heightmapResolution, terrainData.heightmapResolution);
-        var colliderHeights = new NativeArray<float>(terrainData.heightmapResolution * terrainData.heightmapResolution,
-            Allocator.TempJob);
-
-        var terrainHeights = terrainData.GetHeights(0, 0, terrainData.heightmapResolution,
-            terrainData.heightmapResolution);
-
-
-        for (int j = 0; j < size.y; j++)
-            for (int i = 0; i < size.x; i++)
+            if (terrain == null)
             {
-                var h = terrainHeights[i, j];
-                colliderHeights[j + i * size.x] = h;
+                Debug.LogError("No terrain found!");
+                return;
             }
 
-        physicsCollider.Value = Unity.Physics.TerrainCollider.Create(colliderHeights, size, scale,
-            Unity.Physics.TerrainCollider.CollisionMethod.Triangles, filter);
+            CollisionFilter collisionFilter = new CollisionFilter
+            {
+                BelongsTo = belongsTo.Value,
+                CollidesWith = collidesWith.Value,
+                GroupIndex = groupIndex
+            };
 
-        colliderHeights.Dispose();
+            dstManager.AddComponentData(entity, CreateTerrainCollider(terrain.terrainData, collisionFilter));
 
-        return physicsCollider;
+            var renderer = GetComponent<Renderer>();
+
+            if (renderer == null)
+            {
+                Debug.LogError("No renderer found! Please attach a mesh renderer to the terrain.");
+                return;
+            }
+
+            dstManager.AddComponentData(entity, new RenderBounds { Value = renderer.bounds.ToAABB() });
+        }
+
+        public static PhysicsCollider CreateTerrainCollider(TerrainData terrainData, CollisionFilter filter)
+        {
+            var physicsCollider = new PhysicsCollider();
+            var scale = terrainData.heightmapScale;
+            var size = new int2(terrainData.heightmapResolution, terrainData.heightmapResolution);
+            var colliderHeights = new NativeArray<float>(terrainData.heightmapResolution * terrainData.heightmapResolution, Allocator.TempJob);
+            var terrainHeights = terrainData.GetHeights(0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
+
+            for (var j = 0; j < size.y; j++)
+                for (var i = 0; i < size.x; i++)
+                    colliderHeights[j + i * size.x] = terrainHeights[i, j];
+
+            physicsCollider.Value = Unity.Physics.TerrainCollider.Create(colliderHeights, size, scale, Unity.Physics.TerrainCollider.CollisionMethod.Triangles, filter);
+
+            colliderHeights.Dispose();
+
+            return physicsCollider;
+        }
     }
 }

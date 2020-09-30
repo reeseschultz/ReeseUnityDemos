@@ -120,7 +120,7 @@ namespace Reese.Nav
                     if (jumping)
                     {
                         var lastValidPoint = float3.zero;
-                        for (int i = 0; i < straightPath.Length; ++i)
+                        for (var i = 0; i < straightPath.Length; ++i)
                             if (navMeshQuery.IsValid(straightPath[i].polygon)) lastValidPoint = straightPath[i].position;
                             else break;
 
@@ -142,7 +142,7 @@ namespace Reese.Nav
                         pathBuffer.Clear();
                         agent.PathBufferIndex = 0;
 
-                        for (int i = 0; i < straightPathCount; ++i) pathBuffer.Add(
+                        for (var i = 0; i < straightPathCount; ++i) pathBuffer.Add(
                             NavUtil.MultiplyPoint3x4(
                                 math.inverse(localToWorldFromEntity[surface.Value].Value),
                                 (float3)straightPath[i].position + agent.Offset

@@ -6,7 +6,6 @@ using Unity.Collections;
 using Unity.Mathematics;
 
 namespace Reese.Demo {
-
     public class DebugMode : MonoBehaviour
     {
         [SerializeField]
@@ -28,9 +27,9 @@ namespace Reese.Demo {
         EntityQuery entityQuery;
 
         NavGroundingSystem navGroundingSystem;
-        DebugSystems debugSystems;
+        DebugSystem debugSystem;
 
-        private void OnEnable()
+        void OnEnable()
         {
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
             entityQuery = entityManager.CreateEntityQuery(
@@ -38,21 +37,22 @@ namespace Reese.Demo {
                 {
                     All = new ComponentType[] { typeof(NavLerping), typeof(LocalToParent) },
                     None = new ComponentType[] { typeof(NavPlanning), typeof(NavJumping) }
-                });
+                }
+            );
             navGroundingSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavGroundingSystem>();
-            debugSystems = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<DebugSystems>();
-            debugSystems.DrawPathOffset = offsetForDrawPath;
+            debugSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<DebugSystem>();
+            debugSystem.DrawPathOffset = offsetForDrawPath;
         }
 
-        private void Update()
+        void Update()
         {
             navGroundingSystem.IsDebugging = isDebugging && drawUnitVectors;
-            debugSystems.LogNavError = isDebugging && logNavError;
-            debugSystems.DrawPath = isDebugging && drawnPath;
+            debugSystem.LogNavError = isDebugging && logNavError;
+            debugSystem.DrawPath = isDebugging && drawnPath;
         }
     }
 
-    public class DebugSystems : SystemBase
+    public class DebugSystem : SystemBase
     {
         public bool LogNavError = false;
         public bool DrawPath = false;
@@ -71,18 +71,13 @@ namespace Reese.Demo {
             if (DrawPath)
             {
                 float3 drawPathOffset = DrawPathOffset;
+
                 Entities.ForEach((Entity entity, in DynamicBuffer<NavPathBufferElement> pathBuffer) =>
                 {
-
-                    for (int i = 0; i < pathBuffer.Length - 1; ++i)
-                    {
-                        var node = pathBuffer[i];
-
-                        Debug.DrawLine(node.Value + drawPathOffset, pathBuffer[i + 1].Value + drawPathOffset, Color.red);
-                    }
+                    for (var i = 0; i < pathBuffer.Length - 1; ++i)
+                        Debug.DrawLine(pathBuffer[i].Value + drawPathOffset, pathBuffer[i + 1].Value + drawPathOffset, Color.red);
                 }).Run();
             }
-
         }
     }
 }

@@ -31,6 +31,7 @@ namespace Reese.Demo
         int enqueueCount = 1;
 
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
+
         Entity cylinderPrefab;
         Entity dinosaurPrefab;
         Entity currentPrefab;

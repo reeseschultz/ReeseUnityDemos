@@ -34,8 +34,7 @@ namespace Reese.Demo
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithNone<NavNeedsDestination>()
-                .WithNone<NavPlanning>()
+                .WithNone<NavHasProblem, NavNeedsDestination, NavPlanning>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
                 .WithNativeDisableParallelForRestriction(randomArray)
@@ -57,7 +56,9 @@ namespace Reese.Demo
                                 renderBoundsFromEntity[surface.Value].Value,
                                 99
                             ),
-                            out var validDestination))
+                            out var validDestination
+                        )
+                    )
                     {
                         commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination
                         {
