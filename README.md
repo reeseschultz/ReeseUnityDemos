@@ -20,7 +20,11 @@ Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to
 
 ### [DOTS Navigation with Auto-Jumping Agents and Movable Surfaces](https://reeseschultz.com/dots-navigation-with-auto-jumping-agents-and-movable-surfaces/)
 
-![Video of navigation agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
+![Video of agents navigating complex terrain.](/Gifs/nav-terrain-demo.gif)
+
+⇒ `Assets/Scenes/Nav/NavTerrainDemo.unity`.
+
+![Video of agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
 
 ⇒ `Assets/Scenes/Nav/NavMovingJumpDemo.unity`.
 
