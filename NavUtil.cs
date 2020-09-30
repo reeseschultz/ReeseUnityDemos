@@ -1,5 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine.AI;
+using Unity.Transforms;
+using Unity.Physics;
 using UnityEngine.Experimental.AI;
 
 namespace Reese.Nav
@@ -34,6 +36,32 @@ namespace Reese.Nav
             return position;
         }
 
+        /// <summary>Extension method for PhysicsWorld, checking for a valid
+        /// position by raycasting onto the surface layer from the passed
+        /// position. Returns true if the raycast is successful and a position
+        /// via out.</summary>
+        public static bool GetPointOnSurfaceLayer(this PhysicsWorld physicsWorld, LocalToWorld localToWorld, float3 position, out float3 pointOnSurface)
+        {
+            var rayInput = new RaycastInput()
+            {
+                Start = position + localToWorld.Up * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
+                End = position - localToWorld.Up * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
+                Filter = new CollisionFilter()
+                {
+                    BelongsTo = ToBitMask(NavConstants.COLLIDER_LAYER),
+                    CollidesWith = ToBitMask(NavConstants.SURFACE_LAYER)
+                }
+            };
+
+            pointOnSurface = float3.zero;
+            if (physicsWorld.CastRay(rayInput, out var hit))
+            {
+                pointOnSurface = hit.Position;
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>Transforms a point, reimplementing the old
         /// Matrix4x4.MultiplyPoint3x4 using Unity.Mathematics.</summary>
         public static float3 MultiplyPoint3x4(float4x4 transform, float3 point)
@@ -42,7 +70,7 @@ namespace Reese.Nav
         /// <summary>Gets the agent type from the string name.</summary>
         public static int GetAgentType(string agentName)
         {
-            for (int i = 0; i < NavMesh.GetSettingsCount(); ++i)
+            for (var i = 0; i < NavMesh.GetSettingsCount(); ++i)
                 if (agentName == NavMesh.GetSettingsNameFromID(NavMesh.GetSettingsByIndex(i).agentTypeID))
                     return i;
 

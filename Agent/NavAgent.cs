@@ -38,11 +38,20 @@ namespace Reese.Nav
         /// </summary>
         public float JumpGravity;
 
+        /// <summary>Normal of point below the agent.</summary>
+        public float3 SurfacePointNormal;
+
         /// <summary>Writing to this is *required* when spawning an agent (
         /// unless you want the agent to not move from have a default speed
         /// of zero). This is the translation speed of the agent. 20 is a
         /// reasonable value to try.</summary>
         public float TranslationSpeed;
+
+        /// <summary>Writing to this is *required* when spawning an agent (
+        /// unless you want the agent to not rotate towards the target 
+        /// direction). This is the rotation speed of the agent. 0.3f is a
+        /// reasonable value to try.</summary>
+        public float RotationSpeed;
 
         /// <summary>You should *probably* write to this when spawning an
         /// agent. If you don't get this right, then raycasts below the agent

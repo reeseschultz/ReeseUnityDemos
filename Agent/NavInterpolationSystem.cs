@@ -90,10 +90,12 @@ namespace Reese.Nav
                         agent.PathBufferIndex = 0;
                         return;
                     }
-
+                    
+                    translation.Value = Vector3.MoveTowards(translation.Value, localWaypoint, agent.TranslationSpeed * deltaSeconds);
+                    
                     var lookAt = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
                         localToWorldFromEntity[agent.DestinationSurface].Value,
-                        localDestination
+                        localWaypoint
                     );
 
                     lookAt = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).
@@ -102,9 +104,13 @@ namespace Reese.Nav
                     );
 
                     lookAt.y = translation.Value.y;
-                    rotation.Value = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
 
-                    translation.Value = Vector3.MoveTowards(translation.Value, localWaypoint, agent.TranslationSpeed * deltaSeconds);
+                    var lookRotation = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
+
+                    if (math.length(agent.SurfacePointNormal) > 0.01f)
+                        lookRotation = Quaternion.FromToRotation(math.up(), agent.SurfacePointNormal) * lookRotation;
+
+                    rotation.Value = math.slerp(rotation.Value, lookRotation, deltaSeconds / agent.RotationSpeed);
                 })
                 .WithName("NavWalkJob")
                 .ScheduleParallel();

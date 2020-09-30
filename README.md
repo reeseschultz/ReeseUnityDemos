@@ -6,17 +6,18 @@
 
 ## Introduction
 
-Here are the design goals of this navigation package:
+Here are the design highlights of this navigation package:
 
-1. Support **multi-threading**.
-2. Support **good-old obstacle avoidance.**
-3. Support **auto-jumping** of agents between [NavMeshSurfaces](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/ThirdParty/NavMeshComponents/Scripts/NavMeshSurface.cs).
-4. Support **artificial gravity** relative to an agent's current surface.
-5. Support **complex parenting of surfaces** to so-called *bases*, uninformly updating their transforms as a group.
-6. **Parent agents to surfaces** so that agents may navigate across surfaces moving independently of one another.
-7. Support **UPM** via Git and [OpenUPM](https://openupm.com/).
-8. **Include demo scenes** in [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scenes/Nav).
-9. **Extensively document** everything.
+1. **Multi-threading** support.
+1. **Obstacle avoidance** support.
+1. **Terrain** support.
+1. Support for **auto-jumping** of agents between [NavMeshSurfaces](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/ThirdParty/NavMeshComponents/Scripts/NavMeshSurface.cs).
+1. Support for **artificial gravity** relative to an agent's current surface.
+1. Support for **complex parenting of surfaces** to so-called *bases*, uninformly updating child transforms as a group.
+1. Support for **parenting agents to surfaces** so that agents may navigate across surfaces moving independently of one another.
+1. **UPM** support via Git and [OpenUPM](https://openupm.com/).
+1. **Included demo scenes** in [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scenes/Nav).
+1. **Extensive documentation** 
 
 I care more about usability than performance. The navigation code should be reasonably easy to use and work as expected. Performance is highly important, just not as much as delivering the jumping and parenting features.
 
@@ -36,7 +37,6 @@ If you do clone the project, the files you might want fall under:
 
 * [Assets/Scripts/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav) - These are helpful, especially the [NavFallSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/NavFallSystem.cs) since how you want to handle falling is entirely up to you—it's not part of the core navigation code because it's too dependent on the game or simulation in question.
 * [Assets/Scenes/Nav](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scenes/Nav) - The home of the nav demo scenes. It's easier to modify these than start from scratch—take it from me.
-
 
 Third, open the project with the intended Unity editor version. I recommend using [Unity Hub](https://unity3d.com/get-unity/download) to manage various editor versions. Play around.
 
@@ -82,6 +82,7 @@ The [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packa
 * `JumpSpeedMultiplierX`: `float` - The jump speed along the horizontal axis. `1.5f` is a reasonable value to try.
 * `JumpSpeedMultiplierY`: `float` - The jump speed along the vertical axis. `2` is a reasonable value to try.
 * `TranslationSpeed`: `float` - This is the translation (movement) speed of the agent. `20` is a reasonable value to try.
+* `RotationSpeed`: `float` - This is the rotation (movement) speed of the agent. `0.3f` is a reasonable value to try.
 * `TypeID`: `int` - This is the type of agent, in terms of the NavMesh system. See examples of use in the demo spawners. There is also a helper method for setting the type from a `string` in the [NavUtil](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/NavUtil.cs) called `GetAgentType`.
 * `Offset`: `float3` - This is the offset of the agent from the basis. It's a `float3` and not a mere float representing the y-component from the surface, which you may find odd. But the idea here is to provide flexibility. While you may usually only set the y-component, there could be situations where you want to set x or z.
 
@@ -101,6 +102,10 @@ Here are the internally-managed component tags (defined in [NavAgentStatus](http
 Finally, you should write to the following component:
 
 * `NavNeedsDestination` - Exists if the agent needs a destination. In this `struct`, there's a self-explanatory `float3` named `Destination`. There's also an optional `bool` named `Teleport`, which toggles teleportation to the provided `Destination`.
+
+You may *optionally* add another component to your agents when spawning, by the way:
+
+* `NavTerrainCapable` - Only needed if your agents must navigate on terrain. Don't use it otherwise, since it may negatively impact performance.
 
 See the [demo destination systems](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/Destination) for examples of usage.
 
