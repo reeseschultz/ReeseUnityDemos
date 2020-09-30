@@ -72,7 +72,7 @@ namespace Reese.Spawning
         /// </summary>
         public static void Enqueue(Spawn spawn, int spawnCount)
         {
-            for (int i = 0; i < spawnCount; ++i) queue.Enqueue(spawn);
+            for (var i = 0; i < spawnCount; ++i) queue.Enqueue(spawn);
         }
 
         struct SpawnJob : IJob
@@ -106,7 +106,7 @@ namespace Reese.Spawning
             if (queue.IsEmpty) return inputDeps;
 
             var job = inputDeps;
-            for (int i = 0; i < spawnBatchCount; ++i)
+            for (var i = 0; i < spawnBatchCount; ++i)
             {
                 job = new SpawnJob
                 {
