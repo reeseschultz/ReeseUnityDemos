@@ -8,22 +8,22 @@ using Unity.Entities;
 
 namespace Reese.Demo
 {
-    class NavPerformanceSpawner : MonoBehaviour
+    class NavTerrainSpawner : MonoBehaviour
     {
         [SerializeField]
-        Button SpawnButton = default;
+        Button SpawnButton = null;
 
         [SerializeField]
-        Button PrefabButton = default;
+        Button PrefabButton = null;
 
         [SerializeField]
-        Text SpawnText = default;
+        Text SpawnText = null;
 
         [SerializeField]
-        Text PrefabText = default;
+        Text PrefabText = null;
 
         [SerializeField]
-        Slider Slider = default;
+        Slider Slider = null;
 
         [SerializeField]
         float3 SpawnOffset = new float3(0, 1, 0);
@@ -98,7 +98,8 @@ namespace Reese.Demo
                     {
                         Value = SpawnOffset
                     },
-                    new NavNeedsSurface { }
+                    new NavNeedsSurface { },
+                    new NavTerrainCapable { }
                 ),
                 enqueueCount
             );

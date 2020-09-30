@@ -49,7 +49,7 @@ namespace Reese.Demo
         {
             var random = new Unity.Mathematics.Random((uint)new System.Random().Next());
 
-            for (int i = 0; i < enqueueCount; ++i) SpawnSystem.Enqueue(new Spawn()
+            for (var i = 0; i < enqueueCount; ++i) SpawnSystem.Enqueue(new Spawn()
                 .WithPrefab(prefabEntity)
                 .WithComponentList(
                     new Translation

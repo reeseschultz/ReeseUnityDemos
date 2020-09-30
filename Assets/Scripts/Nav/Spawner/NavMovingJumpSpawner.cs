@@ -25,6 +25,7 @@ namespace Reese.Demo
                         JumpSpeedMultiplierX = 1.5f,
                         JumpSpeedMultiplierY = 2,
                         TranslationSpeed = 20,
+                        RotationSpeed = 0.3f,
                         TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
                         Offset = new float3(0, 1, 0)
                     },

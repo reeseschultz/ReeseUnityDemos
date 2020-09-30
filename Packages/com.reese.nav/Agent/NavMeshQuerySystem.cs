@@ -47,7 +47,7 @@ namespace Reese.Nav
         {
             var pointerArray = new NavMeshQueryPointer[JobsUtility.MaxJobThreadCount];
 
-            for (int i = 0; i < JobsUtility.MaxJobThreadCount; ++i)
+            for (var i = 0; i < JobsUtility.MaxJobThreadCount; ++i)
             {
                 pointerArray[i] = new NavMeshQueryPointer
                 {
