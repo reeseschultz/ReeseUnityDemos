@@ -83,7 +83,6 @@ namespace Reese.Nav
                         {
                             Value = status
                         });
-
                         return;
                     }
 
