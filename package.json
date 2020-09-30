@@ -1,10 +1,10 @@
 {
 	"name": "com.reese.spawning",
-	"version": "0.5.9",
+	"version": "0.5.10",
 	"displayName": "Reese's DOTS Spawning",
 	"description": "Generic DOTS runtime spawning for any combination of prefab, components, and buffers.",
 	"dependencies": {
-		"com.unity.entities": "0.14.0-preview.18"
+		"com.unity.entities": "0.14.0-preview.19"
 	},
 	"unity": "2020.1",
 	"unityRelease": "3f1",
