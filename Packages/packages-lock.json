@@ -5,9 +5,9 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.entities": "0.14.0-preview.18",
-        "com.unity.physics": "0.4.1-preview",
-        "com.unity.rendering.hybrid": "0.8.0-preview.18"
+        "com.unity.entities": "0.14.0-preview.19",
+        "com.unity.physics": "0.5.0-preview.1",
+        "com.unity.rendering.hybrid": "0.8.0-preview.19"
       }
     },
     "com.reese.random": {
@@ -15,7 +15,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.entities": "0.14.0-preview.18"
+        "com.unity.entities": "0.14.0-preview.19"
       }
     },
     "com.reese.spawning": {
@@ -23,7 +23,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.entities": "0.14.0-preview.18"
+        "com.unity.entities": "0.14.0-preview.19"
       }
     },
     "com.unity.burst": {
