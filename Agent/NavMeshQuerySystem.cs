@@ -74,10 +74,9 @@ namespace Reese.Nav
 
         protected override void OnDestroy()
         {
-            queryList.ForEach(query =>
-            {
-                query.Dispose();
-            });
+            queryList.ForEach(query => query.Dispose());
+
+            foreach (var pointer in PointerArray) UnsafeUtility.Free(pointer.Value, Allocator.Persistent);
 
             PointerArray.Dispose();
         }
