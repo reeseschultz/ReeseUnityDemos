@@ -13,13 +13,13 @@ namespace Reese.Nav
     public class NavTerrainColliderAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
         [SerializeField]
-        PhysicsCategoryTags belongsTo;
+        PhysicsCategoryTags belongsTo = default;
 
         [SerializeField]
-        PhysicsCategoryTags collidesWith;
+        PhysicsCategoryTags collidesWith = default;
 
         [SerializeField]
-        int groupIndex;
+        int groupIndex = default;
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
