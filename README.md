@@ -8,11 +8,8 @@ Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by me,
 
 This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [monorepo](https://en.wikipedia.org/wiki/Monorepo) that supports the included demos, featuring:
 
-1. [Nav](https://openupm.com/packages/com.reese.nav/) - DOTS navigation with auto-jumping agents and movable surfaces.
-2. [Spawning](https://openupm.com/packages/com.reese.spawning/) - Generic DOTS runtime spawning for any combination of prefab, components, and buffers (not compatible with [IL2CPP](https://docs.unity3d.com/Manual/IL2CPP.html)).
-3. [Randomization](https://openupm.com/packages/com.reese.random/) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones.
-
-All of my packages are available on [OpenUPM](https://openupm.com/).
+1. [Nav](https://openupm.com/packages/com.reese.nav/) - DOTS navigation with auto-jumping agents and movable surfaces; released as a package on the `nav` branch.
+2. [Randomization](https://openupm.com/packages/com.reese.random/) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones; released as a package on the `random` branch.
 
 ## Demos
 
@@ -79,10 +76,6 @@ Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to
 ⇒ `Assets/Scenes/SpawnDemo.unity`
 
 ---
-
-## IL2CPP
-
-The demos may use the [spawning package](https://openupm.com/packages/com.reese.spawning/), which isn't compatible with IL2CPP. Keep that in mind when building and running scenes.
 
 ## Linux & You
 
