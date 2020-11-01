@@ -3,7 +3,6 @@
     "references": [
         "Reese.Nav",
         "Reese.Random",
-        "Reese.Spawning",
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Entities",
