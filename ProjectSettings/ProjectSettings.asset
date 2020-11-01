@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: Reese Schultz
   productName: ReeseUnityDemos
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -598,7 +598,7 @@ PlayerSettings:
     30: UNITY_POST_PROCESSING_STACK_V2
   platformArchitecture: {}
   scriptingBackend:
-    Standalone: 0
+    Standalone: 1
   il2cppCompilerConfiguration: {}
   managedStrippingLevel: {}
   incrementalIl2cppBuild: {}

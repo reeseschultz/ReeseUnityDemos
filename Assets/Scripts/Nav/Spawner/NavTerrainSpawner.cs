@@ -1,10 +1,10 @@
 ﻿using Reese.Nav;
-using Reese.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Entities;
+using Unity.Collections;
 
 namespace Reese.Demo
 {
@@ -72,37 +72,33 @@ namespace Reese.Demo
 
         void Enqueue()
         {
-            SpawnSystem.Enqueue(new Spawn()
-                .WithPrefab(currentPrefab)
-                .WithComponentList(
-                    new NavAgent
-                    {
-                        JumpDegrees = 45,
-                        JumpGravity = 200,
-                        TranslationSpeed = 20,
-                        RotationSpeed = 0.3f,
-                        TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
-                        Offset = new float3(0, 1, 0)
-                    },
-                    new Parent { },
-                    new LocalToParent { },
-                    new LocalToWorld
-                    {
-                        Value = float4x4.TRS(
-                            SpawnOffset,
-                            quaternion.identity,
-                            1
-                        )
-                    },
-                    new Translation
-                    {
-                        Value = SpawnOffset
-                    },
-                    new NavNeedsSurface { },
-                    new NavTerrainCapable { }
-                ),
-                enqueueCount
-            );
+            var outputEntities = new NativeArray<Entity>(enqueueCount, Allocator.Temp);
+
+            entityManager.Instantiate(currentPrefab, outputEntities);
+
+            for (var i = 0; i < outputEntities.Length; ++i)
+            {
+                entityManager.AddComponentData(outputEntities[i], new NavAgent
+                {
+                    TranslationSpeed = 20,
+                    RotationSpeed = 0.3f,
+                    TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
+                    Offset = new float3(0, 1, 0)
+                });
+
+                entityManager.AddComponentData(outputEntities[i], new Translation
+                {
+                    Value = SpawnOffset
+                });
+
+                entityManager.AddComponent<LocalToWorld>(outputEntities[i]);
+                entityManager.AddComponent<Parent>(outputEntities[i]);
+                entityManager.AddComponent<LocalToParent>(outputEntities[i]);
+                entityManager.AddComponent<NavNeedsSurface>(outputEntities[i]);
+                entityManager.AddComponent<NavTerrainCapable>(outputEntities[i]);
+            }
+
+            outputEntities.Dispose();
         }
     }
 }

@@ -2,8 +2,6 @@
 using Reese.Random;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Mathematics;
-using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Rendering;
 using Unity.Transforms;
@@ -11,7 +9,6 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
-    [UpdateAfter(typeof(ExportPhysicsWorld))]
     class NavTerrainDestinationSystem : SystemBase
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();

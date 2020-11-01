@@ -2,7 +2,6 @@
 using Unity.Mathematics;
 using Reese.Nav;
 using Unity.Entities;
-using Reese.Spawning;
 using Unity.Transforms;
 
 namespace Reese.Demo
@@ -14,34 +13,32 @@ namespace Reese.Demo
         void Start()
         {
             var prefabEntity = entityManager.CreateEntityQuery(typeof(DinosaurPrefab)).GetSingleton<DinosaurPrefab>().Value;
+            var entity = entityManager.Instantiate(prefabEntity);
 
-            SpawnSystem.Enqueue(new Spawn()
-                .WithPrefab(prefabEntity)
-                .WithComponentList(
-                    new NavAgent
-                    {
-                        JumpDegrees = 45,
-                        JumpGravity = 100,
-                        JumpSpeedMultiplierX = 2,
-                        JumpSpeedMultiplierY = 4,
-                        TranslationSpeed = 40,
-                        RotationSpeed = 0.3f,
-                        TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
-                        Offset = new float3(0, 1, 0)
-                    },
-                    new Parent { },
-                    new LocalToParent { },
-                    new LocalToWorld
-                    {
-                        Value = float4x4.TRS(
-                            new float3(0, 1, 0),
-                            quaternion.identity,
-                            1
-                        )
-                    },
-                    new NavNeedsSurface { }
+            entityManager.AddComponentData(entity, new NavAgent
+            {
+                JumpDegrees = 45,
+                JumpGravity = 100,
+                JumpSpeedMultiplierX = 2,
+                JumpSpeedMultiplierY = 4,
+                TranslationSpeed = 40,
+                RotationSpeed = 0.3f,
+                TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
+                Offset = new float3(0, 1, 0)
+            });
+
+            entityManager.AddComponentData<LocalToWorld>(entity, new LocalToWorld 
+            {
+                Value = float4x4.TRS(
+                    new float3(0, 1, 0),
+                    quaternion.identity,
+                    1
                 )
-            );
+            });
+
+            entityManager.AddComponent<Parent>(entity);
+            entityManager.AddComponent<LocalToParent>(entity);
+            entityManager.AddComponent<NavNeedsSurface>(entity);
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿using Reese.Spawning;
+﻿using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -12,19 +11,18 @@ namespace Reese.Demo
 
         void Start()
         {
+            var outputEntities = new NativeArray<Entity>(3, Allocator.Temp);
             var prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
 
-            SpawnSystem.Enqueue(new Spawn()
-                .WithPrefab(prefabEntity)
-                .WithComponentList(
-                    new Translation
-                    {
-                        Value = new float3(0, 0, 0)
-                    },
-                    new Projectile { }
-                ),
-                3
-            );
+            entityManager.Instantiate(prefabEntity, outputEntities);
+
+            for (var i = 0; i < outputEntities.Length; ++i)
+            {
+                entityManager.AddComponent<Translation>(outputEntities[i]);
+                entityManager.AddComponent<Projectile>(outputEntities[i]);
+            }
+
+            outputEntities.Dispose();
         }
     }
 }

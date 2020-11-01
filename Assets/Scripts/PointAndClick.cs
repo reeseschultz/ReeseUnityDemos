@@ -4,10 +4,10 @@ using Unity.Entities;
 using UnityEngine;
 using RaycastHit = Unity.Physics.RaycastHit;
 using Unity.Rendering;
-using Reese.Spawning;
 using Unity.Transforms;
 using Unity.Mathematics;
 using UnityEngine.InputSystem;
+using Unity.Collections;
 
 namespace Reese.Demo
 {
@@ -22,37 +22,27 @@ namespace Reese.Demo
 
         void Start()
         {
+            var outputEntities = new NativeArray<Entity>(3, Allocator.Temp);
             var prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
 
-            SpawnSystem.Enqueue(new Spawn()
-                .WithPrefab(prefabEntity)
-                .WithComponentList(
-                    new Translation
-                    {
-                        Value = new float3(0, 1, 0)
-                    }
-                )
-            );
+            entityManager.Instantiate(prefabEntity, outputEntities);
 
-            SpawnSystem.Enqueue(new Spawn()
-                .WithPrefab(prefabEntity)
-                .WithComponentList(
-                    new Translation
-                    {
-                        Value = new float3(5, 1, 0)
-                    }
-                )
-            );
+            entityManager.AddComponentData(outputEntities[0], new Translation
+            {
+                Value = new float3(0, 1, 0)
+            });
 
-            SpawnSystem.Enqueue(new Spawn()
-                .WithPrefab(prefabEntity)
-                .WithComponentList(
-                    new Translation
-                    {
-                        Value = new float3(-5, 1, 0)
-                    }
-                )
-            );
+            entityManager.AddComponentData(outputEntities[1], new Translation
+            {
+                Value = new float3(5, 1, 0)
+            });
+
+            entityManager.AddComponentData(outputEntities[2], new Translation
+            {
+                Value = new float3(-5, 1, 0)
+            });
+
+            outputEntities.Dispose();
         }
 
         void LateUpdate()

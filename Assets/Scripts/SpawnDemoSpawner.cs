@@ -1,9 +1,9 @@
-﻿using Reese.Spawning;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Entities;
+using Unity.Collections;
 
 namespace Reese.Demo
 {
@@ -18,7 +18,7 @@ namespace Reese.Demo
         [SerializeField]
         Slider Slider = default;
 
-        int enqueueCount = 1;
+        int spawnCount = 1;
 
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
         Entity prefabEntity;
@@ -27,41 +27,45 @@ namespace Reese.Demo
         {
             if (Button == null || Slider == null) return;
 
-            Button.onClick.AddListener(Enqueue);
-            Slider.onValueChanged.AddListener(UpdateEnqueueCount);
+            Button.onClick.AddListener(Spawn);
+            Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
             prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
         }
 
-        void UpdateEnqueueCount(float count)
+        void UpdateSpawnCount(float count)
         {
-            enqueueCount = (int)count;
+            spawnCount = (int)count;
 
             if (SpawnText == null) return;
 
-            SpawnText.text = "Spawn " + enqueueCount;
+            SpawnText.text = "Spawn " + spawnCount;
 
-            if (enqueueCount == 1) SpawnText.text += " Entity";
+            if (spawnCount == 1) SpawnText.text += " Entity";
             else SpawnText.text += " Entities";
         }
 
-        void Enqueue()
+        void Spawn()
         {
             var random = new Unity.Mathematics.Random((uint)new System.Random().Next());
 
-            for (var i = 0; i < enqueueCount; ++i) SpawnSystem.Enqueue(new Spawn()
-                .WithPrefab(prefabEntity)
-                .WithComponentList(
-                    new Translation
-                    {
-                        Value = new float3(
-                            random.NextInt(-25, 25),
-                            2,
-                            random.NextInt(-25, 25)
-                        )
-                    }
-                )
-            );
+            var outputEntities = new NativeArray<Entity>(spawnCount, Allocator.Temp);
+
+            entityManager.Instantiate(prefabEntity, outputEntities);
+
+            for (var i = 0; i < outputEntities.Length; ++i)
+            {
+                entityManager.AddComponentData(outputEntities[i], new Translation
+                {
+                    Value = new float3(
+                        random.NextInt(-25, 25),
+                        2,
+                        random.NextInt(-25, 25)
+                    )
+                });
+            }
+
+            outputEntities.Dispose();
         }
     }
 }

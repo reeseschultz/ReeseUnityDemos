@@ -1,8 +1,8 @@
 [![openupm](https://img.shields.io/npm/v/com.reese.spawning?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.reese.spawning/)
 
-# Reese's DOTS Spawning
+# Reese's DOTS Spawning (DEPRECATED!)
 
-![Video of spawning prefabs with Unity ECS.](/Gifs/spawn-demo.gif)
+**This package is no longer supported! Use batch instantiation via the `EntityManager` instead.**
 
 Generic DOTS runtime spawning for any combination of prefab, components, and buffers.
 
