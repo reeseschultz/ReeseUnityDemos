@@ -6,6 +6,7 @@ using Unity.Transforms;
 using Collider = Unity.Physics.Collider;
 using SphereCollider = Unity.Physics.SphereCollider;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
+using UnityEngine;
 
 namespace Reese.Nav
 {

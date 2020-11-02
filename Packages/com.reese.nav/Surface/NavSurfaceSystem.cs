@@ -5,6 +5,8 @@ using Unity.Transforms;
 using RaycastHit = Unity.Physics.RaycastHit;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 using Unity.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Reese.Nav
 {
@@ -14,16 +16,42 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavBasisSystem))]
     public class NavSurfaceSystem : SystemBase
     {
+        Dictionary<int, GameObject> gameObjectMap = new Dictionary<int, GameObject>();
         NativeHashMap<int, bool> needsSurfaceMap = default;
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+
+        /// <summary>Provided key should be </summary>
+        public bool GameObjectMapContainsKey(int key)
+            => gameObjectMap.ContainsKey(key);
+
+        public bool GameObjectMapContainsValue(GameObject go)
+            => gameObjectMap.ContainsValue(go);
+
+        public int GameObjectMapCount()
+            => gameObjectMap.Count;
+
+        public Dictionary<int, GameObject>.KeyCollection GameObjectMapKeys()
+            => gameObjectMap.Keys;
+
+        public Dictionary<int, GameObject>.ValueCollection GameObjectMapValues()
+            => gameObjectMap.Values;
+
+        public void GameObjectMapAdd(int key, GameObject value)
+            => gameObjectMap.Add(key, value);
+
+        public bool GameObjectMapRemove(int key)
+            => gameObjectMap.Remove(key);
+
+        public bool GameObjectMapTryGetValue(int key, out GameObject value)
+            => gameObjectMap.TryGetValue(key, out value);
 
         protected override void OnCreate()
             => needsSurfaceMap = new NativeHashMap<int, bool>(
                 NavConstants.NEEDS_SURFACE_MAP_SIZE,
                 Allocator.Persistent
             );
-
+            
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
