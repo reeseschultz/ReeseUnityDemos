@@ -165,6 +165,8 @@ namespace Reese.Nav
                     surface.Value = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                     commandBuffer.RemoveComponent<NavNeedsSurface>(entityInQueryIndex, entity);
 
+                    translation.Value = hit.Position + agent.Offset;
+
                     if (!jumpBufferFromEntity.HasComponent(entity)) return;
                     var jumpBuffer = jumpBufferFromEntity[entity];
                     if (jumpBuffer.Length < 1) return;

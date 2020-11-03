@@ -13,7 +13,7 @@ public class TestSpawner : MonoBehaviour
 
     void Start()
     {
-        go = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+        go = Instantiate(prefab, new Vector3(0, 10, 0), Quaternion.identity);
 
         navAgentHybrid = go.AddComponent<NavAgentHybrid>();
     }

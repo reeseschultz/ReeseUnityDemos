@@ -29,7 +29,7 @@ namespace Reese.Nav
         public string Type = NavConstants.HUMANOID;
 
         [SerializeField]
-        public Vector3 Offset = new Vector3(0, 1, 0);
+        public Vector3 Offset = default;
 
         [SerializeField]
         public bool Teleport = default;
@@ -68,15 +68,16 @@ namespace Reese.Nav
                 )
             });
 
+            entityManager.AddComponentData<Translation>(entity, new Translation
+            {
+                Value = transform.localPosition
+            });
+
             entityManager.AddComponent<Parent>(entity);
             entityManager.AddComponent<LocalToParent>(entity);
             entityManager.AddComponent<NavNeedsSurface>(entity);
-            entityManager.AddComponent<Translation>(entity);
             entityManager.AddComponent<Rotation>(entity);
         }
-
-        void OnDestroy()
-            => entityManager.DestroyEntity(entity);
 
         void FixedUpdate()
         {
