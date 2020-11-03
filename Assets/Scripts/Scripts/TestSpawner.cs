@@ -13,9 +13,12 @@ public class TestSpawner : MonoBehaviour
 
     void Start()
     {
-        go = Instantiate(prefab, new Vector3(0, 10, 0), Quaternion.identity);
+        go = Instantiate(prefab, new Vector3(-32, 10, 0), Quaternion.identity);
 
         navAgentHybrid = go.AddComponent<NavAgentHybrid>();
+        navAgentHybrid.JumpSpeedMultiplierX = 5;
+        navAgentHybrid.JumpSpeedMultiplierY = 9;
+        navAgentHybrid.TranslationSpeed = 50;
     }
 
     void FixedUpdate()

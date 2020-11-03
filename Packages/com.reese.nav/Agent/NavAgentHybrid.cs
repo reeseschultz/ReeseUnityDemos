@@ -54,14 +54,16 @@ namespace Reese.Nav
                 )
             });
 
-            entityManager.AddComponentData<Translation>(entity, new Translation
-            {
-                Value = transform.position 
-            });
+            if (!entityManager.HasComponent<Rotation>(entity)) entityManager.AddComponent<Rotation>(entity);
 
-            entityManager.AddComponent<Rotation>(entity);
-            entityManager.AddComponent<Parent>(entity);
-            entityManager.AddComponent<LocalToParent>(entity);
+            if (!entityManager.HasComponent<Parent>(entity))
+            {
+                entityManager.AddComponent<Parent>(entity);
+                entityManager.AddComponent<LocalToParent>(entity);
+            }
+
+            if (!entityManager.HasComponent<Translation>(entity)) entityManager.AddComponent<Translation>(entity);
+
             entityManager.AddComponent<NavNeedsSurface>(entity);
         }
 

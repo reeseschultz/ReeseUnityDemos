@@ -21,7 +21,6 @@ namespace Reese.Nav
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
-        /// <summary>Provided key should be </summary>
         public bool GameObjectMapContainsKey(int key)
             => gameObjectMap.ContainsKey(key);
 
@@ -165,7 +164,7 @@ namespace Reese.Nav
                     surface.Value = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                     commandBuffer.RemoveComponent<NavNeedsSurface>(entityInQueryIndex, entity);
 
-                    translation.Value = hit.Position + agent.Offset;
+                    translation.Value.y = hit.Position.y + agent.Offset.y;
 
                     if (!jumpBufferFromEntity.HasComponent(entity)) return;
                     var jumpBuffer = jumpBufferFromEntity[entity];
