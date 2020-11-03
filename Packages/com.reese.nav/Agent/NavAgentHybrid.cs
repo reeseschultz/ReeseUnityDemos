@@ -43,6 +43,28 @@ namespace Reese.Nav
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
         NavSurfaceSystem surfaceSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavSurfaceSystem>();
 
+        void InitializeEntityTransform()
+        {
+            entityManager.AddComponentData<LocalToWorld>(entity, new LocalToWorld
+            {
+                Value = float4x4.TRS(
+                    transform.position,
+                    transform.rotation,
+                    transform.lossyScale
+                )
+            });
+
+            entityManager.AddComponentData<Translation>(entity, new Translation
+            {
+                Value = transform.position 
+            });
+
+            entityManager.AddComponent<Rotation>(entity);
+            entityManager.AddComponent<Parent>(entity);
+            entityManager.AddComponent<LocalToParent>(entity);
+            entityManager.AddComponent<NavNeedsSurface>(entity);
+        }
+
         void Start()
         {
             entity = entityManager.CreateEntity();
@@ -56,27 +78,10 @@ namespace Reese.Nav
                 TranslationSpeed = TranslationSpeed,
                 RotationSpeed = RotationSpeed,
                 TypeID = NavUtil.GetAgentType(Type),
-                Offset = Offset               
+                Offset = Offset
             });
 
-            entityManager.AddComponentData<LocalToWorld>(entity, new LocalToWorld
-            {
-                Value = float4x4.TRS(
-                    transform.position,
-                    transform.rotation,
-                    transform.lossyScale
-                )
-            });
-
-            entityManager.AddComponentData<Translation>(entity, new Translation
-            {
-                Value = transform.localPosition
-            });
-
-            entityManager.AddComponent<Parent>(entity);
-            entityManager.AddComponent<LocalToParent>(entity);
-            entityManager.AddComponent<NavNeedsSurface>(entity);
-            entityManager.AddComponent<Rotation>(entity);
+            InitializeEntityTransform();
         }
 
         void FixedUpdate()
@@ -110,6 +115,8 @@ namespace Reese.Nav
                 });
 
                 lastWorldDestination = WorldDestination;
+
+                InitializeEntityTransform(); // Reinitialize in case GameObject transform changes in-between pathing.
             }
 
             var surfaceEntity = entityManager.GetComponentData<Parent>(entity);
