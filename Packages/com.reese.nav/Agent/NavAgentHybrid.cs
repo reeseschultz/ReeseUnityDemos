@@ -64,7 +64,7 @@ namespace Reese.Nav
                 Value = float4x4.TRS(
                     transform.position,
                     transform.rotation,
-                    1
+                    transform.lossyScale
                 )
             });
 
