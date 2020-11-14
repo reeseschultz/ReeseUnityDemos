@@ -2,38 +2,70 @@
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.Experimental.AI;
 
 namespace Reese.Nav
 {
     public class NavAgentHybrid : MonoBehaviour
     {
+        /// <summary>True if the agent is lerping, false if not.</summary>
+        public bool IsLerping { get; private set; }
+
+        /// <summary>True if the agent is jumping, false if not.</summary>
+        public bool IsJumping { get; private set; }
+
+        /// <summary>True if the agent is falling, false if not.</summary>
+        public bool IsFalling { get; private set; }
+
+        /// <summary>True if the agent is planning, false if not.</summary>
+        public bool IsPlanning { get; private set; }
+
+        /// <summary>True if the agent is terrain-capable, false if not.</summary>
+        public bool IsTerrainCapable { get; set; }
+
+        /// <summary>Has a value of PathQueryStatus if the agent has a problem, null if not.</summary>
+        public PathQueryStatus? HasProblem { get; private set; }
+
+        /// <summary>True if the agent needs a surface, false if not.</summary>
+        public bool NeedsSurface { get; private set; }
+
+        /// <summary>The agent's jump angle in degrees.</summary>
         [SerializeField]
         public float JumpDegrees = 45;
 
+        /// <summary>Artificial gravity applied to the agent.</summary>
         [SerializeField]
         public float JumpGravity = 100;
 
+        /// <summary>The agent's horizontal jump speed multiplier.</summary>
         [SerializeField]
         public float JumpSpeedMultiplierX = 1.5f;
 
+        /// <summary>The agent's vertical jump speed mulitiplier.</summary>
         [SerializeField]
         public float JumpSpeedMultiplierY = 2;
 
+        /// <summary>The agent's translation speed.</summary>
         [SerializeField]
         public float TranslationSpeed = 20;
 
+        /// <summary>The agent's rotation speed.</summary>
         [SerializeField]
         public float RotationSpeed = 0.3f;
 
+        /// <summary>The agent's type.</summary>
         [SerializeField]
         public string Type = NavConstants.HUMANOID;
 
+        /// <summary>The agent's offset.</summary>
         [SerializeField]
         public Vector3 Offset = default;
 
+        /// <summary>True if the agent should teleport to destinations, false if not.</summary>
         [SerializeField]
         public bool Teleport = default;
 
+        /// <summary>The agent's world destination.</summary>
         [SerializeField]
         public Vector3 WorldDestination = default;
 
@@ -86,27 +118,46 @@ namespace Reese.Nav
             InitializeEntityTransform();
         }
 
+        void Update()
+        {
+            if (entity.Equals(Entity.Null)) return;
+
+            IsLerping = entityManager.HasComponent<NavLerping>(entity);
+            IsJumping = entityManager.HasComponent<NavJumping>(entity);
+            IsFalling = entityManager.HasComponent<NavFalling>(entity);
+            IsPlanning = entityManager.HasComponent<NavPlanning>(entity);
+
+            NeedsSurface = entityManager.HasComponent<NavNeedsSurface>(entity);
+
+            if (IsTerrainCapable && !entityManager.HasComponent<NavTerrainCapable>(entity)) entityManager.AddComponent<NavTerrainCapable>(entity);
+            else entityManager.RemoveComponent<NavTerrainCapable>(entity);
+
+            if (entityManager.HasComponent<NavHasProblem>(entity)) HasProblem = entityManager.GetComponentData<NavHasProblem>(entity).Value;
+            else HasProblem = null;
+        }
+
         void FixedUpdate()
         {
             if (
+                entity.Equals(Entity.Null) ||
                 !entityManager.HasComponent<NavAgent>(entity) ||
                 !entityManager.HasComponent<Parent>(entity) ||
                 !entityManager.HasComponent<Translation>(entity) ||
                 !entityManager.HasComponent<Rotation>(entity)
             ) return;
 
-            var navAgent = entityManager.GetComponentData<NavAgent>(entity);
+            var agent = entityManager.GetComponentData<NavAgent>(entity);
 
-            navAgent.JumpDegrees = JumpDegrees;
-            navAgent.JumpGravity = JumpGravity;
-            navAgent.JumpSpeedMultiplierX = JumpSpeedMultiplierX;
-            navAgent.JumpSpeedMultiplierY = JumpSpeedMultiplierY;
-            navAgent.TranslationSpeed = TranslationSpeed;
-            navAgent.RotationSpeed = RotationSpeed;
-            navAgent.TypeID = NavUtil.GetAgentType(Type);
-            navAgent.Offset = Offset;
+            agent.JumpDegrees = JumpDegrees;
+            agent.JumpGravity = JumpGravity;
+            agent.JumpSpeedMultiplierX = JumpSpeedMultiplierX;
+            agent.JumpSpeedMultiplierY = JumpSpeedMultiplierY;
+            agent.TranslationSpeed = TranslationSpeed;
+            agent.RotationSpeed = RotationSpeed;
+            agent.TypeID = NavUtil.GetAgentType(Type);
+            agent.Offset = Offset;
 
-            entityManager.SetComponentData(entity, navAgent);
+            entityManager.SetComponentData(entity, agent);
 
             if (!lastWorldDestination.Equals(WorldDestination))
             {

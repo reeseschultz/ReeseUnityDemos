@@ -5,7 +5,7 @@ ModelImporter:
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Jump
+    second: Jumping
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -35,10 +35,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Jump
+      name: Jumping
       takeName: mixamo.com
       internalID: 0
-      firstFrame: 0
+      firstFrame: 30
       lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
