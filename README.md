@@ -21,23 +21,17 @@ This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [
 
 ![Gif of agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
 
----
-
 ⇒ `Assets/Scenes/Nav/NavMovingJumpDemo.unity`.
 
 ---
 
 ![Gif of agents spawning and avoiding obstacles.](/Gifs/nav-performance-demo.gif)
 
----
-
 ⇒ `Assets/Scenes/Nav/NavPerformanceDemo.unity`.
 
 ---
 
 ![Gif of an agent moving to point-and-clicked destinations.](/Gifs/nav-point-and-click-demo.gif)
-
----
 
 ⇒ `Assets/Scenes/Nav/NavPointAndClickDemo.unity`.
 
