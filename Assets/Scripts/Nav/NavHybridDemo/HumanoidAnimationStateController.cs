@@ -23,12 +23,6 @@ namespace Reese.Demo
             animator.SetBool(RUNNING, agent.IsLerping);
             animator.SetBool(JUMPING, agent.IsJumping);
             animator.SetBool(FALLING, agent.IsFalling);
-
-            // if (agent.IsLerping)
-            // {
-                // animator.CrossFadeInFixedTime("Running", 0.05f, 0);
-                // animator.Play("Running", 0);
-            // }
         }
     }
 }
