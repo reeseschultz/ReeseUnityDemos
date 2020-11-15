@@ -34,6 +34,7 @@ namespace Reese.Demo
                 .WithNone<NavHasProblem, NavNeedsDestination, NavPlanning>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
+                .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(randomArray)
                 .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface, in LocalToWorld localToWorld) =>
                 {

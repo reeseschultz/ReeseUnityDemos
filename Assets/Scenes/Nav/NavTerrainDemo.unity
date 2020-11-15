@@ -12710,7 +12710,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u2022 Use the WASD keys move the camera\n\u2022 Right-click and move
+  m_Text: "\u2022 Use the WASD keys to move the camera\n\u2022 Right-click and move
     the mouse to look around"
 --- !u!222 &1842874586
 CanvasRenderer:
