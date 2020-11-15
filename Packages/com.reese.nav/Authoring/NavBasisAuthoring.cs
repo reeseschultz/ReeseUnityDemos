@@ -5,7 +5,6 @@ using UnityEngine;
 namespace Reese.Nav
 {
     /// <summary>Authors a NavBasis.</summary>
-    [RequiresEntityConversion]
     public class NavBasisAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
         /// <summary>If true the GameObject's transform will be used and

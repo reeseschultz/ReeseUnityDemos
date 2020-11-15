@@ -7,7 +7,6 @@ using UnityEngine;
 namespace Reese.Nav
 {
     /// <summary>Authors a NavSurface.</summary>
-    [RequiresEntityConversion]
     public class NavSurfaceAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
         /// <summary>If true the GameObject's transform will be used and

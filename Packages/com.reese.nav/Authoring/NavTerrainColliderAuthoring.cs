@@ -9,7 +9,6 @@ using UnityEngine;
 namespace Reese.Nav
 {
     /// <summary>Authors a terrain collider.</summary>
-    [RequiresEntityConversion]
     public class NavTerrainColliderAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
         [SerializeField]
