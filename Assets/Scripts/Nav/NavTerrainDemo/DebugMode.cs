@@ -2,7 +2,6 @@
 using Unity.Entities;
 using Unity.Transforms;
 using Reese.Nav;
-using Unity.Collections;
 using Unity.Mathematics;
 
 namespace Reese.Demo {
