@@ -8,9 +8,9 @@
 
 This is a multi-threaded navigation package using [Unity DOTS](https://unity.com/dots). It supports obstacle avoidance, terrain, agents automatically jumping between surfaces with artificial gravity, parenting of agents and surfaces for preserving local transformations, and even backward compatibility with GameObjects. It's maintained by me, [Reese Schultz](https://github.com/reeseschultz/).
 
-You may want to *clone* the containing [monorepo](https://en.wikipedia.org/wiki/Monorepo) since it has demos and glue code not part of `Reese.Nav`:
-
 ## Clone (Optional)
+
+You may want to *clone* the containing [monorepo](https://en.wikipedia.org/wiki/Monorepo) since it has demos and glue code not part of `Reese.Nav`:
 
 ```sh
 git clone https://github.com/reeseschultz/ReeseUnityDemos.git
@@ -57,6 +57,8 @@ Consider that, even when using GameObjects, you would still want to attach the D
 
 ## API
 
+---
+
 ### [NavAgentHybrid](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentHybrid.cs) (simple, exclusively for GameObjects)
 
 #### Initialization Variables
@@ -84,6 +86,8 @@ Consider that, even when using GameObjects, you would still want to attach the D
 
 * `Teleport`: `bool` - `true` if the agent should teleport to destinations, `false` if not.
 * `WorldDestination`: `Vector3` - The agent's world destination.
+
+---
 
 ### [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) (advanced, exclusively for entities)
 
@@ -121,6 +125,8 @@ You may *optionally* add another component to your agents when spawning:
 
 (See the [demo destination systems](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/Destination) for examples of status component and variable usage.)
 
+---
+
 ### [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurface.cs)
 
 The [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurface.cs) is much less complicated than the [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs). What you'll mainly be concerned with is its associated [NavSurfaceAuthoring](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurfaceAuthoring.cs) script. It has some important public variables:
@@ -131,6 +137,8 @@ The [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Pac
 
 Other than that, you may have some reason to query [NavSurfaces](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.nav/Surface), but that's about it.
 
+---
+
 ### [NavBasis](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Basis/NavBasis.cs)
 
 Like the [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurface.cs), you only need to know about the related [NavBasisAuthoring](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Basis/NavBasisAuthoring.cs) script. It has a couple public variables:
@@ -139,6 +147,8 @@ Like the [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/maste
 * `ParentBasis`: `NavBasisAuthoring` - In essence, a basis can have a basis.
 
 What is the basis, exactly? It's abstract for a reason: it's a glorified parent transform. The logic is as follows: a basis can be the child of a basis; a surface can be a child of a basis; and finally, an agent can be a child of a surface. And as previously stated, the basis is optional. You don't have to set it on a [NavSurfaceAuthoring](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Basis/NavBasisAuthoring.cs) script; a default basis will be created for you.
+
+---
 
 ### **IMPORTANT:** Layers & You
 
