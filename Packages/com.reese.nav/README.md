@@ -53,7 +53,7 @@ If you want to use this package with standard GameObjects, you're in luck. Alter
 
 Either way, the `NavHybridDemo` in `Assets/Scenes/Nav` of the containing project will illuminate the GameObject workflow. The prefab used in that scene has the `NavAgentHybrid` component attached to it. It also features sample animation controllers in [Assets/Scripts/Nav/NavHybridDemo](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/), one of which is a script that shows you how to interface with the `NavAgentHybrid` component to play animations.
 
-Consider that, even when using GameObjects, you would still want to attach the DOTS-based surface, and ,optionally, basis code as well. For more on that, see the API section to follow.
+Consider that, even when using GameObjects, you would still want to attach the DOTS-based surface, and, optionally, basis code as well. For more on that, see the API section to follow.
 
 ## API
 
