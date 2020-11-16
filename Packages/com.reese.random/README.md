@@ -1,6 +1,7 @@
-[![openupm](https://img.shields.io/npm/v/com.reese.random?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.reese.random/)
-
 # Reese's DOTS Randomization
+
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+[![openupm](https://img.shields.io/npm/v/com.reese.random?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.reese.random/)
 
 ![Video of agents spawning and avoiding obstacles.](/Gifs/nav-performance-demo.gif)
 
