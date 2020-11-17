@@ -20,7 +20,10 @@ namespace Reese.Demo
         protected override void OnCreate()
         {
             if (!SceneManager.GetActiveScene().name.Equals("NavPointAndClickDemo"))
+            {
                 Enabled = false;
+                return;
+            }
 
             agentTransformGameObject = new GameObject("Agent Transform GameObject");
         }

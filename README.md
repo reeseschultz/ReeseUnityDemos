@@ -1,6 +1,6 @@
 # ReeseUnityDemos
 
-[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/dQkjpKT)
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
 
 Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by me, Reese.
 
@@ -13,65 +13,43 @@ This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [
 
 ## Demos
 
-Here's how my articles on [reeseschultz.com](https://reeseschultz.com) relate to samples in this project:
-
-### [DOTS Navigation with Auto-Jumping Agents and Movable Surfaces](https://reeseschultz.com/dots-navigation-with-auto-jumping-agents-and-movable-surfaces/)
-
-![Video of agents navigating complex terrain.](/Gifs/nav-terrain-demo.gif)
+![Gif of agents navigating complex terrain.](/Gifs/nav-terrain-demo.gif)
 
 ⇒ `Assets/Scenes/Nav/NavTerrainDemo.unity`.
 
-![Video of agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
+---
+
+![Gif of agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
 
 ⇒ `Assets/Scenes/Nav/NavMovingJumpDemo.unity`.
 
-![Video of agents spawning and avoiding obstacles.](/Gifs/nav-performance-demo.gif)
+---
+
+![Gif of agents spawning and avoiding obstacles.](/Gifs/nav-performance-demo.gif)
 
 ⇒ `Assets/Scenes/Nav/NavPerformanceDemo.unity`.
 
-![Video of an agent moving to point-and-clicked destinations.](/Gifs/nav-point-and-click-demo.gif)
+---
+
+![Gif of an agent moving to point-and-clicked destinations.](/Gifs/nav-point-and-click-demo.gif)
 
 ⇒ `Assets/Scenes/Nav/NavPointAndClickDemo.unity`.
 
 ---
 
-### [Pointing and Clicking with Unity ECS](https://reeseschultz.com/pointing-and-clicking-with-unity-ecs/)
-
-
-![Video of changing prefab colors with Unity ECS.](/Gifs/point-and-click-demo.gif)
+![Gif of changing prefab colors with Unity ECS.](/Gifs/point-and-click-demo.gif)
 
 ⇒ `Assets/Scenes/PointAndClickDemo.unity`.
 
 ---
 
-### [Projectile Motion with Unity DOTS](https://reeseschultz.com/projectile-motion-with-unity-dots/)
-
-
-![Video of projectile motion demonstration with Unity DOTS.](/Gifs/projectile-demo.gif)
+![Gif of projectile motion demonstration with Unity DOTS.](/Gifs/projectile-demo.gif)
 
 ⇒ `Assets/Scenes/ProjectileDemo.unity`
 
 ---
 
-### [Random Number Generation with Unity DOTS](https://reeseschultz.com/random-number-generation-with-unity-dots)
-
-⇒ `Assets/Scenes/ProjectileDemo.unity`
-
-⇒ `Assets/Scenes/SpawnDemo.unity`
-
-⇒ `Assets/Scenes/Nav/NavPerformanceDemo.unity`
-
----
-
-### [Selectively Running Systems in Scenes with Unity ECS](https://reeseschultz.com/selectively-running-systems-in-scenes-with-unity-ecs)
-
-⇒ `Assets/Scenes/ProjectileDemo.unity`
-
----
-
-### [Spawning Prefabs with Unity ECS](https://reeseschultz.com/spawning-prefabs-with-unity-ecs/)
-
-![Video of spawning prefabs with Unity ECS.](/Gifs/spawn-demo.gif)
+![Gif of spawning prefabs with Unity ECS.](/Gifs/spawn-demo.gif)
 
 ⇒ `Assets/Scenes/SpawnDemo.unity`
 

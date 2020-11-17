@@ -9,7 +9,6 @@ using UnityEngine;
 namespace Reese.Nav
 {
     /// <summary>Authors a terrain collider.</summary>
-    [RequiresEntityConversion]
     public class NavTerrainColliderAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
         [SerializeField]
@@ -57,6 +56,7 @@ namespace Reese.Nav
             dstManager.AddComponentData(entity, new RenderBounds { Value = bounds });
         }
 
+        // Adapted from https://forum.unity.com/threads/using-unity-terrain-with-dots-workflow.755105/#post-5061125 by daschatten.
         public static PhysicsCollider CreateTerrainCollider(TerrainData terrainData, CollisionFilter filter)
         {
             var physicsCollider = new PhysicsCollider();

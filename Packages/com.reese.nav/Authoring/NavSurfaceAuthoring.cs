@@ -7,7 +7,6 @@ using UnityEngine;
 namespace Reese.Nav
 {
     /// <summary>Authors a NavSurface.</summary>
-    [RequiresEntityConversion]
     public class NavSurfaceAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
         /// <summary>If true the GameObject's transform will be used and
@@ -31,12 +30,17 @@ namespace Reese.Nav
         /// </summary>
         public NavBasisAuthoring Basis;
 
+        NavSurfaceSystem surfaceSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavSurfaceSystem>();
+
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             dstManager.AddComponentData<NavSurface>(entity, new NavSurface
             {
-                Basis = conversionSystem.GetPrimaryEntity(Basis)
+                Basis = conversionSystem.GetPrimaryEntity(Basis),
+                TransformInstanceID = gameObject.transform.GetInstanceID()
             });
+
+            surfaceSystem.GameObjectMapAdd(gameObject.transform.GetInstanceID(), gameObject);
 
             if (HasGameObjectTransform) dstManager.AddComponent(entity, typeof(CopyTransformFromGameObject));
             else dstManager.AddComponent(entity, typeof(CopyTransformToGameObject));
