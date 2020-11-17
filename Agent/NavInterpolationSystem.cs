@@ -1,5 +1,4 @@
-﻿using Unity.Collections;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
@@ -43,7 +42,8 @@ namespace Reese.Nav
                 .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation, in Parent surface) =>
                 {
-                    if (!pathBufferFromEntity.HasComponent(entity)) return;
+                    if (!pathBufferFromEntity.HasComponent(entity) || agent.DestinationSurface.Equals(Entity.Null)) return;
+
                     var pathBuffer = pathBufferFromEntity[entity];
 
                     if (pathBuffer.Length == 0) return;
@@ -90,9 +90,9 @@ namespace Reese.Nav
                         agent.PathBufferIndex = 0;
                         return;
                     }
-                    
+
                     translation.Value = Vector3.MoveTowards(translation.Value, localWaypoint, agent.TranslationSpeed * deltaSeconds);
-                    
+
                     var lookAt = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
                         localToWorldFromEntity[agent.DestinationSurface].Value,
                         localWaypoint
@@ -129,6 +129,8 @@ namespace Reese.Nav
                 .WithReadOnly(localToWorldFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in NavAgent agent, in Parent surface) =>
                 {
+                    if (agent.DestinationSurface.Equals(Entity.Null)) return;
+
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
 
                     if (!jumpBufferFromEntity.HasComponent(entity)) return;

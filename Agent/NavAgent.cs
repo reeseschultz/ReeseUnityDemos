@@ -57,7 +57,7 @@ namespace Reese.Nav
         /// agent. If you don't get this right, then raycasts below the agent
         /// may entirely overshoot the surface, which will eventually mean that
         /// the NavFalling component is added, which wouldn't be what you want.
-        /// This is the offset of the agent from the basis. Now, you
+        /// This is the offset of the agent from the surface. Now, you
         /// may find it odd that this is a float3 and not simply a float
         /// representing the y-component from the surface, but the idea here
         /// is to provide flexibility. While you may usually only set the y-

@@ -14,5 +14,7 @@ namespace Reese.Nav
         /// this reference is used to set the Parent component *after*
         /// Unity.Physics does its thing.</summary>
         public Entity Basis;
+
+        public int TransformInstanceID;
     }
 }
