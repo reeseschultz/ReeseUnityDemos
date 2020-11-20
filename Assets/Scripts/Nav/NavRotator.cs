@@ -1,23 +1,29 @@
 using UnityEngine;
-using Unity.Mathematics;
 
 namespace Reese.Demo
 {
     class NavRotator : MonoBehaviour
     {
         [SerializeField]
-        float xAngleMax = 10;
+        Vector3 fromRelativeAngles = new Vector3(0, 0, 0);
 
         [SerializeField]
-        float yAngleMax = 30;
+        Vector3 toRelativeAngles = new Vector3(0, 0, 0);
 
         [SerializeField]
-        float xAngleRate = 0.5f;
+        float frequency = 1.0F;
 
-        [SerializeField]
-        float yAngleRate = 2;
+        void Start()
+        {
+            fromRelativeAngles += transform.localRotation.eulerAngles;
+            toRelativeAngles += transform.localRotation.eulerAngles;
+        }
 
         void Update()
-            => transform.rotation = Quaternion.Euler(xAngleMax * math.sin(Time.time * xAngleRate), 0, yAngleMax * math.sin(Time.time * yAngleRate));
+            => transform.localRotation = Quaternion.Lerp(
+                Quaternion.Euler(fromRelativeAngles),
+                Quaternion.Euler(toRelativeAngles),
+                (Mathf.Sin(Mathf.PI * frequency * Time.time) + 1) * 0.5f
+            );
     }
 }

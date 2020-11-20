@@ -1168,10 +1168,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e04640fcd1120a7f9751ca10c68e5c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xAngleMax: 2
-  yAngleMax: 1
-  xAngleRate: 0.5
-  yAngleRate: 0.5
+  fromRelativeAngles: {x: -4.5, y: 3, z: 0}
+  toRelativeAngles: {x: 4.5, y: -3, z: 0}
+  frequency: 0.08
 --- !u!4 &2088851149
 Transform:
   m_ObjectHideFlags: 0
@@ -1405,7 +1404,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9155020506048037064}
   m_LocalRotation: {x: -0, y: 0.2752877, z: -0, w: 0.9613619}
-  m_LocalPosition: {x: 38.349884, y: -119.38873, z: -14.195937}
+  m_LocalPosition: {x: 38.349884, y: -122.01, z: -14.195937}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2690873420227826497}
@@ -1503,7 +1502,6 @@ GameObject:
   - component: {fileID: 4785637567527308824}
   - component: {fileID: 7310842395264091431}
   - component: {fileID: 5156223703317179575}
-  - component: {fileID: 1211974496684795633}
   m_Layer: 0
   m_Name: obj_potty1 Mesh
   m_TagString: Untagged
@@ -1511,22 +1509,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1211974496684795633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1211974496684795632}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e04640fcd1120a7f9751ca10c68e5c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  xAngleMax: 10
-  yAngleMax: 1
-  xAngleRate: 0.5
-  yAngleRate: 2
 --- !u!1 &1290034021190140086
 GameObject:
   m_ObjectHideFlags: 0
@@ -1942,7 +1924,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7777401414206775657}
   m_LocalRotation: {x: 0.053523343, y: 0.6085152, z: -0.034920022, w: 0.7909647}
-  m_LocalPosition: {x: 92.94988, y: -129.38873, z: -30.195938}
+  m_LocalPosition: {x: 92.94988, y: -133, z: -30.195938}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 3710385800030241406}
@@ -2725,7 +2707,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 296538217173050071}
   m_LocalRotation: {x: -0, y: 0.13419442, z: -0, w: 0.99095505}
-  m_LocalPosition: {x: 225.14987, y: -129.38873, z: 97.20406}
+  m_LocalPosition: {x: 225.14987, y: -133.1, z: 97.20406}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 2870116036521024157}
