@@ -1171,7 +1171,7 @@ MonoBehaviour:
   xAngleMax: 2
   yAngleMax: 1
   xAngleRate: 0.5
-  yAngleRate: 2
+  yAngleRate: 0.5
 --- !u!4 &2088851149
 Transform:
   m_ObjectHideFlags: 0
