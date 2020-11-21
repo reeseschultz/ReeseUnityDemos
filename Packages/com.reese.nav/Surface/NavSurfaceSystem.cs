@@ -7,6 +7,7 @@ using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 using Unity.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Mathematics;
 
 namespace Reese.Nav
 {
@@ -14,6 +15,7 @@ namespace Reese.Nav
     /// surface (or lack thereof) underneath a given NavAgent. It also maintains
     /// parent-child relationships.</summary>
     [UpdateAfter(typeof(NavBasisSystem))]
+    [UpdateAfter(typeof(TransformSystemGroup))]
     public class NavSurfaceSystem : SystemBase
     {
         Dictionary<int, GameObject> gameObjectMap = new Dictionary<int, GameObject>();
@@ -50,14 +52,13 @@ namespace Reese.Nav
                 NavConstants.NEEDS_SURFACE_MAP_SIZE,
                 Allocator.Persistent
             );
-            
+
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var defaultBasis = World.GetExistingSystem<NavBasisSystem>().DefaultBasis;
 
-            // Below job is needed because Unity.Physics removes the Parent
-            // component for dynamic bodies.
+            // Prevents Unity.Physics from removing the Parent component from dynamic bodies:
             Entities
                 .WithNone<Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavSurface surface) =>
@@ -85,8 +86,7 @@ namespace Reese.Nav
 
             barrier.AddJobHandleForProducer(Dependency);
 
-            // Below job is needed so users don't have to manually add the
-            // Parent and LocalToParent components when spawning agents.
+            // Adds Parent and LocalToParent components when to agents:
             Entities
                 .WithNone<NavHasProblem, Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavAgent agent) =>
@@ -100,9 +100,7 @@ namespace Reese.Nav
 
             barrier.AddJobHandleForProducer(Dependency);
 
-            // Below job is needed because Unity.Transforms assumes that
-            // children should be scaled by their surface by automatically
-            // providing them with a CompositeScale.
+            // Prevents Unity.Transforms from assuming that children should be scaled by their parent:
             Entities
                 .WithAll<CompositeScale>()
                 .WithAny<NavSurface, NavBasis>()
@@ -177,6 +175,34 @@ namespace Reese.Nav
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                 })
                 .WithName("NavSurfaceTrackingJob")
+                .ScheduleParallel();
+
+            var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
+
+            // Corrects the translation of agents spawned on a surface not at the origin:
+            Entities
+                .WithChangeFilter<PreviousParent>()
+                .WithAll<NavFixTranslation>()
+                .WithReadOnly(localToWorldFromEntity)
+                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in PreviousParent previousParent, in Parent parent) =>
+                {
+                    if (previousParent.Value.Equals(Entity.Null) || !localToWorldFromEntity.HasComponent(parent.Value)) return;
+
+                    var parentTransform = localToWorldFromEntity[parent.Value];
+
+                    if (parentTransform.Position.Equals(float3.zero)) {
+                        commandBuffer.RemoveComponent<NavFixTranslation>(entityInQueryIndex, entity);
+                        return;
+                    }
+
+                    translation.Value = NavUtil.MultiplyPoint3x4(
+                        math.inverse(parentTransform.Value),
+                        translation.Value
+                    );
+
+                    commandBuffer.RemoveComponent<NavFixTranslation>(entityInQueryIndex, entity);
+                })
+                .WithName("NavFixTranslationJob")
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);

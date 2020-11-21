@@ -1,4 +1,5 @@
 ﻿using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -57,20 +58,8 @@ namespace Reese.Nav
                 Offset = offset
             });
 
-            dstManager.AddComponentData(entity, new Translation
-            {
-                Value = transform.position
-            });
-
-            dstManager.AddComponentData(entity, new Rotation
-            {
-                Value = transform.rotation
-            });
-
-            dstManager.AddComponent<LocalToWorld>(entity);
-            dstManager.AddComponent<Parent>(entity);
-            dstManager.AddComponent<LocalToParent>(entity);
             dstManager.AddComponent<NavNeedsSurface>(entity);
+            dstManager.AddComponent<NavFixTranslation>(entity);
 
             if (isTerrainCapable) dstManager.AddComponent<NavTerrainCapable>(entity);
         }

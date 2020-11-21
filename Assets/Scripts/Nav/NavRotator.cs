@@ -11,7 +11,7 @@ namespace Reese.Demo
         Vector3 toRelativeAngles = new Vector3(0, 0, 0);
 
         [SerializeField]
-        float frequency = 1.0F;
+        float frequency = 1;
 
         void Start()
         {

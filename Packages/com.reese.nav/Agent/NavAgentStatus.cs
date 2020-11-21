@@ -44,4 +44,7 @@ namespace Reese.Nav
 
     /// <summary>Exists if the agent needs to traverse complex terrain.</summary>
     public struct NavTerrainCapable : IComponentData { }
+
+    /// <summary>Exists if the agent's translation needs to be fixed.</summary>
+    public struct NavFixTranslation : IComponentData { }
 }
