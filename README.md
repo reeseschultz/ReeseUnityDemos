@@ -42,19 +42,27 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 
 ## Usage at a Glance
 
-For this navigation package, whether you're using it with GameObjects or entities, there are **three key components** you should be familiar with:
+For this navigation package, whether you're using it with GameObjects or entities, there are three concepts to be familiar with:
 
-1. [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) - A component added to any entity you want to, well, navigate. There is a facade for this component called the [NavAgentHybrid](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentHybrid.cs) to be used exclusively with GameObjects. It works by creating an entity with the `NavAgent` component in the background. The `NavAgentHybrid` updates its GameObject transform to match that of the invisible "background" entity which drives the navigation.
-2. [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurface.cs) - A component added to [GameObjects](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/GameObject.html) during authoring that also have the [NavMeshSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/ThirdParty/NavMeshComponents/Scripts/NavMeshSurface.cs) attached. Make sure you bake your surfaces!
-3. [NavBasis](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Basis/NavBasis.cs) - A glorified parent transform you may attach to any arbitrary [GameObject](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/GameObject.html). If you don't assign your surfaces to a basis, then they will be parented to a shared default basis. A basis is normally used to translate multiple surfaces as a whole.
+1. **Agent** - An actor or character that navigates. Agents are parented to surfaces.
+2. **Surface** - A space for agents to navigate upon. Surfaces are parented to bases (if no explicit basis is provided, a default basis is used at the world origin).
+3. **Basis** - A glorified parent transform that allows multiple surfaces to move as a whole.
 
-### A Note on Usage with GameObjects
+### Authoring Components
 
-If you want to use this package with standard GameObjects, you're in luck. Alternatively, if you want to use a skinned mesh renderer (bone-based animation), using GameObjects may be your only option until the official DOTS animation package is more mature.
+1. [NavAgentAuthoring](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Authoring/NavAgentAuthoring.cs) - Converts GameObjects into entities with the `NavAgent` component, and other needed components.
+2. [NavSurfaceAuthoring](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Authoring/NavSurfaceAuthoring.cs) - Converts GameObjects into entities with the `NavSurface` component, and other needed components.
+3. [NavBasisAuthoring](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Authoring/NavBasisAuthoring.cs) - Converts GameObjects into entities with the `NavBasis` component, and other needed components.
 
-Either way, the `NavHybridDemo` in `Assets/Scenes/Nav` of the containing project will illuminate the GameObject workflow. The prefab used in that scene has the `NavAgentHybrid` component attached to it. It also features sample animation controllers in [Assets/Scripts/Nav/NavHybridDemo](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/), one of which is a script that shows you how to interface with the `NavAgentHybrid` component to play animations.
+### Usage with GameObjects
 
-Consider that, even when using GameObjects, you would still want to attach the DOTS-based surface, and, optionally, basis code as well. For more on that, see the API section to follow.
+To retain navigating agents *as* GameObjects, rather than converting them into entities, add the [NavAgentHybrid](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentHybrid.cs) to them *instead* of `NavAgentAuthoring`. Such hybrid agents are still able to interact with other objects with `NavSurfaceAuthoring` and `NavBasisAuthoring` components, so long as as the Conversion Mode for them is set to "Convert and Inject Game Object." FYI, `NavAgentAuthoring` works by creating an invisible entity with the `NavAgent` component in the background. The `NavAgentHybrid` updates its GameObject transform to match that of the background entity.
+
+### Entity Components
+
+1. [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) - A component for making entities into agents.
+2. [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurface.cs) - A component for making entities into entities into surfaces.
+3. [NavBasis](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Basis/NavBasis.cs) - A component for making entities into bases. 
 
 ## API
 
