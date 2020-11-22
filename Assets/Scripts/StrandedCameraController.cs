@@ -11,7 +11,10 @@ namespace Reese.Demo
 
         void LateUpdate()
         {
-            if (!offset.HasValue) offset = transform.position - strandedDestinationSystem.AgentTransformGameObject.transform.position;
+            if (!offset.HasValue) {
+                offset = transform.position - strandedDestinationSystem.AgentTransformGameObject.transform.position;
+                transform.LookAt(strandedDestinationSystem.AgentTransformGameObject.transform.position);
+            }
 
             transform.position = Vector3.Lerp(
                 transform.position,
