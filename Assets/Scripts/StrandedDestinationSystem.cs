@@ -10,8 +10,9 @@ namespace Reese.Demo
     [UpdateAfter(typeof(TransformSystemGroup))]
     class StrandedDestinationSystem : SystemBase
     {
+        public GameObject AgentTransformGameObject { get; private set; }
+
         Entity agentEntity;
-        GameObject agentTransformGameObject;
 
         protected override void OnCreate()
         {
@@ -21,14 +22,11 @@ namespace Reese.Demo
                 return;
             }
 
-            agentTransformGameObject = new GameObject("Agent Transform GameObject");
+            AgentTransformGameObject = new GameObject("Agent Transform GameObject");
         }
 
         protected override void OnUpdate()
         {
-            if (Camera.main.transform.parent == null)
-                Camera.main.transform.SetParent(agentTransformGameObject.transform);
-
             var keyboard = Keyboard.current;
 
             if (keyboard == null) return;
@@ -45,8 +43,8 @@ namespace Reese.Demo
             if (agentEntity.Equals(Entity.Null)) return;
 
             var agentPosition = EntityManager.GetComponentData<LocalToWorld>(agentEntity).Position;
-            agentTransformGameObject.transform.SetPositionAndRotation(agentPosition, Quaternion.identity);
-            Camera.main.transform.LookAt(agentTransformGameObject.transform, Vector3.up);
+
+            AgentTransformGameObject.transform.SetPositionAndRotation(agentPosition, Quaternion.identity);
 
             var mouse = Mouse.current;
 
