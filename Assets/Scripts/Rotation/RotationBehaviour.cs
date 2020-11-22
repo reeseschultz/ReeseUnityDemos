@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Reese.Demo
 {
-    class NavRotator : MonoBehaviour
+    class RotationBehaviour : MonoBehaviour
     {
         [SerializeField]
         Vector3 fromRelativeAngles = new Vector3(0, 0, 0);
