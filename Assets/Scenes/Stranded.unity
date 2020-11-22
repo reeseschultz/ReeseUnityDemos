@@ -3350,13 +3350,30 @@ GameObject:
   - component: {fileID: 6563405482074868825}
   - component: {fileID: 6805857775995986964}
   - component: {fileID: 4855511077657047752}
-  m_Layer: 0
+  - component: {fileID: 8849378376642101702}
+  m_Layer: 29
   m_Name: mob_cat2 Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!208 &8849378376642101702
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8849378376642101701}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 250, y: 300, z: 250}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 0
+  m_Center: {x: -40, y: -10, z: 60.000004}
+  m_TimeToStationary: 0.5
 --- !u!4 &8985144725545747971
 Transform:
   m_ObjectHideFlags: 0
