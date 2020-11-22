@@ -3116,9 +3116,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpDegrees: 45
   jumpGravity: 100
-  jumpSpeedMultiplierX: 1.5
-  jumpSpeedMultiplierY: 2
-  translationSpeed: 20
+  jumpSpeedMultiplierX: 3
+  jumpSpeedMultiplierY: 4
+  translationSpeed: 30
   rotationSpeed: 0.3
   type: Humanoid
   offset: {x: 0, y: 0, z: 0}
