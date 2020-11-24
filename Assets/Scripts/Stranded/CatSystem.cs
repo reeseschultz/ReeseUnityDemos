@@ -1,28 +1,42 @@
 ﻿using Unity.Entities;
 using Unity.Jobs;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
     class CatSystem : SystemBase
     {
-        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        GameObject catGO = default;
+
+        protected override void OnCreate()
+        {
+            if (!SceneManager.GetActiveScene().name.Equals("Stranded"))
+            {
+                Enabled = false;
+                return;
+            }
+
+            catGO = GameObject.Find("Cat");
+        }
 
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
+            if (catGO == null) return;
 
             Entities
                 .WithChangeFilter<SpatialTriggerEvent>()
-                .ForEach((Entity entity, int entityInQueryIndex, in Cat cat) =>
+                .ForEach((in Cat cat) =>
                 {
-                    Debug.Log("Meow.");
+                    var source = catGO.GetComponent<AudioSource>();
+
+                    if (source == null) return;
+
+                    source.Play();
                 })
                 .WithoutBurst()
                 .WithName("MeowJob")
-                .ScheduleParallel();
-
-            barrier.AddJobHandleForProducer(Dependency);
+                .Run();
         }
     }
 }
