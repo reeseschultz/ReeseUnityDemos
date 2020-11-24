@@ -1,7 +1,6 @@
 ﻿using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Reese.Demo
 {
@@ -30,23 +29,32 @@ namespace Reese.Demo
                     {
                         var activatorEntity = activatorBuffer[i];
 
-                        if (!localToWorldFromEntity.HasComponent(activatorEntity)) continue;
+                        if (activatorEntity.Equals(Entity.Null) || !localToWorldFromEntity.HasComponent(activatorEntity)) continue;
 
                         var activatorPosition = localToWorldFromEntity[activatorEntity].Position;
 
                         var bounds = trigger.Bounds;
                         bounds.Center += triggerPosition;
 
-                        if (!bounds.Contains(activatorPosition) && spatialTriggerEventFromEntity.HasComponent(entity))
+                        if (
+                            !bounds.Contains(activatorPosition) &&
+                            spatialTriggerEventFromEntity.HasComponent(entity) &&
+                            spatialTriggerEventFromEntity[entity].Activator.Equals(activatorEntity)
+                        )
                         {
                             commandBuffer.RemoveComponent<SpatialTriggerEvent>(entityInQueryIndex, entity);
                         }
-                        else if (bounds.Contains(activatorPosition) && !spatialTriggerEventFromEntity.HasComponent(entity))
+                        else if (
+                            bounds.Contains(activatorPosition) &&
+                            !spatialTriggerEventFromEntity.HasComponent(entity)
+                        )
                         {
                             commandBuffer.AddComponent(entityInQueryIndex, entity, new SpatialTriggerEvent
                             {
                                 Activator = activatorEntity
                             });
+
+                            return;
                         }
                     }
                 })
