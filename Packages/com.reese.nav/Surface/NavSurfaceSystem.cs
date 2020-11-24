@@ -15,7 +15,6 @@ namespace Reese.Nav
     /// surface (or lack thereof) underneath a given NavAgent. It also maintains
     /// parent-child relationships.</summary>
     [UpdateAfter(typeof(NavBasisSystem))]
-    [UpdateAfter(typeof(TransformSystemGroup))]
     public class NavSurfaceSystem : SystemBase
     {
         Dictionary<int, GameObject> gameObjectMap = new Dictionary<int, GameObject>();
@@ -80,7 +79,6 @@ namespace Reese.Nav
 
                     commandBuffer.AddComponent<LocalToParent>(entityInQueryIndex, entity);
                 })
-                .WithoutBurst()
                 .WithName("NavAddParentToSurfaceJob")
                 .ScheduleParallel();
 
@@ -94,7 +92,6 @@ namespace Reese.Nav
                     commandBuffer.AddComponent<Parent>(entityInQueryIndex, entity);
                     commandBuffer.AddComponent<LocalToParent>(entityInQueryIndex, entity);
                 })
-                .WithoutBurst()
                 .WithName("NavAddParentToAgentJob")
                 .ScheduleParallel();
 
@@ -179,10 +176,16 @@ namespace Reese.Nav
 
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
-            // Corrects the translation of agents spawned on a surface not at the origin:
+            ////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////
+            // TODO : Move following jobs and related code into transform extensions package. //
+            ////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////
+
+            // Corrects the translation of children with a parent not at the origin:
             Entities
                 .WithChangeFilter<PreviousParent>()
-                .WithAll<NavFixTranslation>()
+                .WithAny<NavFixTranslation>()
                 .WithReadOnly(localToWorldFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in PreviousParent previousParent, in Parent parent) =>
                 {
@@ -190,7 +193,8 @@ namespace Reese.Nav
 
                     var parentTransform = localToWorldFromEntity[parent.Value];
 
-                    if (parentTransform.Position.Equals(float3.zero)) {
+                    if (parentTransform.Position.Equals(float3.zero))
+                    {
                         commandBuffer.RemoveComponent<NavFixTranslation>(entityInQueryIndex, entity);
                         return;
                     }
@@ -203,6 +207,23 @@ namespace Reese.Nav
                     commandBuffer.RemoveComponent<NavFixTranslation>(entityInQueryIndex, entity);
                 })
                 .WithName("NavFixTranslationJob")
+                .ScheduleParallel();
+
+            // Re-parents entities to ensure correct transform:
+            Entities
+                .WithNone<NavAgent, LocalToParent>()
+                .ForEach((Entity entity, int entityInQueryIndex, in Parent parent) =>
+                {
+                    commandBuffer.RemoveComponent<Parent>(entityInQueryIndex, entity);
+
+                    commandBuffer.AddComponent(entityInQueryIndex, entity, new Parent
+                    {
+                        Value = parent.Value
+                    });
+
+                    commandBuffer.AddComponent<LocalToParent>(entityInQueryIndex, entity);
+                })
+                .WithName("NavReparentingJob")
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
