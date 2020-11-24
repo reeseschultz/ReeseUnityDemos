@@ -75,7 +75,7 @@ sudo apt install gcc-multilib libncurses5
 
 ### IL2CPP Setup
 
-If, despite prior warning, you still want to use IL2CPP, note that you need to install `clang` on Ubuntu via:
+Note that you may need to install `clang` on Ubuntu via:
 
 ```sh
 sudo apt install clang
