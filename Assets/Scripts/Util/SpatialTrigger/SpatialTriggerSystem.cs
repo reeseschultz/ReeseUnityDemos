@@ -29,7 +29,7 @@ namespace Reese.Demo
                     {
                         var activatorEntity = activatorBuffer[i];
 
-                        if (activatorEntity.Equals(Entity.Null) || !localToWorldFromEntity.HasComponent(activatorEntity)) continue;
+                        if (activatorEntity == Entity.Null || !localToWorldFromEntity.HasComponent(activatorEntity)) continue;
 
                         var activatorPosition = localToWorldFromEntity[activatorEntity].Position;
 
@@ -39,7 +39,7 @@ namespace Reese.Demo
                         if (
                             !bounds.Contains(activatorPosition) &&
                             spatialTriggerEventFromEntity.HasComponent(entity) &&
-                            spatialTriggerEventFromEntity[entity].Activator.Equals(activatorEntity)
+                            spatialTriggerEventFromEntity[entity].Activator == activatorEntity
                         )
                         {
                             commandBuffer.RemoveComponent<SpatialTriggerEvent>(entityInQueryIndex, entity);
