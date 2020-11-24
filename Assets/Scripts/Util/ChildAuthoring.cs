@@ -2,6 +2,7 @@
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
+using static Unity.Entities.ConvertToEntity;
 
 namespace Reese.Demo
 {
@@ -18,7 +19,18 @@ namespace Reese.Demo
                 Value = conversionSystem.GetPrimaryEntity(parent)
             });
 
+            var convertToEntity = GetComponent<ConvertToEntity>();
+            if (convertToEntity != null && convertToEntity.ConversionMode.Equals(Mode.ConvertAndInjectGameObject))
+            {
+                dstManager.AddComponent(entity, typeof(CopyTransformToGameObject));
+
+                var renderer = GetComponent<Renderer>();
+                if (renderer != null) renderer.enabled = false;
+            }
+
             dstManager.AddComponent<NavFixTranslation>(entity); // TODO : Transform extensions package.
+
+            dstManager.RemoveComponent<MeshRenderer>(entity);
         }
     }
 }

@@ -1500,8 +1500,8 @@ GameObject:
   - component: {fileID: 1693522735}
   - component: {fileID: 1693522734}
   - component: {fileID: 1693522733}
-  - component: {fileID: 1693522732}
   - component: {fileID: 1693522739}
+  - component: {fileID: 1693522732}
   m_Layer: 28
   m_Name: Potty3 Surface
   m_TagString: Untagged
@@ -4259,7 +4259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea7d7495833204790ba1d3a8755397f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ConversionMode: 0
+  ConversionMode: 1
 --- !u!4 &8985144725545747971
 Transform:
   m_ObjectHideFlags: 0
