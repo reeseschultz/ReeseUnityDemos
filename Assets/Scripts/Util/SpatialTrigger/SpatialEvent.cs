@@ -2,7 +2,7 @@
 
 namespace Reese.Demo
 {
-    public struct SpatialTriggerEvent : IComponentData
+    public struct SpatialEvent : IComponentData
     {
         public Entity Activator;
     }

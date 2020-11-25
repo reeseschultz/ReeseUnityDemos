@@ -25,7 +25,7 @@ namespace Reese.Demo
             if (catGO == null) return;
 
             Entities
-                .WithChangeFilter<SpatialTriggerEvent>()
+                .WithChangeFilter<SpatialEvent>()
                 .ForEach((in Cat cat) =>
                 {
                     var source = catGO.GetComponent<AudioSource>();

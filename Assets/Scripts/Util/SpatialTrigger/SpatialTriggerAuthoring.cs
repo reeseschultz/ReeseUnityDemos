@@ -15,7 +15,7 @@ namespace Reese.Demo
         Vector3 scale = Vector3.one;
 
         [SerializeField]
-        List<SpatialTriggerActivatorAuthoring> activators = new List<SpatialTriggerActivatorAuthoring>();
+        List<SpatialActivatorAuthoring> activators = new List<SpatialActivatorAuthoring>();
 
         void OnDrawGizmosSelected()
         {
@@ -38,8 +38,8 @@ namespace Reese.Demo
                 }
             });
 
-            dstManager.AddComponent(entity, typeof(SpatialTriggerActivatorBufferElement));
-            var activatorBuffer = dstManager.GetBuffer<SpatialTriggerActivatorBufferElement>(entity);
+            dstManager.AddComponent(entity, typeof(SpatialActivatorBufferElement));
+            var activatorBuffer = dstManager.GetBuffer<SpatialActivatorBufferElement>(entity);
             activators.ForEach(activator => activatorBuffer.Add(conversionSystem.GetPrimaryEntity(activator)));
         }
     }
