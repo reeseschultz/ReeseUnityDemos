@@ -81,7 +81,7 @@ Note that you may need to install `clang` on Ubuntu via:
 sudo apt install clang
 ```
 
-### Contributing
+## Contributing
 
 Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever. All that said, [GitHub Issues](https://github.com/reeseschultz/ReeseUnityDemos/issues/new/choose) is fine for constructive discussion.
 
