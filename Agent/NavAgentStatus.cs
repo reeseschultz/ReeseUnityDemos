@@ -10,9 +10,7 @@ namespace Reese.Nav
     /// <summary>Exists if the agent has a problem.</summary>
     public struct NavHasProblem : IComponentData
     {
-        /// <summary>The problematic status preventing further path planning.
-        /// See: https://docs.unity3d.com/ScriptReference/Experimental.AI.PathQueryStatus.html
-        /// </summary>
+        /// <summary>The problematic status preventing further path planning. See: https://docs.unity3d.com/ScriptReference/Experimental.AI.PathQueryStatus.html</summary>
         public PathQueryStatus Value;
     }
 
@@ -28,9 +26,11 @@ namespace Reese.Nav
         /// <summary>The 3D destination coordinate.</summary>
         public float3 Destination;
 
-        /// <summary>True if teleporting to the specified destination, false if
-        /// not (the default).</summary>
+        /// <summary>True if teleporting to the specified destination, false if not (the default).</summary>
         public bool Teleport;
+
+        /// <summary>If this destination is within the provided tolerance of the last destination for a given agent, it will be ignored. Useful for mouselook since many new destinations can block lerping.</summary>
+        public float Tolerance;
     }
 
     /// <summary>Exists if the agent needs a surface. This component should be
