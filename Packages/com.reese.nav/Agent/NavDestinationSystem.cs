@@ -6,7 +6,6 @@ using Unity.Transforms;
 using Collider = Unity.Physics.Collider;
 using SphereCollider = Unity.Physics.SphereCollider;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
-using UnityEngine;
 
 namespace Reese.Nav
 {
@@ -23,6 +22,7 @@ namespace Reese.Nav
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
+            var elapsedSeconds = (float)Time.ElapsedTime;
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
@@ -33,6 +33,8 @@ namespace Reese.Nav
                 .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination needsDestination) =>
                 {
+                    if (elapsedSeconds - agent.DestinationSeconds < 0.5f) return;
+
                     var collider = SphereCollider.Create(
                         new SphereGeometry()
                         {
@@ -86,6 +88,7 @@ namespace Reese.Nav
 
                         agent.DestinationSurface = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                         agent.LocalDestination = destination;
+                        agent.DestinationSeconds = elapsedSeconds;
 
                         commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                     }

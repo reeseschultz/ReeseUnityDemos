@@ -54,12 +54,9 @@ namespace Reese.Demo
                 !Physics.Raycast(Camera.main.ScreenPointToRay(new Vector2(mouse.position.x.ReadValue(), mouse.position.y.ReadValue())), out RaycastHit hit)
             ) return;
 
-            var tolerance = hit.transform.gameObject.name.Contains("Potty") ? 1 : 8;
-
             EntityManager.AddComponentData(agentEntity, new NavNeedsDestination
             {
-                Destination = hit.point,
-                Tolerance = tolerance
+                Destination = hit.point
             });
         }
     }

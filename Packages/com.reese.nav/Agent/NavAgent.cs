@@ -7,6 +7,11 @@ namespace Reese.Nav
     /// interpolation.</summary>
     public struct NavAgent : IComponentData
     {
+        /// <summary>This is the *point* in time when the agent's last
+        /// destination was set. Outside the nav systems and debugging,
+        /// this is only intended to be read, not written.</summary>
+        public float DestinationSeconds;
+
         /// <summary>This is the *point* in time when the agent started
         /// falling, *not* the duration. This is written to by the nav systems
         /// to help you figure out how long the agent has been falling. See the
