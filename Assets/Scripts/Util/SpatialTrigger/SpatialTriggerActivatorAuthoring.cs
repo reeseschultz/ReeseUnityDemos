@@ -7,6 +7,9 @@ namespace Reese.Demo
     public class SpatialTriggerActivatorAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
-            => dstManager.AddComponent(entity, typeof(SpatialTriggerActivator));
+        {
+            dstManager.AddComponent(entity, typeof(SpatialTriggerActivator));
+            dstManager.AddComponent(entity, typeof(SpatialTriggerBufferElement));
+        }
     }
 }
