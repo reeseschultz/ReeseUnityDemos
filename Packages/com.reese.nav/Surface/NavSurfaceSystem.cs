@@ -18,7 +18,6 @@ namespace Reese.Nav
     public class NavSurfaceSystem : SystemBase
     {
         Dictionary<int, GameObject> gameObjectMap = new Dictionary<int, GameObject>();
-        NativeHashMap<int, bool> needsSurfaceMap = default;
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
@@ -45,12 +44,6 @@ namespace Reese.Nav
 
         public bool GameObjectMapTryGetValue(int key, out GameObject value)
             => gameObjectMap.TryGetValue(key, out value);
-
-        protected override void OnCreate()
-            => needsSurfaceMap = new NativeHashMap<int, bool>(
-                NavConstants.NEEDS_SURFACE_MAP_SIZE,
-                Allocator.Persistent
-            );
 
         protected override void OnUpdate()
         {
@@ -113,7 +106,6 @@ namespace Reese.Nav
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
-            var map = needsSurfaceMap;
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
@@ -122,14 +114,9 @@ namespace Reese.Nav
                 .WithAll<NavNeedsSurface, LocalToParent>()
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
-                .WithNativeDisableContainerSafetyRestriction(map)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation, in LocalToWorld localToWorld) =>
                 {
-                    if (
-                        !surface.Value.Equals(Entity.Null) &&
-                        map.TryGetValue(entity.Index, out bool needsSurface) &&
-                        !map.TryAdd(entity.Index, false)
-                    ) return;
+                    if (!surface.Value.Equals(Entity.Null) && false) return;
 
                     var rayInput = new RaycastInput
                     {
@@ -228,8 +215,5 @@ namespace Reese.Nav
 
             barrier.AddJobHandleForProducer(Dependency);
         }
-
-        protected override void OnDestroy()
-            => needsSurfaceMap.Dispose();
     }
 }
