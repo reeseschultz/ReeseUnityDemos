@@ -6,6 +6,7 @@ using Unity.Transforms;
 using Collider = Unity.Physics.Collider;
 using SphereCollider = Unity.Physics.SphereCollider;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
+using UnityEngine;
 
 namespace Reese.Nav
 {
@@ -63,6 +64,8 @@ namespace Reese.Nav
                             math.inverse(localToWorldFromEntity[hit.Entity].Value),
                             needsDestination.Destination
                         ) + agent.Offset;
+
+                        if (NavUtil.ApproxEquals(destination, agent.LocalDestination, needsDestination.Tolerance)) return;
 
                         if (needsDestination.Teleport)
                         {

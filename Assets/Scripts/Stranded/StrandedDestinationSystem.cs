@@ -50,13 +50,14 @@ namespace Reese.Demo
 
             if (
                 mouse == null ||
-                !mouse.leftButton.wasPressedThisFrame ||
+                !mouse.leftButton.isPressed ||
                 !Physics.Raycast(Camera.main.ScreenPointToRay(new Vector2(mouse.position.x.ReadValue(), mouse.position.y.ReadValue())), out RaycastHit hit)
             ) return;
 
             EntityManager.AddComponentData(agentEntity, new NavNeedsDestination
             {
                 Destination = hit.point,
+                Tolerance = 15
             });
         }
     }
