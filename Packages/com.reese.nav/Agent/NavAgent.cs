@@ -71,13 +71,6 @@ namespace Reese.Nav
         /// </summary>
         public float3 Offset;
 
-        /// <summary>This is the index of the path buffer that the
-        /// interpolation system is presently moving the agent toward, unless
-        /// there is no path. Only the NavPlanSystem ever writes to this.
-        /// Outside the nav systems and debugging, this is not intended to be
-        /// read nor written.</summary>
-        public int PathBufferIndex;
-
         /// <summary>For knowing how many times raycasting has been conducted
         /// from the negative y-component of the agent (while jumping) to detect
         /// a surface below in the NavSurfaceSystem. If no surface is detected

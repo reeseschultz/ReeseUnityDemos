@@ -23,13 +23,46 @@ namespace Reese.Nav
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
+        static void HandleCompletePath(ComponentDataFromEntity<LocalToWorld> localToWorldFromEntity, Entity entity, Rotation rotation, ref NavAgent agent, ref DynamicBuffer<NavPathBufferElement> pathBuffer, Parent surface, Translation translation, PhysicsWorld physicsWorld, float elapsedSeconds, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex)
+        {
+            var rayInput = new RaycastInput
+            {
+                Start = localToWorldFromEntity[entity].Position + agent.Offset,
+                End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
+                Filter = new CollisionFilter
+                {
+                    BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
+                    CollidesWith = NavUtil.ToBitMask(NavConstants.OBSTACLE_LAYER)
+                }
+            };
+
+            if (
+                !surface.Value.Equals(agent.DestinationSurface) &&
+                !NavUtil.ApproxEquals(translation.Value, agent.LocalDestination, 1) &&
+                !physicsWorld.CastRay(rayInput, out RaycastHit hit)
+            )
+            {
+                agent.JumpSeconds = elapsedSeconds;
+
+                commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
+                commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
+
+                return;
+            }
+
+            commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
+            commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
+
+            return;
+        }
+
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var elapsedSeconds = (float)Time.ElapsedTime;
             var deltaSeconds = Time.DeltaTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
-            var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>(true);
+            var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
@@ -37,65 +70,30 @@ namespace Reese.Nav
             Entities
                 .WithNone<NavHasProblem, NavPlanning, NavJumping>()
                 .WithAll<NavLerping, LocalToParent>()
-                .WithReadOnly(pathBufferFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(physicsWorld)
+                .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref Rotation rotation, in Parent surface) =>
                 {
                     if (!pathBufferFromEntity.HasComponent(entity) || agent.DestinationSurface.Equals(Entity.Null)) return;
 
                     var pathBuffer = pathBufferFromEntity[entity];
 
+                    if (pathBuffer.Length == 0)
+                    {
+                        HandleCompletePath(localToWorldFromEntity, entity, rotation, ref agent, ref pathBuffer, surface, translation, physicsWorld, elapsedSeconds, commandBuffer, entityInQueryIndex);
+                        return;
+                    }
+
+                    if (NavUtil.ApproxEquals(translation.Value, pathBuffer[0].Value, 1)) pathBuffer.RemoveAt(0);
+
                     if (pathBuffer.Length == 0) return;
 
-                    if (agent.PathBufferIndex >= pathBuffer.Length)
-                    {
-                        --agent.PathBufferIndex;
-                        return;
-                    }
-
-                    var localDestination = agent.LocalDestination;
-                    var localWaypoint = pathBuffer[agent.PathBufferIndex].Value;
-
-                    if (
-                        NavUtil.ApproxEquals(translation.Value, localWaypoint, 1) &&
-                        ++agent.PathBufferIndex > pathBuffer.Length - 1
-                    )
-                    {
-                        var rayInput = new RaycastInput
-                        {
-                            Start = localToWorldFromEntity[entity].Position + agent.Offset,
-                            End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
-                            Filter = new CollisionFilter
-                            {
-                                BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
-                                CollidesWith = NavUtil.ToBitMask(NavConstants.OBSTACLE_LAYER)
-                            }
-                        };
-
-                        if (
-                            !surface.Value.Equals(agent.DestinationSurface) &&
-                            !NavUtil.ApproxEquals(translation.Value, localDestination, 1) &&
-                            !physicsWorld.CastRay(rayInput, out RaycastHit hit)
-                        )
-                        {
-                            agent.JumpSeconds = elapsedSeconds;
-                            commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
-                            commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
-                            return;
-                        }
-
-                        commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
-                        commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
-                        agent.PathBufferIndex = 0;
-                        return;
-                    }
-
-                    translation.Value = Vector3.MoveTowards(translation.Value, localWaypoint, agent.TranslationSpeed * deltaSeconds);
+                    translation.Value = Vector3.MoveTowards(translation.Value, pathBuffer[0].Value, agent.TranslationSpeed * deltaSeconds);
 
                     var lookAt = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
                         localToWorldFromEntity[agent.DestinationSurface].Value,
-                        localWaypoint
+                        pathBuffer[0].Value
                     );
 
                     lookAt = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).

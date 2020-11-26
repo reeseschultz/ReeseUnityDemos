@@ -56,7 +56,8 @@ namespace Reese.Demo
 
             EntityManager.AddComponentData(agentEntity, new NavNeedsDestination
             {
-                Destination = hit.point
+                Destination = hit.point,
+                Tolerance = 1
             });
         }
     }

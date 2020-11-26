@@ -23,7 +23,6 @@ namespace Reese.Nav
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
-            var translationFromEntity = GetComponentDataFromEntity<Translation>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
@@ -139,8 +138,7 @@ namespace Reese.Nav
                     }
                     else if (status == PathQueryStatus.Success)
                     {
-                        pathBuffer.Clear();
-                        agent.PathBufferIndex = 0;
+                        if (pathBuffer.Length > 0) pathBuffer.RemoveAt(0);
 
                         for (var i = 0; i < straightPathCount; ++i) pathBuffer.Add(
                             NavUtil.MultiplyPoint3x4(
