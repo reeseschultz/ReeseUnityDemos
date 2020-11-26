@@ -2,6 +2,9 @@
 {
     public static class NavConstants
     {
+        /// <summary>Duration in seconds before a new destination will take effect after another. Prevents planning from being clogged with destinations which can then block interpolation of agents.</summary>
+        public const float DESTINATION_RATE_LIMIT_SECONDS = 0.8f;
+
         /// <summary>A sphere collider of the specified radius is used to detect the destination surface.</summary>
         public const float DESTINATION_SURFACE_COLLIDER_RADIUS = 1;
 
