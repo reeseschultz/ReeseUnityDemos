@@ -106,6 +106,7 @@ namespace Reese.Nav
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
+            var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
@@ -114,6 +115,7 @@ namespace Reese.Nav
                 .WithAll<NavNeedsSurface, LocalToParent>()
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
+                .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation, in LocalToWorld localToWorld) =>
                 {
                     if (!surface.Value.Equals(Entity.Null) && false) return;
@@ -155,6 +157,8 @@ namespace Reese.Nav
                     translation.Value = jumpBuffer[0].Value + agent.Offset;
 
                     jumpBuffer.Clear();
+
+                    if (pathBufferFromEntity.HasComponent(entity)) pathBufferFromEntity[entity].Clear();
 
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                 })
