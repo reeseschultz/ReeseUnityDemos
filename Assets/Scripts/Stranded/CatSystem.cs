@@ -58,19 +58,19 @@ namespace Reese.Demo
             var parallelCommandBuffer = commandBuffer.AsParallelWriter();
 
             Entities
-                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in Hopping translator) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, in Hopping hopping) =>
                 {
                     var position = translation.Value;
 
-                    position.y = translator.Height * math.sin(
-                        math.PI * ((elapsedSeconds - translator.StartSeconds) / translator.Duration)
+                    position.y = hopping.Height * math.sin(
+                        math.PI * ((elapsedSeconds - hopping.StartSeconds) / hopping.Duration)
                     );
 
                     translation.Value = position;
 
-                    if (elapsedSeconds - translator.StartSeconds < translator.Duration) return;
+                    if (elapsedSeconds - hopping.StartSeconds < hopping.Duration) return;
 
-                    translation.Value = translator.OriginalPosition;
+                    translation.Value = hopping.OriginalPosition;
                     parallelCommandBuffer.RemoveComponent<Hopping>(entityInQueryIndex, entity);
                 })
                 .WithName("CatHopJob")
