@@ -28,11 +28,11 @@ namespace Reese.Demo
                 .WithChangeFilter<SpatialEvent>()
                 .ForEach((in Cat cat) =>
                 {
-                    var source = catGO.GetComponent<AudioSource>();
+                    var meowController = catGO.GetComponent<CatMeowController>();
 
-                    if (source == null) return;
+                    if (meowController == null) return;
 
-                    source.Play();
+                    meowController.Meow();
                 })
                 .WithoutBurst()
                 .WithName("MeowJob")
