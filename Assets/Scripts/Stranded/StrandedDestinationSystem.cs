@@ -35,6 +35,7 @@ namespace Reese.Demo
             cursor.name = "3D Cursor";
             cursorRenderer = cursor.GetComponent<Renderer>();
             cursorRenderer.enabled = false;
+            cursorRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
 
         protected override void OnUpdate()
@@ -78,7 +79,13 @@ namespace Reese.Demo
             if (pointOnNavigableSurface)
             {
                 cursorRenderer.enabled = true;
-                cursor.transform.position = hit.Position;
+
+                var cursorPosition = hit.Position;
+                cursorPosition.y += 1;
+
+                cursor.transform.position = cursorPosition;
+
+                cursor.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.SurfaceNormal);
 
                 if (mouse != null && mouse.leftButton.isPressed)
                 {
