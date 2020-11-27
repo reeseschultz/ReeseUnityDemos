@@ -3,11 +3,50 @@ using UnityEngine.AI;
 using Unity.Transforms;
 using Unity.Physics;
 using UnityEngine.Experimental.AI;
+using UnityEngine;
+using Unity.Entities;
 
 namespace Reese.Nav
 {
     public static class NavUtil
     {
+        /// <summary>Gets a point on a navigable surface (either the current surface or a jumpable one) for the provided agent entity via the out hit parameter. Returns true if there is a navigable surface, false if not.</summary>
+        public static bool GetPointOnNavigableSurface(Vector3 point, Entity agentEntity, Camera cam, PhysicsWorld physicsWorld, float raycastDistance, EntityManager entityManager, out Unity.Physics.RaycastHit hit)
+        {
+            var screenPointToRay = cam.ScreenPointToRay(point);
+
+            var rayInput = new RaycastInput
+            {
+                Start = screenPointToRay.origin,
+                End = screenPointToRay.GetPoint(raycastDistance),
+                Filter = CollisionFilter.Default
+            };
+
+            if (!physicsWorld.CastRay(rayInput, out hit) || hit.RigidBodyIndex == -1) return false;
+
+            var hitSurfaceEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
+
+            if (hitSurfaceEntity == Entity.Null) return false;
+
+            if (!entityManager.HasComponent<Parent>(agentEntity)) return false;
+
+            var surfaceEntity = entityManager.GetComponentData<Parent>(agentEntity).Value;
+
+            if (surfaceEntity == Entity.Null) return false;
+
+            if (surfaceEntity == hitSurfaceEntity) return true;
+
+            if (!entityManager.HasComponent<NavJumpableBufferElement>(surfaceEntity)) return false;
+
+            var jumpableSurfaces = entityManager.GetBuffer<NavJumpableBufferElement>(surfaceEntity);
+
+            for (var i = 0; i < jumpableSurfaces.Length; ++i)
+                if (hitSurfaceEntity == jumpableSurfaces[i])
+                    return true;
+
+            return false;
+        }
+
         /// <summary>Checks approximate equality between two float3s.</summary>
         public static bool ApproxEquals(float3 a, float3 b, float tolerance)
             => !ApproxEquals(a.x, b.x, tolerance) || !ApproxEquals(a.y, b.y, tolerance) || !ApproxEquals(a.z, b.z, tolerance) ? false : true;

@@ -16,6 +16,9 @@ namespace Reese.Demo
 
         public GameObject AgentTransformGameObject { get; private set; }
 
+        GameObject cursor = default;
+        Renderer cursorRenderer = default;
+
         Entity agentEntity;
 
         protected override void OnCreate()
@@ -27,6 +30,11 @@ namespace Reese.Demo
             }
 
             AgentTransformGameObject = new GameObject("Agent Transform GameObject");
+
+            cursor = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            cursor.name = "3D Cursor";
+            cursorRenderer = cursor.GetComponent<Renderer>();
+            cursorRenderer.enabled = false;
         }
 
         protected override void OnUpdate()
@@ -52,66 +60,36 @@ namespace Reese.Demo
 
             var mouse = Mouse.current;
 
-            var screenPointToRay = Camera.main.ScreenPointToRay(
-                new Vector3(
-                    mouse.position.x.ReadValue(),
-                    mouse.position.y.ReadValue()
-                )
+            var point = new Vector3(
+                mouse.position.x.ReadValue(),
+                mouse.position.y.ReadValue()
             );
 
-            var rayInput = new RaycastInput
+            var pointOnNavigableSurface = NavUtil.GetPointOnNavigableSurface(
+                point,
+                agentEntity,
+                Camera.main,
+                physicsWorld,
+                500,
+                EntityManager,
+                out var hit
+            );
+
+            if (pointOnNavigableSurface)
             {
-                Start = screenPointToRay.origin,
-                End = screenPointToRay.GetPoint(500),
-                Filter = CollisionFilter.Default
-            };
+                cursorRenderer.enabled = true;
+                cursor.transform.position = hit.Position;
 
-            if (
-                mouse == null ||
-                !mouse.leftButton.isPressed ||
-                !physicsWorld.CastRay(rayInput, out var hit)
-            ) return;
-
-            if (hit.RigidBodyIndex == -1) return;
-
-            var hitSurfaceEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-
-            if (hitSurfaceEntity == Entity.Null) return;
-
-            if (!EntityManager.HasComponent<Parent>(agentEntity)) return;
-
-            var surfaceEntity = EntityManager.GetComponentData<Parent>(agentEntity).Value;
-
-            if (surfaceEntity == Entity.Null) return;
-
-            if (surfaceEntity == hitSurfaceEntity)
-            {
-                EntityManager.AddComponentData(agentEntity, new NavNeedsDestination
-                {
-                    Destination = hit.Position,
-                    Tolerance = 1
-                });
-
-                return;
-            }
-
-            if (!EntityManager.HasComponent<NavJumpableBufferElement>(surfaceEntity)) return;
-
-            var jumpableSurfaces = EntityManager.GetBuffer<NavJumpableBufferElement>(surfaceEntity);
-
-            for (var i = 0; i < jumpableSurfaces.Length; ++i)
-            {
-                if (hitSurfaceEntity == jumpableSurfaces[i])
+                if (mouse != null && mouse.leftButton.isPressed)
                 {
                     EntityManager.AddComponentData(agentEntity, new NavNeedsDestination
                     {
                         Destination = hit.Position,
                         Tolerance = 1
                     });
-
-                    break;
                 }
             }
+            else cursorRenderer.enabled = false;
         }
     }
 }
