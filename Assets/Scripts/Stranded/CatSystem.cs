@@ -52,7 +52,7 @@ namespace Reese.Demo
                         Duration = 1
                     });
                 })
-                .WithName("MeowJob")
+                .WithName("CatMeowJob")
                 .Run();
 
             var parallelCommandBuffer = commandBuffer.AsParallelWriter();
@@ -73,7 +73,7 @@ namespace Reese.Demo
                     translation.Value = translator.OriginalPosition;
                     parallelCommandBuffer.RemoveComponent<Hopping>(entityInQueryIndex, entity);
                 })
-                .WithName("CatTranslateJob")
+                .WithName("CatHopJob")
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
