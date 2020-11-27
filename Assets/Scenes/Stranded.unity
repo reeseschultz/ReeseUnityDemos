@@ -1015,7 +1015,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasGameObjectTransform: 0
-  JumpableSurfaces: []
+  JumpableSurfaces:
+  - {fileID: 325003692}
+  - {fileID: 1966374266}
   Basis: {fileID: 1580720549}
 --- !u!43 &621066996
 Mesh:
