@@ -458,7 +458,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasGameObjectTransform: 0
-  JumpableSurfaces: []
+  JumpableSurfaces:
+  - {fileID: 199165904}
+  - {fileID: 1693522733}
+  - {fileID: 1193333414}
   Basis: {fileID: 1580720549}
 --- !u!114 &88154999
 MonoBehaviour:
@@ -632,7 +635,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasGameObjectTransform: 0
-  JumpableSurfaces: []
+  JumpableSurfaces:
+  - {fileID: 88154998}
+  - {fileID: 325003692}
+  - {fileID: 1792517111}
   Basis: {fileID: 1580720549}
 --- !u!114 &199165905
 MonoBehaviour:
@@ -817,7 +823,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasGameObjectTransform: 0
-  JumpableSurfaces: []
+  JumpableSurfaces:
+  - {fileID: 1966374266}
+  - {fileID: 417180585}
+  - {fileID: 199165904}
+  - {fileID: 1193333414}
   Basis: {fileID: 1580720549}
 --- !u!114 &325003693
 MonoBehaviour:
@@ -1694,7 +1704,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasGameObjectTransform: 0
-  JumpableSurfaces: []
+  JumpableSurfaces:
+  - {fileID: 88154998}
+  - {fileID: 325003692}
+  - {fileID: 1954573344}
+  - {fileID: 1966374266}
   Basis: {fileID: 1580720549}
 --- !u!1 &1580720548
 GameObject:
@@ -1826,7 +1840,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasGameObjectTransform: 0
-  JumpableSurfaces: []
+  JumpableSurfaces:
+  - {fileID: 88154998}
+  - {fileID: 1954573344}
+  - {fileID: 1792517111}
   Basis: {fileID: 0}
 --- !u!114 &1693522734
 MonoBehaviour:
@@ -1999,7 +2016,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasGameObjectTransform: 0
-  JumpableSurfaces: []
+  JumpableSurfaces:
+  - {fileID: 199165904}
+  - {fileID: 1954573344}
+  - {fileID: 1693522733}
   Basis: {fileID: 0}
 --- !u!114 &1792517112
 MonoBehaviour:
@@ -2220,7 +2240,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasGameObjectTransform: 0
-  JumpableSurfaces: []
+  JumpableSurfaces:
+  - {fileID: 1792517111}
+  - {fileID: 1693522733}
+  - {fileID: 1193333414}
   Basis: {fileID: 0}
 --- !u!114 &1954573345
 MonoBehaviour:
@@ -2515,7 +2538,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasGameObjectTransform: 0
-  JumpableSurfaces: []
+  JumpableSurfaces:
+  - {fileID: 325003692}
+  - {fileID: 417180585}
+  - {fileID: 1193333414}
   Basis: {fileID: 1580720549}
 --- !u!1 &2099228884
 GameObject:
