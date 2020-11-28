@@ -24,6 +24,8 @@ namespace Reese.Nav
 
             if (!physicsWorld.CastRay(rayInput, out hit) || hit.RigidBodyIndex == -1) return false;
 
+            if (!NavMesh.SamplePosition(hit.Position, out var navMeshHit, 1, NavMesh.AllAreas)) return false;
+
             var hitSurfaceEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
 
             if (hitSurfaceEntity == Entity.Null) return false;
