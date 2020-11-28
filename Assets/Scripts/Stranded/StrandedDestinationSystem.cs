@@ -19,7 +19,7 @@ namespace Reese.Demo
         GameObject cursor = default;
         Renderer cursorRenderer = default;
 
-        Entity agentEntity;
+        Entity agentEntity = default;
 
         protected override void OnCreate()
         {
@@ -31,15 +31,23 @@ namespace Reese.Demo
 
             AgentTransformGameObject = new GameObject("Agent Transform GameObject");
 
-            cursor = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            cursor.name = "3D Cursor";
-            cursorRenderer = cursor.GetComponent<Renderer>();
+            cursor = GameObject.Find("3D Cursor");
+
+            if (cursor == null || cursor.transform.childCount == 0) return;
+
+            var cursorMesh = cursor.transform.GetChild(0);
+
+            cursorRenderer = cursorMesh.GetComponent<Renderer>();
+
+            if (cursorRenderer == null) return;
+
             cursorRenderer.enabled = false;
-            cursorRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
 
         protected override void OnUpdate()
         {
+            if (cursor == null || cursorRenderer == null) return;
+
             var keyboard = Keyboard.current;
 
             if (keyboard == null) return;
