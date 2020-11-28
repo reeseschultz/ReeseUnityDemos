@@ -33,7 +33,7 @@ namespace Reese.Demo
 
             cursor = GameObject.Find("3D Cursor");
 
-            if (cursor == null || cursor.transform.childCount == 0) return;
+            if (cursor == null) return;
 
             var cursorMesh = cursor.transform.GetChild(0);
 
