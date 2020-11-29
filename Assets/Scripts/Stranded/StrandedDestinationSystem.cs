@@ -14,39 +14,41 @@ namespace Reese.Demo
     {
         PhysicsWorld physicsWorld => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<BuildPhysicsWorld>().PhysicsWorld;
 
-        public GameObject AgentTransformGameObject { get; private set; }
+        GameObject agentTransformGO = default;
 
         GameObject cursor = default;
         Renderer cursorRenderer = default;
 
         Entity agentEntity = default;
 
-        protected override void OnCreate()
-        {
-            if (!SceneManager.GetActiveScene().name.Equals("Stranded"))
-            {
-                Enabled = false;
-                return;
-            }
-
-            AgentTransformGameObject = new GameObject("Agent Transform GameObject");
-
-            cursor = GameObject.Find("3D Cursor");
-
-            if (cursor == null) return;
-
-            var cursorMesh = cursor.transform.GetChild(0);
-
-            cursorRenderer = cursorMesh.GetComponent<Renderer>();
-
-            if (cursorRenderer == null) return;
-
-            cursorRenderer.enabled = false;
-        }
-
         protected override void OnUpdate()
         {
-            if (cursor == null || cursorRenderer == null) return;
+            if (!SceneManager.GetActiveScene().name.Equals("Stranded")) return;
+
+            if (agentTransformGO == null)
+            {
+                agentTransformGO = GameObject.Find("Agent Transform GameObject");
+                if (agentTransformGO == null) return;
+            }
+
+            if (cursor == null)
+            {
+                cursor = GameObject.Find("3D Cursor");
+                if (cursor == null) return;
+            }
+
+            if (cursorRenderer == null)
+            {
+                var cursorMesh = cursor.transform.GetChild(0);
+
+                if (cursorMesh == null) return;
+
+                cursorRenderer = cursorMesh.GetComponent<Renderer>();
+
+                if (cursorRenderer == null) return;
+
+                cursorRenderer.enabled = false;
+            }
 
             var keyboard = Keyboard.current;
 
@@ -65,7 +67,7 @@ namespace Reese.Demo
 
             var agentPosition = EntityManager.GetComponentData<LocalToWorld>(agentEntity).Position;
 
-            AgentTransformGameObject.transform.SetPositionAndRotation(agentPosition, Quaternion.identity);
+            agentTransformGO.transform.SetPositionAndRotation(agentPosition, Quaternion.identity);
 
             var mouse = Mouse.current;
 

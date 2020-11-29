@@ -13,20 +13,15 @@ namespace Reese.Demo
 
         GameObject catGO = default;
 
-        protected override void OnCreate()
-        {
-            if (!SceneManager.GetActiveScene().name.Equals("Stranded"))
-            {
-                Enabled = false;
-                return;
-            }
-
-            catGO = GameObject.Find("Cat");
-        }
-
         protected override void OnUpdate()
         {
-            if (catGO == null) return;
+            if (!SceneManager.GetActiveScene().name.Equals("Stranded")) return;
+
+            if (catGO == null)
+            {
+                catGO = GameObject.Find("Cat");
+                if (catGO == null) return;
+            }
 
             var commandBuffer = barrier.CreateCommandBuffer();
 
