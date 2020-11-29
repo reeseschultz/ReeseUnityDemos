@@ -1658,7 +1658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dad1280750ab0d1c8bfd5eb383525ac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentTransformGameObject: {fileID: 1175312367}
+  agentTransformGO: {fileID: 1175312367}
 --- !u!1 &847049035
 GameObject:
   m_ObjectHideFlags: 0

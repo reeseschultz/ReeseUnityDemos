@@ -5,21 +5,23 @@ namespace Reese.Demo
     public class StrandedCameraController : MonoBehaviour
     {
         [SerializeField]
-        GameObject agentTransformGameObject = default;
+        GameObject agentTransformGO = default;
 
-        Vector3? offset = null;
+        Vector3? offset = default;
 
         void LateUpdate()
         {
+            if (agentTransformGO.transform.position.Equals(Vector3.zero)) return; // Must wait for agent transform GO to initialize.
+
             if (!offset.HasValue)
             {
-                offset = transform.position - agentTransformGameObject.transform.position;
-                transform.LookAt(agentTransformGameObject.transform.position);
+                offset = transform.position - agentTransformGO.transform.position;
+                transform.LookAt(agentTransformGO.transform.position);
             }
 
             transform.position = Vector3.Lerp(
                 transform.position,
-                agentTransformGameObject.transform.position + offset.Value,
+                agentTransformGO.transform.position + offset.Value,
                 Time.deltaTime
             );
         }
