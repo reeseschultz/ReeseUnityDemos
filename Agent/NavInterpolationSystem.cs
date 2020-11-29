@@ -44,6 +44,7 @@ namespace Reese.Nav
             {
                 agent.JumpSeconds = elapsedSeconds;
 
+                commandBuffer.RemoveComponent<NavWalking>(entityInQueryIndex, entity);
                 commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
                 commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
 
@@ -51,6 +52,7 @@ namespace Reese.Nav
             }
 
             commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
+            commandBuffer.RemoveComponent<NavWalking>(entityInQueryIndex, entity);
             commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
 
             return;
@@ -68,8 +70,8 @@ namespace Reese.Nav
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithNone<NavHasProblem, NavPlanning, NavJumping>()
-                .WithAll<NavLerping, LocalToParent>()
+                .WithNone<NavHasProblem, NavPlanning>()
+                .WithAll<NavWalking, LocalToParent>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)

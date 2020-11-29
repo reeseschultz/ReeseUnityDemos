@@ -8,11 +8,14 @@ namespace Reese.Nav
 {
     public class NavAgentHybrid : MonoBehaviour
     {
-        /// <summary>True if the agent is lerping, false if not.</summary>
-        public bool IsLerping { get; private set; }
+        /// <summary>True if the agent is walking, false if not.</summary>
+        public bool IsWalking { get; private set; }
 
         /// <summary>True if the agent is jumping, false if not.</summary>
         public bool IsJumping { get; private set; }
+
+        /// <summary>True if the agent is lerping, false if not. (Includes both walking and jumping.)</summary>
+        public bool IsLerping { get; private set; }
 
         /// <summary>True if the agent is falling, false if not.</summary>
         public bool IsFalling { get; private set; }
@@ -122,8 +125,9 @@ namespace Reese.Nav
         {
             if (entity.Equals(Entity.Null)) return;
 
-            IsLerping = entityManager.HasComponent<NavLerping>(entity);
+            IsWalking = entityManager.HasComponent<NavWalking>(entity);
             IsJumping = entityManager.HasComponent<NavJumping>(entity);
+            IsLerping = entityManager.HasComponent<NavLerping>(entity);
             IsFalling = entityManager.HasComponent<NavFalling>(entity);
             IsPlanning = entityManager.HasComponent<NavPlanning>(entity);
 

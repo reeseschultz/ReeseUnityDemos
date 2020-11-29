@@ -87,8 +87,9 @@ To retain navigating agents *as* GameObjects, rather than converting them into e
 
 | Variable               | Type               | Description                                                                                                                                                                                                                                                | Default Value |
 |------------------------|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| **`IsLerping`**        | `bool`             | `true` if the agent is lerping, `false` if not.                                                                                                                                                                                                            | `false`       |
+| **`IsWalking`**        | `bool`             | `true` if the agent is walking, `false` if not.                                                                                                                                                                                                            | `false`       |
 | **`IsJumping`**        | `bool`             | `true` if the agent is jumping, `false` if not.                                                                                                                                                                                                            | `false`       |
+| **`IsLerping`**        | `bool`             | `true` if the agent is lerping, `false` if not. (Includes both walking and jumping.)                                                                                                                                                                       | `false`       |
 | **`IsFalling`**        | `bool`             | `true` if the agent is falling, `false` if not.                                                                                                                                                                                                            | `false`       |
 | **`IsPlanning`**       | `bool`             | `true` if the agent is planning, `false` if not.                                                                                                                                                                                                           | `false`       |
 | **`IsTerrainCapable`** | `bool`             | `true` if the agent is terrain-capable, `false` if not.                                                                                                                                                                                                    | `false`       |
@@ -125,13 +126,14 @@ To retain navigating agents *as* GameObjects, rather than converting them into e
 
 Here are the internally-managed components (defined in [NavAgentStatus](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentStatus.cs)) that are applied to [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) throughout the navigation lifecycle. Do **not** write to these, just query them to check existence:
 
-| `IComponentData`      | Description                          |
-|-----------------------|--------------------------------------|
-| **`NavLerping`**      | Exists if the agent is lerping.      |
-| **`NavJumping`**      | Exists if the agent is jumping.      |
-| **`NavFalling`**      | Exists if the agent is falling.      |
-| **`NavPlanning`**     | Exists if the agent is planning.     |
-| **`NavNeedsSurface`** | Exists if the agent needs a surface. |
+| `IComponentData`      | Description                                                              |
+|-----------------------|--------------------------------------------------------------------------|
+| **`NavWalking`**      | Exists if the agent is walking.                                          |
+| **`NavJumping`**      | Exists if the agent is jumping.                                          |
+| **`NavLerping`**      | Exists if the agent is lerping (includes both walking and jumping).      |
+| **`NavFalling`**      | Exists if the agent is falling.                                          |
+| **`NavPlanning`**     | Exists if the agent is planning.                                         |
+| **`NavNeedsSurface`** | Exists if the agent needs a surface.                                     |
 
 Other components you **may** add and write to:
 
