@@ -11,16 +11,16 @@ namespace Reese.Demo
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
-        GameObject catGO = default;
+        GameObject go = default;
 
         protected override void OnUpdate()
         {
             if (!SceneManager.GetActiveScene().name.Equals("Stranded")) return;
 
-            if (catGO == null)
+            if (go == null)
             {
-                catGO = GameObject.Find("Cat");
-                if (catGO == null) return;
+                go = GameObject.Find("Cat");
+                if (go == null) return;
             }
 
             var commandBuffer = barrier.CreateCommandBuffer();
@@ -33,11 +33,11 @@ namespace Reese.Demo
                 .WithNone<Hopping>()
                 .ForEach((Entity entity, in Cat cat, in Translation translation) =>
                 {
-                    var meowController = catGO.GetComponent<CatMeowController>();
+                    var controller = go.GetComponent<CatSoundController>();
 
-                    if (meowController == null) return;
+                    if (controller == null) return;
 
-                    meowController.Meow();
+                    controller.Meow();
 
                     commandBuffer.AddComponent(entity, new Hopping
                     {

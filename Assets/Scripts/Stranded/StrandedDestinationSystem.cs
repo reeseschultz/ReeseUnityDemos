@@ -27,7 +27,7 @@ namespace Reese.Demo
 
             if (agentTransformGO == null)
             {
-                agentTransformGO = GameObject.Find("Agent Transform GameObject");
+                agentTransformGO = GameObject.Find("Player GO");
                 if (agentTransformGO == null) return;
             }
 

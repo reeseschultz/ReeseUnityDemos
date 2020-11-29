@@ -3,10 +3,10 @@
 namespace Reese.Demo
 {
     [RequireComponent(typeof(AudioSource))]
-    public class CatMeowController : MonoBehaviour
+    public class CatSoundController : MonoBehaviour
     {
         [SerializeField]
-        AudioClip[] clips = default;
+        AudioClip[] meows = default;
 
         AudioSource source = default;
 
@@ -15,9 +15,9 @@ namespace Reese.Demo
 
         public void Meow()
         {
-            if (clips.Length <= 0) return;
+            if (meows.Length <= 0) return;
 
-            source.clip = clips[UnityEngine.Random.Range(0, clips.Length)];
+            source.clip = meows[UnityEngine.Random.Range(0, meows.Length)];
             source.Play();
         }
     }

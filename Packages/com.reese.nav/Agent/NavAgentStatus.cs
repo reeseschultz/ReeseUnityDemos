@@ -17,7 +17,10 @@ namespace Reese.Nav
     /// <summary>Exists if the agent is jumping.</summary>
     public struct NavJumping : IComponentData { }
 
-    /// <summary>Exists if the agent is lerping.</summary>
+    /// <summary>Exists if the agent is walking.</summary>
+    public struct NavWalking : IComponentData { }
+
+    /// <summary>Exists if the agent is lerping (includes both walking and jumping).</summary>
     public struct NavLerping : IComponentData { }
 
     /// <summary>Exists if the agent needs a destination.</summary>
