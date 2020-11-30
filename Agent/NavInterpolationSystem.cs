@@ -87,15 +87,19 @@ namespace Reese.Nav
                         return;
                     }
 
-                    if (NavUtil.ApproxEquals(translation.Value, pathBuffer[0].Value, 1)) pathBuffer.RemoveAt(0);
+                    var pathBufferLength = pathBuffer.Length - 1;
+
+                    if (NavUtil.ApproxEquals(translation.Value, pathBuffer[pathBufferLength].Value, 1)) pathBuffer.RemoveAt(pathBufferLength);
 
                     if (pathBuffer.Length == 0) return;
 
-                    translation.Value = Vector3.MoveTowards(translation.Value, pathBuffer[0].Value, agent.TranslationSpeed * deltaSeconds);
+                    pathBufferLength = pathBuffer.Length - 1;
+
+                    translation.Value = Vector3.MoveTowards(translation.Value, pathBuffer[pathBufferLength].Value, agent.TranslationSpeed * deltaSeconds);
 
                     var lookAt = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
                         localToWorldFromEntity[agent.DestinationSurface].Value,
-                        pathBuffer[0].Value
+                        pathBuffer[pathBufferLength].Value
                     );
 
                     lookAt = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).
