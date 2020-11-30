@@ -34,7 +34,7 @@ namespace Reese.Demo {
             entityQuery = entityManager.CreateEntityQuery(
                 new EntityQueryDesc
                 {
-                    All = new ComponentType[] { typeof(NavLerping), typeof(LocalToParent) },
+                    All = new ComponentType[] { typeof(NavWalking), typeof(LocalToParent) },
                     None = new ComponentType[] { typeof(NavPlanning), typeof(NavJumping) }
                 }
             );

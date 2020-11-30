@@ -14,9 +14,6 @@ namespace Reese.Nav
         /// <summary>True if the agent is jumping, false if not.</summary>
         public bool IsJumping { get; private set; }
 
-        /// <summary>True if the agent is lerping, false if not. (Includes both walking and jumping.)</summary>
-        public bool IsLerping { get; private set; }
-
         /// <summary>True if the agent is falling, false if not.</summary>
         public bool IsFalling { get; private set; }
 
@@ -127,7 +124,6 @@ namespace Reese.Nav
 
             IsWalking = entityManager.HasComponent<NavWalking>(entity);
             IsJumping = entityManager.HasComponent<NavJumping>(entity);
-            IsLerping = entityManager.HasComponent<NavLerping>(entity);
             IsFalling = entityManager.HasComponent<NavFalling>(entity);
             IsPlanning = entityManager.HasComponent<NavPlanning>(entity);
 

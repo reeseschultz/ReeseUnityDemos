@@ -20,9 +20,6 @@ namespace Reese.Nav
     /// <summary>Exists if the agent is walking.</summary>
     public struct NavWalking : IComponentData { }
 
-    /// <summary>Exists if the agent is lerping (includes both walking and jumping).</summary>
-    public struct NavLerping : IComponentData { }
-
     /// <summary>Exists if the agent needs a destination.</summary>
     public struct NavNeedsDestination : IComponentData
     {
@@ -32,7 +29,7 @@ namespace Reese.Nav
         /// <summary>True if teleporting to the specified destination, false if not (the default).</summary>
         public bool Teleport;
 
-        /// <summary>If this destination is within the provided tolerance of the last destination for a given agent, it will be ignored. Useful for mouselook since many new destinations can block lerping.</summary>
+        /// <summary>If this destination is within the provided tolerance of the last destination for a given agent, it will be ignored. Useful for mouselook since many new destinations can block interpolation.</summary>
         public float Tolerance;
     }
 
