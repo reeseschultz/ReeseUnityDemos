@@ -9,8 +9,7 @@ using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 
 namespace Reese.Nav
 {
-    /// <summary>Creates and updates destinations as persistent entities that
-    /// retain location information pertinent to nav agents.</summary>
+    /// <summary>Manages destinations for agents.</summary>
     [UpdateAfter(typeof(NavSurfaceSystem))]
     public class NavDestinationSystem : SystemBase
     {
