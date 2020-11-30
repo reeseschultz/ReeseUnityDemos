@@ -19,8 +19,9 @@ namespace Reese.Nav
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
-            var physicsWorld = buildPhysicsWorld.PhysicsWorld;
+
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
+            var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var elapsedSeconds = (float)Time.ElapsedTime;
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
@@ -32,7 +33,11 @@ namespace Reese.Nav
                 .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination needsDestination) =>
                 {
-                    if (agent.DestinationSeconds != 0 && elapsedSeconds - agent.DestinationSeconds < NavConstants.DESTINATION_RATE_LIMIT_SECONDS) return;
+                    if (elapsedSeconds - agent.DestinationSeconds < NavConstants.DESTINATION_RATE_LIMIT_SECONDS)
+                    {
+                        commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
+                        return;
+                    }
 
                     var collider = SphereCollider.Create(
                         new SphereGeometry()
