@@ -133,7 +133,6 @@ namespace Reese.Nav
                         if (jumpBuffer.Length > 0)
                         {
                             commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
-                            commandBuffer.AddComponent<NavLerping>(entityInQueryIndex, entity);
                         }
                     }
                     else if (status == PathQueryStatus.Success)
@@ -150,7 +149,6 @@ namespace Reese.Nav
                         if (pathBuffer.Length > 0)
                         {
                             commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
-                            commandBuffer.AddComponent<NavLerping>(entityInQueryIndex, entity);
                             commandBuffer.AddComponent<NavWalking>(entityInQueryIndex, entity);
                         }
                     }

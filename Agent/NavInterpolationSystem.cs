@@ -36,6 +36,8 @@ namespace Reese.Nav
                 }
             };
 
+            commandBuffer.RemoveComponent<NavWalking>(entityInQueryIndex, entity);
+
             if (
                 !surface.Value.Equals(agent.DestinationSurface) &&
                 !NavUtil.ApproxEquals(translation.Value, agent.LocalDestination, 1) &&
@@ -44,15 +46,12 @@ namespace Reese.Nav
             {
                 agent.JumpSeconds = elapsedSeconds;
 
-                commandBuffer.RemoveComponent<NavWalking>(entityInQueryIndex, entity);
                 commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
                 commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
 
                 return;
             }
 
-            commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
-            commandBuffer.RemoveComponent<NavWalking>(entityInQueryIndex, entity);
             commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
 
             return;
