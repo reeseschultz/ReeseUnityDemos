@@ -138,9 +138,9 @@ namespace Reese.Nav
                     }
                     else if (status == PathQueryStatus.Success)
                     {
-                        if (pathBuffer.Length > 0) pathBuffer.RemoveAt(0);
+                        if (pathBuffer.Length > 0) pathBuffer.RemoveAt(pathBuffer.Length - 1);
 
-                        for (var i = 0; i < straightPathCount; ++i) pathBuffer.Add(
+                        for (var i = straightPathCount - 1; i > 0; --i) pathBuffer.Add(
                             NavUtil.MultiplyPoint3x4(
                                 math.inverse(localToWorldFromEntity[surface.Value].Value),
                                 (float3)straightPath[i].position + agent.Offset
