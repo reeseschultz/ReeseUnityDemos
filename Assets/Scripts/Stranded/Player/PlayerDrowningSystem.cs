@@ -32,12 +32,9 @@ namespace Reese.Demo.Stranded
             var ran = false;
 
             Entities
-                .WithNone<NavHasProblem>()
-                .WithAll<NavFalling>()
+                .WithAny<NavHasProblem, NavFalling>()
                 .ForEach((in NavAgent agent, in Player player) =>
                 {
-                    if (elapsedSeconds - agent.FallSeconds < 1) return;
-
                     controller.Run();
 
                     ran = true;
