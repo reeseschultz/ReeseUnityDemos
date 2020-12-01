@@ -1,7 +1,7 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
 
-namespace Reese.Demo
+namespace Reese.Demo.Stranded
 {
     public struct Hopping : IComponentData
     {

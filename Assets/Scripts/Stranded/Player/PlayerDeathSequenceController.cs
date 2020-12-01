@@ -4,9 +4,9 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Reese.Demo
+namespace Reese.Demo.Stranded
 {
-    public class DeathSequenceController : MonoBehaviour
+    public class PlayerDeathSequenceController : MonoBehaviour
     {
         [SerializeField]
         CanvasGroup backgroundGroup = default;

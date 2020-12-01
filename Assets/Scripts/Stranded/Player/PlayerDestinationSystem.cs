@@ -7,10 +7,10 @@ using UnityEngine.InputSystem;
 using Unity.Physics;
 using Unity.Physics.Systems;
 
-namespace Reese.Demo
+namespace Reese.Demo.Stranded
 {
     [UpdateAfter(typeof(TransformSystemGroup))]
-    class StrandedDestinationSystem : SystemBase
+    class PlayerDestinationSystem : SystemBase
     {
         PhysicsWorld physicsWorld => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<BuildPhysicsWorld>().PhysicsWorld;
 

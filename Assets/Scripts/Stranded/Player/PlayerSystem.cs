@@ -4,7 +4,7 @@ using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Reese.Demo
+namespace Reese.Demo.Stranded
 {
     class PlayerSystem : SystemBase
     {

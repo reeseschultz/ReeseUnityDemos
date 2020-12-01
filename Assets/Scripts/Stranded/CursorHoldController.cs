@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Reese.Demo
+namespace Reese.Demo.Stranded
 {
     class CursorHoldController : MonoBehaviour
     {

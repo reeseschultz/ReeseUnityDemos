@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Reese.Demo
+namespace Reese.Demo.Stranded
 {
     [RequireComponent(typeof(AudioSource))]
     public class CatSoundController : MonoBehaviour

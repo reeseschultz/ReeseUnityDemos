@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Reese.Demo
+namespace Reese.Demo.Stranded
 {
     public class PlayerSoundController : MonoBehaviour
     {

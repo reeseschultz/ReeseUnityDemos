@@ -4,11 +4,11 @@ using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Reese.Demo
+namespace Reese.Demo.Stranded
 {
-    class DrownSystem : SystemBase
+    class PlayerDrowningSystem : SystemBase
     {
-        DeathSequenceController deathSequenceController = default;
+        PlayerDeathSequenceController deathSequenceController = default;
 
         bool ranDeathSequence = default;
 
@@ -18,11 +18,11 @@ namespace Reese.Demo
 
             if (deathSequenceController == null)
             {
-                var go = GameObject.Find("Death Sequence Controller");
+                var go = GameObject.Find("Player Death Sequence Controller");
 
                 if (go == null) return;
 
-                deathSequenceController = go.GetComponent<DeathSequenceController>();
+                deathSequenceController = go.GetComponent<PlayerDeathSequenceController>();
 
                 if (deathSequenceController == null) return;
             }

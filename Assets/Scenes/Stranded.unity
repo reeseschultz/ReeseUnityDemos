@@ -900,7 +900,7 @@ GameObject:
   - component: {fileID: 383883047}
   - component: {fileID: 383883046}
   m_Layer: 0
-  m_Name: Death Sequence Controller
+  m_Name: Player Death Sequence Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

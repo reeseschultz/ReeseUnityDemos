@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Reese.Demo
+namespace Reese.Demo.Stranded
 {
-    public class StrandedCameraController : MonoBehaviour
+    public class PlayerDrivenCameraController : MonoBehaviour
     {
         [SerializeField]
         GameObject agentTransformGO = default;
