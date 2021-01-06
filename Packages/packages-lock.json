@@ -5,9 +5,9 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.entities": "0.14.0-preview.19",
-        "com.unity.physics": "0.5.0-preview.1",
-        "com.unity.rendering.hybrid": "0.8.0-preview.19"
+        "com.unity.entities": "0.16.0-preview.21",
+        "com.unity.physics": "0.5.1-preview.2",
+        "com.unity.rendering.hybrid": "0.10.0-preview.21"
       }
     },
     "com.reese.random": {
@@ -15,7 +15,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.entities": "0.14.0-preview.19"
+        "com.unity.entities": "0.16.0-preview.21"
       }
     },
     "com.unity.burst": {
@@ -57,14 +57,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ext.nunit": {
-      "version": "1.0.0",
+      "version": "1.0.6",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "1.2.1",
+      "version": "2.0.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -87,7 +87,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.inputsystem": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -156,7 +156,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.postprocessing": {
-      "version": "2.3.0",
+      "version": "3.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -213,11 +213,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.18",
+      "version": "1.1.20",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.ext.nunit": "1.0.0",
+        "com.unity.ext.nunit": "1.0.6",
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       },
