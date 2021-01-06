@@ -11,6 +11,7 @@ namespace Reese.Demo
 {
     class NavTerrainDestinationSystem : SystemBase
     {
+        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
@@ -23,6 +24,7 @@ namespace Reese.Demo
         protected override void OnUpdate()
         {
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
+            var settings = navSystem.Settings;
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var jumpableBufferFromEntity = GetBufferFromEntity<NavJumpableBufferElement>(true);
             var renderBoundsFromEntity = GetComponentDataFromEntity<RenderBounds>(true);
@@ -54,7 +56,10 @@ namespace Reese.Demo
                                 renderBoundsFromEntity[surface.Value].Value,
                                 99
                             ),
-                            out var validDestination
+                            out var validDestination,
+                            settings.ObstacleRaycastDistanceMax,
+                            settings.ColliderLayer,
+                            settings.SurfaceLayer
                         )
                     )
                     {

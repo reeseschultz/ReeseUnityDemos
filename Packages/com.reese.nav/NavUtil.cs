@@ -40,25 +40,27 @@ namespace Reese.Nav
         /// position by raycasting onto the surface layer from the passed
         /// position. Returns true if the raycast is successful and a position
         /// via out.</summary>
-        public static bool GetPointOnSurfaceLayer(this PhysicsWorld physicsWorld, LocalToWorld localToWorld, float3 position, out float3 pointOnSurface)
+        public static bool GetPointOnSurfaceLayer(this PhysicsWorld physicsWorld, LocalToWorld localToWorld, float3 position, out float3 pointOnSurface, float obstacleRaycastDistanceMax, int colliderLayer, int surfaceLayer)
         {
             var rayInput = new RaycastInput()
             {
-                Start = position + localToWorld.Up * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
-                End = position - localToWorld.Up * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
+                Start = position + localToWorld.Up * obstacleRaycastDistanceMax,
+                End = position - localToWorld.Up * obstacleRaycastDistanceMax,
                 Filter = new CollisionFilter()
                 {
-                    BelongsTo = ToBitMask(NavConstants.COLLIDER_LAYER),
-                    CollidesWith = ToBitMask(NavConstants.SURFACE_LAYER)
+                    BelongsTo = ToBitMask(colliderLayer),
+                    CollidesWith = ToBitMask(surfaceLayer)
                 }
             };
 
             pointOnSurface = float3.zero;
+
             if (physicsWorld.CastRay(rayInput, out var hit))
             {
                 pointOnSurface = hit.Position;
                 return true;
             }
+
             return false;
         }
 

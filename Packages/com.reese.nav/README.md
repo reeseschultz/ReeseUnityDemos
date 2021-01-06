@@ -77,15 +77,15 @@ Consider that, even when using GameObjects, you would still want to attach the D
 
 #### Status Variables
 
-| Variable               | Type               | Description                                                                                                                                                                                                                                                | Default Value |
-|------------------------|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| **`IsLerping`**        | `bool`             | `true` if the agent is lerping, `false` if not.                                                                                                                                                                                                            | `false`       |
-| **`IsJumping`**        | `bool`             | `true` if the agent is jumping, `false` if not.                                                                                                                                                                                                            | `false`       |
-| **`IsFalling`**        | `bool`             | `true` if the agent is falling, `false` if not.                                                                                                                                                                                                            | `false`       |
-| **`IsPlanning`**       | `bool`             | `true` if the agent is planning, `false` if not.                                                                                                                                                                                                           | `false`       |
-| **`IsTerrainCapable`** | `bool`             | `true` if the agent is terrain-capable, `false` if not.                                                                                                                                                                                                    | `false`       |
-| **`NeedsSurface`**     | `bool`             | `true` if the agent needs a surface, `false` if not.                                                                                                                                                                                                       | `false`       |
-| **`HasProblem`**       | `PathQueryStatus?` | Has a value of [PathQueryStatus](https://docs.unity3d.com/ScriptReference/Experimental.AI.PathQueryStatus.html) if the agent has a problem, `null` if not. Problems tend to arise to due incorrect values set in `NavConstants`, which is discussed later. | `null`        |
+| Variable               | Type               | Description                                                                                                                                                                | Default Value |
+|------------------------|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| **`IsLerping`**        | `bool`             | `true` if the agent is lerping, `false` if not.                                                                                                                            | `false`       |
+| **`IsJumping`**        | `bool`             | `true` if the agent is jumping, `false` if not.                                                                                                                            | `false`       |
+| **`IsFalling`**        | `bool`             | `true` if the agent is falling, `false` if not.                                                                                                                            | `false`       |
+| **`IsPlanning`**       | `bool`             | `true` if the agent is planning, `false` if not.                                                                                                                           | `false`       |
+| **`IsTerrainCapable`** | `bool`             | `true` if the agent is terrain-capable, `false` if not.                                                                                                                    | `false`       |
+| **`NeedsSurface`**     | `bool`             | `true` if the agent needs a surface, `false` if not.                                                                                                                       | `false`       |
+| **`HasProblem`**       | `PathQueryStatus?` | Has a value of [PathQueryStatus](https://docs.unity3d.com/ScriptReference/Experimental.AI.PathQueryStatus.html) if the agent has a problem, `null` if not.                 | `null`        |
 
 ### Destination Variables
 
@@ -161,31 +161,45 @@ Like the [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/maste
 
 ### **IMPORTANT:** Layers & You
 
-By default, [GameObjects](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/GameObject.html) with [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurface.cs) components attached to them should be set to layer 28. All obstacles should be set to layer 29. Otherwise, things won't work because the navigation package depends on ray and collider casting. For more information on the layers and overriding them, see the section on constants below.
+By default, [GameObjects](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/GameObject.html) with [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurface.cs) components attached to them should be set to layer 28. All obstacles should be set to layer 29. Otherwise, things won't work because the navigation package depends on ray and collider casting. For more information on the layers and overriding them, see the section on settings below.
 
-### Constants
+### Runtime Settings
 
-Constants corresponding to the layers are as follows (feel free to change them as needed):
+The nav package has many settings you may override (at runtime), hence why the [NavSettingsOverrides](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Assets/Scripts/Nav/NavSettingsOverrides.cs) class is included for your convenience in the demo code. This class makes it easy to retain your changes even when you update the nav package via UPM.
 
-| Constant             | Type  | Description              | Default Value |
-|----------------------|-------|--------------------------|---------------|
-| **`SURFACE_LAYER`**  | `int` | The layer for surfaces.  | `28`          |
-| **`OBSTACLE_LAYER`** | `int` | The layer for obstacles. | `29`          |
-| **`COLLIDER_LAYER`** | `int` | The layer for colliders. | `30`          |
+If you cloned or forked the monorepo, then you already have the class. Otherwise, feel free to copy-paste its code and modify it for your preferred overrides.
 
-Additionally, there are other constants you may need to change:
+Now, what settings are there to override, anyway?
 
-| Constant                                   | Type    | Description                                                                                                                                                                                                                                                                                                    | Default Value |
+Settings corresponding to the layers are as follows:
+
+| Setting             | Type  | Description              | Default Value |
+|---------------------|-------|--------------------------|---------------|
+| **`SurfaceLayer`**  | `int` | The layer for surfaces.  | `28`          |
+| **`ObstacleLayer`** | `int` | The layer for obstacles. | `29`          |
+| **`ColliderLayer`** | `int` | The layer for colliders. | `30`          |
+
+And then there's the rest of the settings you may want to change:
+
+| Setting                                    | Type    | Description                                                                                                                                                                                                                                                                                                    | Default Value |
 |--------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| **`DESTINATION_SURFACE_COLLIDER_RADIUS`**  | `float` | A sphere collider of the specified radius is used to detect the destination surface.                                                                                                                                                                                                                           | `1`           |
-| **`JUMP_SECONDS_MAX`**                     | `float` | Upper limit on the *duration* spent jumping before the agent is actually considered falling. This limit can be reached when the agent tries to jump too close to the edge of a surface and misses.                                                                                                             | `5`           |
-| **`OBSTACLE_RAYCAST_DISTANCE_MAX`**        | `float` | Upper limit on the raycast distance when searching for an obstacle in front of a given NavAgent.                                                                                                                                                                                                               | `1000`        |
-| **`SURFACE_RAYCAST_DISTANCE_MAX`**         | `float` | Upper limit on the raycast distance when searching for a surface below a given [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs).                                                                                                               | `1000`        |
-| **`PATH_SEARCH_MAX`**                      | `int`   | Upper limit on the search area size during path planning.                                                                                                                                                                                                                                                      | `1000`        |
-| **`SURFACE_RAYCAST_MAX`**                  | `int`   | Upper limit on the number of raycasts to attempt in searching for a surface below the NavAgent. Exceeding this implies that there is no surface below the agent, its then determined to be falling which means that no more raycasts will be performed.                                                        | `100`         |
-| **`ITERATION_MAX`**                        | `int`   | Upper limit on the iterations performed in a [NavMeshQuery](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/Experimental.AI.NavMeshQuery.html) to find a path in the [NavPlanSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavPlanSystem.cs). | `1000`        |
-| **`JUMPABLE_SURFACE_MAX`**                 | `int`   | Upper limit on a given jumpable surface buffer. Exceeding this merely results in allocation of heap memory.                                                                                                                                                                                                    | `30`          |
-| **`PATH_NODE_MAX`**                        | `int`   | Upper limit on a given path buffer. Exceeding this merely results in allocation of heap memory.                                                                                                                                                                                                                | `1000`        |
+| **`DestinationSurfaceColliderRadius`**     | `float` | A sphere collider of the specified radius is used to detect the destination surface.                                                                                                                                                                                                                           | `1`           |
+| **`JumpSecondsMax`**                       | `float` | Upper limit on the *duration* spent jumping before the agent is actually considered falling. This limit can be reached when the agent tries to jump too close to the edge of a surface and misses.                                                                                                             | `5`           |
+| **`ObstacleRaycastDistanceMax`**           | `float` | Upper limit on the raycast distance when searching for an obstacle in front of a given NavAgent.                                                                                                                                                                                                               | `1000`        |
+| **`SurfaceRaycastDistanceMax`**            | `float` | Upper limit on the raycast distance when searching for a surface below a given [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs).                                                                                                               | `1000`        |
+| **`PathSearchMax`**                        | `int`   | Upper limit on the search area size during path planning.                                                                                                                                                                                                                                                      | `1000`        |
+| **`IterationMax`**                         | `int`   | Upper limit on the iterations performed in a [NavMeshQuery](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/Experimental.AI.NavMeshQuery.html) to find a path in the [NavPlanSystem](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavPlanSystem.cs). | `1000`        |
+| **`PathNodeMax`**                          | `int`   | Upper limit on a given path buffer. Exceeding this merely results in allocation of heap memory.                                                                                                                                                                                                                | `1000`        |
+
+### Compile-Time Constants
+
+In addition to settings, there are also compile-time constants. You *can* change them directly in [NavConstants](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/NavConstants.cs), although that shouldn't be necessary. Plus, the constants will reset when you update via UPM.
+
+| Constant                                   | Type     | Description                                                                                                                                                                                                                                                                                                    | Default Value |
+|--------------------------------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| **`SURFACE_RAYCAST_MAX`**                  | `int`    | Upper limit on the number of raycasts to attempt in searching for a surface below the NavAgent. Exceeding this implies that there is no surface below the agent, its then determined to be falling which means that no more raycasts will be performed.                                                        | `100`         |
+| **`JUMPABLE_SURFACE_MAX`**                 | `int`    | Upper limit on a given jumpable surface buffer. Exceeding this merely results in allocation of heap memory.                                                                                                                                                                                                    | `30`          |
+| **`HUMANOID`**                             | `string` | The 'Humanoid' NavMesh agent type as a string.                                                                                                                                                                                                                                                                 | `"Humanoid"`  |
 
 ## Tips
 
