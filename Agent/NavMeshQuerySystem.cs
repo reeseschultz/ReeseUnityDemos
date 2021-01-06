@@ -33,6 +33,8 @@ namespace Reese.Nav
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     unsafe public class NavMeshQuerySystem : ComponentSystem
     {
+        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
+
         /// <summary>An array of structs containing pointers, each referencing
         /// its own respective NavMeshQuery.</summary>
         internal NativeArray<NavMeshQueryPointer> PointerArray { get; private set; }
@@ -45,6 +47,7 @@ namespace Reese.Nav
 
         protected override void OnCreate()
         {
+            var settings = navSystem.Settings;
             var pointerArray = new NavMeshQueryPointer[JobsUtility.MaxJobThreadCount];
 
             for (var i = 0; i < JobsUtility.MaxJobThreadCount; ++i)
@@ -61,7 +64,7 @@ namespace Reese.Nav
                 var query = new NavMeshQuery(
                     NavMeshWorld.GetDefaultWorld(),
                     Allocator.Persistent,
-                    NavConstants.NAV_MESH_QUERY_NODE_MAX
+                    settings.NavMeshQueryNodeMax
                 );
 
                 queryList.Add(query);

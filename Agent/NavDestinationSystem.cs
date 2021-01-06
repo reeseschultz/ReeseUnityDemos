@@ -14,14 +14,16 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavSurfaceSystem))]
     public class NavDestinationSystem : SystemBase
     {
-        BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
+        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
+        BuildPhysicsWorld buildPhysicsWorld => World.GetOrCreateSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
-            var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
+            var physicsWorld = buildPhysicsWorld.PhysicsWorld;
+            var settings = navSystem.Settings;
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
@@ -36,12 +38,12 @@ namespace Reese.Nav
                         new SphereGeometry()
                         {
                             Center = needsDestination.Destination,
-                            Radius = NavConstants.DESTINATION_SURFACE_COLLIDER_RADIUS
+                            Radius = settings.DestinationSurfaceColliderRadius
                         },
                         new CollisionFilter()
                         {
-                            BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
-                            CollidesWith = NavUtil.ToBitMask(NavConstants.SURFACE_LAYER),
+                            BelongsTo = NavUtil.ToBitMask(settings.ColliderLayer),
+                            CollidesWith = NavUtil.ToBitMask(settings.SurfaceLayer),
                         }
                     );
 

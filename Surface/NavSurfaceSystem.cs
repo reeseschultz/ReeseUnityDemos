@@ -16,6 +16,7 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavBasisSystem))]
     public class NavSurfaceSystem : SystemBase
     {
+        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         Dictionary<int, GameObject> gameObjectMap = new Dictionary<int, GameObject>();
         NativeHashMap<int, bool> needsSurfaceMap = default;
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
@@ -47,10 +48,10 @@ namespace Reese.Nav
 
         protected override void OnCreate()
             => needsSurfaceMap = new NativeHashMap<int, bool>(
-                NavConstants.NEEDS_SURFACE_MAP_SIZE,
+                navSystem.Settings.NeedsSurfaceMapSize,
                 Allocator.Persistent
             );
-            
+
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
@@ -117,6 +118,7 @@ namespace Reese.Nav
 
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
+            var settings = navSystem.Settings;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var map = needsSurfaceMap;
 
@@ -139,17 +141,17 @@ namespace Reese.Nav
                     var rayInput = new RaycastInput
                     {
                         Start = localToWorld.Position + agent.Offset,
-                        End = -localToWorld.Up * NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
+                        End = -localToWorld.Up * settings.SurfaceRaycastDistanceMax,
                         Filter = new CollisionFilter()
                         {
-                            BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
-                            CollidesWith = NavUtil.ToBitMask(NavConstants.SURFACE_LAYER),
+                            BelongsTo = NavUtil.ToBitMask(settings.ColliderLayer),
+                            CollidesWith = NavUtil.ToBitMask(settings.SurfaceLayer),
                         }
                     };
 
                     if (!physicsWorld.CastRay(rayInput, out RaycastHit hit))
                     {
-                        if (++agent.SurfaceRaycastCount >= NavConstants.SURFACE_RAYCAST_MAX)
+                        if (++agent.SurfaceRaycastCount >= settings.SurfaceRaycastMax)
                         {
                             agent.FallSeconds = elapsedSeconds;
 
