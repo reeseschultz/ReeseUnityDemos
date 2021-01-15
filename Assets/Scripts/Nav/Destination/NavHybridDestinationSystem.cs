@@ -24,6 +24,12 @@ namespace Reese.Demo
                 mouse.leftButton.wasPressedThisFrame &&
                 Physics.Raycast(Camera.main.ScreenPointToRay(new Vector2(mouse.position.x.ReadValue(), mouse.position.y.ReadValue())), out var hit)
             ) agent.WorldDestination = hit.point;
+
+            var keyboard = Keyboard.current;
+
+            if (keyboard == null) return;
+
+            if (keyboard.tabKey.isPressed) agent.Stop(); // Just for testing stop functionality.
         }
     }
 }

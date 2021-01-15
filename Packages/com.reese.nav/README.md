@@ -62,6 +62,12 @@ Consider that, even when using GameObjects, you would still want to attach the D
 
 ### [NavAgentHybrid](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentHybrid.cs) (exclusively for GameObjects)
 
+#### Public Methods
+
+| Method                     | Type      | Description                                                                 |
+|----------------------------|-----------|-----------------------------------------------------------------------------|
+| **`Stop`**                 | `void`    | Stops the agent from navigating (waits for jumping or falling to complete). |
+
 #### Initialization Variables
 
 | Variable                   | Type      | Description                                   | Default Value       |
@@ -130,6 +136,7 @@ Other components you **may** add and write to:
 | `IComponentData`          | Description                                                                                                                                                                                                                             |
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **`NavNeedsDestination`** | Exists if the agent needs a destination. In this `struct`, there's a `float3` named `Destination` (relative to the world). There's also an optional `bool` named `Teleport`, which toggles teleportation to the provided `Destination`. |
+| **`NavStop`**             | Exists if the agent needs to stop moving (waits for jumping or falling to complete).                                                                                                                                                    |
 | **`NavTerrainCapable`**   | Only needed if your agents must navigate on terrain. Don't use it otherwise, since it may negatively impact performance.                                                                                                                |
 
 (See the [demo destination systems](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/Destination) for examples of status component and variable usage.)
