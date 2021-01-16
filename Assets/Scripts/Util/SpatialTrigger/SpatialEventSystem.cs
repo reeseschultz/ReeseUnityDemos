@@ -67,6 +67,8 @@ namespace Reese.Demo
                 .WithNativeDisableParallelForRestriction(triggersWithChangedActivatorBuffers)
                 .ForEach((Entity entity, int nativeThreadIndex, in DynamicBuffer<SpatialActivatorBufferElement> activatorBuffer) =>
                 {
+                    var triggerList = new NativeList<Entity>(Allocator.Temp);
+
                     for (var i = 0; i < activatorBuffer.Length; ++i)
                     {
                         var activatorEntity = activatorBuffer[i].Value;
@@ -77,21 +79,15 @@ namespace Reese.Demo
                             triggerBufferFromEntity[activatorEntity] :
                             commandBuffer.AddBuffer<SpatialTriggerBufferElement>(nativeThreadIndex, activatorEntity);
 
-                        var activatorHasTrigger = false;
+                        triggerList.Clear();
+                        triggerList.AddRange(triggerBuffer.AsNativeArray().Reinterpret<Entity>());
 
-                        for (var j = 0; j < triggerBuffer.Length; ++j)
-                        {
-                            if (triggerBuffer[j] == entity)
-                            {
-                                activatorHasTrigger = true;
-                                break;
-                            }
-                        }
-
-                        if (!activatorHasTrigger) triggerBuffer.Add(entity);
+                        if (triggerList.BinarySearch(entity) == -1) triggerBuffer.Add(entity);
                     }
 
                     triggersWithChangedActivatorBuffers.Add(entity);
+
+                    triggerList.Dispose();
                 })
                 .WithName("AddTriggersToActivatorBuffersJob")
                 .ScheduleParallel();
@@ -108,6 +104,8 @@ namespace Reese.Demo
                     .WithNativeDisableParallelForRestriction(triggersWithChangedActivatorBuffers)
                     .ForEach((Entity entity, in DynamicBuffer<SpatialTriggerBufferElement> triggerBuffer) =>
                     {
+                        var activatorList = new NativeList<Entity>(Allocator.Temp);
+
                         for (var i = 0; i < triggerBuffer.Length; ++i)
                         {
                             var triggerEntity = triggerBuffer[i];
@@ -119,21 +117,13 @@ namespace Reese.Demo
 
                             var activatorBuffer = activatorBufferFromEntity[triggerEntity];
 
-                            var triggerHasActivator = false;
+                            activatorList.Clear();
+                            activatorList.AddRange(activatorBuffer.AsNativeArray().Reinterpret<Entity>());
 
-                            for (var j = 0; j < activatorBuffer.Length; ++j)
-                            {
-                                var activatorEntity = activatorBuffer[j];
-
-                                if (entity == activatorEntity)
-                                {
-                                    triggerHasActivator = true;
-                                    break;
-                                }
-                            }
-
-                            if (!triggerHasActivator) triggerBuffer.RemoveAt(i--);
+                            if (activatorList.BinarySearch(entity) == -1) triggerBuffer.RemoveAt(i--);
                         }
+
+                        activatorList.Dispose();
                     })
                     .WithName("RemoveTriggersFromActivatorBuffersJob")
                     .ScheduleParallel();
