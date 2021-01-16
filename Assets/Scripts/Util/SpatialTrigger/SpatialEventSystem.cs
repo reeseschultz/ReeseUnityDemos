@@ -106,7 +106,7 @@ namespace Reese.Demo
                     {
                         var activatorList = new NativeList<Entity>(Allocator.Temp);
 
-                        for (var i = 0; i < triggerBuffer.Length; ++i)
+                        for (var i = triggerBuffer.Length - 1; i >= 0; --i)
                         {
                             var triggerEntity = triggerBuffer[i];
 
@@ -120,7 +120,7 @@ namespace Reese.Demo
                             activatorList.Clear();
                             activatorList.AddRange(activatorBuffer.AsNativeArray().Reinterpret<Entity>());
 
-                            if (activatorList.BinarySearch(entity) == -1) triggerBuffer.RemoveAt(i--);
+                            if (activatorList.BinarySearch(entity) == -1) triggerBuffer.RemoveAt(i);
                         }
 
                         activatorList.Dispose();
