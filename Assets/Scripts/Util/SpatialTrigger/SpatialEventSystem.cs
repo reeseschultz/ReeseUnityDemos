@@ -47,10 +47,11 @@ namespace Reese.Demo
             var triggersWithChangedActivatorBuffers = new NativeList<Entity>(Allocator.TempJob);
 
             Entities
+                .WithAll<SpatialTrigger>()
                 .WithChangeFilter<SpatialActivatorBufferElement>()
                 .WithNativeDisableParallelForRestriction(triggerBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(triggersWithChangedActivatorBuffers)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, in SpatialTrigger trigger, in DynamicBuffer<SpatialActivatorBufferElement> activatorBuffer) =>
+                .ForEach((Entity entity, int nativeThreadIndex, in DynamicBuffer<SpatialActivatorBufferElement> activatorBuffer) =>
                 {
                     for (var i = 0; i < activatorBuffer.Length; ++i)
                     {
@@ -88,9 +89,10 @@ namespace Reese.Demo
                 var activatorBufferFromEntity = GetBufferFromEntity<SpatialActivatorBufferElement>(true);
 
                 Entities
+                    .WithAll<SpatialActivator>()
                     .WithReadOnly(activatorBufferFromEntity)
                     .WithNativeDisableParallelForRestriction(triggersWithChangedActivatorBuffers)
-                    .ForEach((Entity entity, int entityInQueryIndex, in SpatialActivator activator, in DynamicBuffer<SpatialTriggerBufferElement> triggerBuffer) =>
+                    .ForEach((Entity entity, in DynamicBuffer<SpatialTriggerBufferElement> triggerBuffer) =>
                     {
                         for (var i = 0; i < triggerBuffer.Length; ++i)
                         {
@@ -134,7 +136,7 @@ namespace Reese.Demo
             var parallelChangedTriggers = changedTriggers.AsParallelWriter();
 
             Entities
-                .WithChangeFilter<Translation>() // Only checks if activators are in a trigger's bounds if the trigger moves. Translation is preferred instead of LocalToWorld to account for parenting. If only the parent moves but not a child that happens to be a trigger, then we know the trigger couldn't have caused the need for a bounds check (but its activators still can, hence the ensuing job definition below).
+                .WithChangeFilter<Translation>() // If a trigger moves, we know that it could have moved into an activator's bounds.
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(eventFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, in SpatialTrigger trigger, in DynamicBuffer<SpatialActivatorBufferElement> activatorBuffer) =>
@@ -165,13 +167,14 @@ namespace Reese.Demo
             var triggerFromEntity = GetComponentDataFromEntity<SpatialTrigger>(true);
 
             var job = Entities
+                .WithAll<SpatialActivator>()
                 .WithChangeFilter<Translation>() // If an activator moves, we know that it could have potentially moved into a trigger's bounds.
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(triggerFromEntity)
                 .WithReadOnly(eventFromEntity)
                 .WithReadOnly(changedTriggers)
                 .WithDisposeOnCompletion(changedTriggers)
-                .ForEach((Entity entity, int entityInQueryIndex, in SpatialActivator activator, in DynamicBuffer<SpatialTriggerBufferElement> triggerBuffer) =>
+                .ForEach((Entity entity, int entityInQueryIndex, in DynamicBuffer<SpatialTriggerBufferElement> triggerBuffer) =>
                 {
                     if (triggerBuffer.Length == 0 || !localToWorldFromEntity.HasComponent(entity)) return;
 
