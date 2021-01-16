@@ -77,7 +77,7 @@ namespace Reese.Demo.Stranded
                 {
                     for (var i = exitBuffer.Length - 1; i >= 0; --i) // Traversing from end of buffer so removal is straightforward and performant.
                     {
-                        Debug.Log(exitBuffer[i].Value + " has entered the cat's trigger bounds.");
+                        Debug.Log(exitBuffer[i].Value + " has exited the cat's trigger bounds.");
 
                         // Potentially handle different kinds of exit events here.
 
