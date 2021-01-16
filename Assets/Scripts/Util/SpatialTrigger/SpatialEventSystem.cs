@@ -165,7 +165,11 @@ namespace Reese.Demo
                     {
                         var activatorEntity = activatorBuffer[i];
 
-                        if (activatorEntity == Entity.Null || !localToWorldFromEntity.HasComponent(activatorEntity) || !activatorFromEntity.HasComponent(activatorEntity)) continue;
+                        if (
+                            activatorEntity == Entity.Null ||
+                            !localToWorldFromEntity.HasComponent(activatorEntity) ||
+                            !activatorFromEntity.HasComponent(activatorEntity)
+                        ) continue;
 
                         var activatorPosition = localToWorldFromEntity[activatorEntity].Position;
 
@@ -204,7 +208,11 @@ namespace Reese.Demo
                     {
                         var triggerEntity = triggerBuffer[i];
 
-                        if (triggerEntity == Entity.Null || changedTriggers.Contains(triggerEntity) || !localToWorldFromEntity.HasComponent(triggerEntity)) continue;
+                        if (
+                            triggerEntity == Entity.Null ||
+                            changedTriggers.Contains(triggerEntity) ||
+                            !localToWorldFromEntity.HasComponent(triggerEntity)
+                        ) continue;
 
                         var trigger = triggerFromEntity[triggerEntity];
                         var triggerPosition = localToWorldFromEntity[triggerEntity].Position;
