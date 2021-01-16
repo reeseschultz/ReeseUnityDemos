@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 namespace Reese.Demo
 {
@@ -52,90 +53,136 @@ namespace Reese.Demo
             return false;
         }
 
+        static NativeMultiHashMap<Entity, FixedString128> entityToGroupMap = default;
+        static NativeMultiHashMap<FixedString128, Entity> groupToActivatorMap = default;
+        static NativeMultiHashMap<FixedString128, Entity> groupToTriggerMap = default;
+
+        protected override void OnCreate()
+        {
+            entityToGroupMap = new NativeMultiHashMap<Entity, FixedString128>(1000, Allocator.Persistent);
+            groupToActivatorMap = new NativeMultiHashMap<FixedString128, Entity>(10, Allocator.Persistent);
+            groupToTriggerMap = new NativeMultiHashMap<FixedString128, Entity>(10, Allocator.Persistent);
+        }
+
+        protected override void OnDestroy()
+        {
+            entityToGroupMap.Dispose();
+            groupToActivatorMap.Dispose();
+            groupToTriggerMap.Dispose();
+        }
+
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
-            var triggerBufferFromEntity = GetBufferFromEntity<SpatialTriggerBufferElement>();
-
-            var triggersWithChangedActivatorBuffers = new NativeList<Entity>(Allocator.TempJob);
+            var activatorFromEntity = GetComponentDataFromEntity<SpatialActivator>(true);
+            var triggerFromEntity = GetComponentDataFromEntity<SpatialTrigger>(true);
 
             Entities
-                .WithAll<SpatialTrigger>()
-                .WithChangeFilter<SpatialActivatorBufferElement>()
-                .WithNativeDisableParallelForRestriction(triggerBufferFromEntity)
-                .WithNativeDisableParallelForRestriction(triggersWithChangedActivatorBuffers)
-                .ForEach((Entity entity, int nativeThreadIndex, in DynamicBuffer<SpatialActivatorBufferElement> activatorBuffer) =>
+                .WithChangeFilter<SpatialGroupBufferElement>()
+                .WithReadOnly(activatorFromEntity)
+                .WithReadOnly(triggerFromEntity)
+                .ForEach((Entity entity, in DynamicBuffer<SpatialGroupBufferElement> groupBuffer) =>
                 {
-                    var triggerList = new NativeList<Entity>(Allocator.Temp);
+                    var isActivator = activatorFromEntity.HasComponent(entity);
+                    var isTrigger = triggerFromEntity.HasComponent(entity);
 
-                    for (var i = 0; i < activatorBuffer.Length; ++i)
+                    // Handle added groups:
+
+                    var addedSet = new NativeHashSet<FixedString128>(1, Allocator.Temp);
+
+                    for (var i = 0; i < groupBuffer.Length; ++i)
                     {
-                        var activatorEntity = activatorBuffer[i].Value;
+                        var currentGroup = groupBuffer[i].Value;
 
-                        if (activatorEntity == Entity.Null) continue;
-
-                        var triggerBuffer = triggerBufferFromEntity.HasComponent(activatorEntity) ?
-                            triggerBufferFromEntity[activatorEntity] :
-                            commandBuffer.AddBuffer<SpatialTriggerBufferElement>(nativeThreadIndex, activatorEntity);
-
-                        triggerList.Clear();
-                        triggerList.AddRange(triggerBuffer.AsNativeArray().Reinterpret<Entity>());
-
-                        if (triggerList.BinarySearch(entity) == -1) triggerBuffer.Add(entity);
-                    }
-
-                    triggersWithChangedActivatorBuffers.Add(entity);
-
-                    triggerList.Dispose();
-                })
-                .WithName("AddTriggersToActivatorBuffersJob")
-                .ScheduleParallel();
-
-            Dependency.Complete();
-
-            if (triggersWithChangedActivatorBuffers.Length > 0)
-            {
-                var activatorBufferFromEntity = GetBufferFromEntity<SpatialActivatorBufferElement>(true);
-
-                Entities
-                    .WithAll<SpatialActivator>()
-                    .WithReadOnly(activatorBufferFromEntity)
-                    .WithNativeDisableParallelForRestriction(triggersWithChangedActivatorBuffers)
-                    .ForEach((Entity entity, in DynamicBuffer<SpatialTriggerBufferElement> triggerBuffer) =>
-                    {
-                        var activatorList = new NativeList<Entity>(Allocator.Temp);
-
-                        for (var i = triggerBuffer.Length - 1; i >= 0; --i)
+                        if (isActivator)
                         {
-                            var triggerEntity = triggerBuffer[i];
+                            var activators = groupToActivatorMap.GetValuesForKey(currentGroup);
+                            var hasActivator = false;
 
-                            if (
-                                triggerEntity == Entity.Null ||
-                                triggersWithChangedActivatorBuffers.BinarySearch(triggerEntity) == -1
-                            ) continue;
+                            do
+                            {
+                                var otherEntity = activators.Current;
 
-                            var activatorBuffer = activatorBufferFromEntity[triggerEntity];
+                                if (entity == otherEntity)
+                                {
+                                    hasActivator = true;
+                                    break;
+                                }
+                            } while (activators.MoveNext());
 
-                            activatorList.Clear();
-                            activatorList.AddRange(activatorBuffer.AsNativeArray().Reinterpret<Entity>());
-
-                            if (activatorList.BinarySearch(entity) == -1) triggerBuffer.RemoveAt(i);
+                            if (!hasActivator) groupToActivatorMap.Add(currentGroup, entity);
                         }
 
-                        activatorList.Dispose();
-                    })
-                    .WithName("RemoveTriggersFromActivatorBuffersJob")
-                    .ScheduleParallel();
+                        if (isTrigger)
+                        {
+                            var triggers = groupToTriggerMap.GetValuesForKey(currentGroup);
+                            var hasTrigger = false;
 
-                Dependency.Complete();
-            }
+                            do
+                            {
+                                var otherEntity = triggers.Current;
 
-            triggersWithChangedActivatorBuffers.Dispose();
+                                if (entity == otherEntity)
+                                {
+                                    hasTrigger = true;
+                                    break;
+                                }
+                            } while (triggers.MoveNext());
+
+                            if (!hasTrigger) groupToTriggerMap.Add(currentGroup, entity);
+                        }
+                    }
+
+                    // Handle removed groups:
+
+                    var previousGroupEnumerator = entityToGroupMap.GetValuesForKey(entity);
+
+                    do
+                    {
+                        var previousGroup = previousGroupEnumerator.Current;
+
+                        if (addedSet.Contains(previousGroup)) continue;
+
+                        var previousGroupInCurrentGroup = false;
+
+                        for (var i = 0; i < groupBuffer.Length; ++i)
+                        {
+                            var currentGroup = groupBuffer[i].Value;
+
+                            if (previousGroup == currentGroup)
+                            {
+                                previousGroupInCurrentGroup = true;
+                                break;
+                            }
+                        }
+
+                        if (!previousGroupInCurrentGroup)
+                        {
+                            if (isActivator) groupToActivatorMap.Remove(previousGroup, entity);
+                            if (isTrigger) groupToTriggerMap.Remove(previousGroup, entity);
+                        }
+                    } while (previousGroupEnumerator.MoveNext());
+
+                    addedSet.Dispose();
+                })
+                .WithName("SpatialGroupToEntityChangeJob")
+                .WithoutBurst()
+                .ScheduleParallel();
+
+            Entities
+                .WithChangeFilter<SpatialGroupBufferElement>()
+                .ForEach((Entity entity, in DynamicBuffer<SpatialGroupBufferElement> groupBuffer) =>
+                {
+                    if (entityToGroupMap.ContainsKey(entity)) entityToGroupMap.Remove(entity);
+                    for (var i = 0; i < groupBuffer.Length; ++i) entityToGroupMap.Add(entity, groupBuffer[i]);
+                })
+                .WithName("SpatialEntityToGroupChangeJob")
+                .WithoutBurst()
+                .ScheduleParallel();
 
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var eventFromEntity = GetComponentDataFromEntity<SpatialEvent>(true);
-            var activatorFromEntity = GetComponentDataFromEntity<SpatialActivator>(true);
 
             var entriesFromEntity = GetBufferFromEntity<SpatialEntryBufferElement>();
             var exitsFromEntity = GetBufferFromEntity<SpatialExitBufferElement>();
@@ -150,41 +197,49 @@ namespace Reese.Demo
                 .WithReadOnly(activatorFromEntity)
                 .WithNativeDisableParallelForRestriction(entriesFromEntity)
                 .WithNativeDisableParallelForRestriction(exitsFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, in SpatialTrigger trigger, in DynamicBuffer<SpatialActivatorBufferElement> activatorBuffer) =>
+                .ForEach((Entity entity, int entityInQueryIndex, in SpatialTrigger trigger, in DynamicBuffer<SpatialGroupBufferElement> groupBuffer) =>
                 {
                     parallelChangedTriggers.Add(entity);
 
-                    if (activatorBuffer.Length == 0 || !localToWorldFromEntity.HasComponent(entity)) return;
+                    if (groupBuffer.Length == 0 || !localToWorldFromEntity.HasComponent(entity)) return;
 
                     var triggerPosition = localToWorldFromEntity[entity].Position;
 
                     var triggerBounds = trigger.Bounds;
                     triggerBounds.Center += triggerPosition;
 
-                    for (var i = 0; i < activatorBuffer.Length; ++i)
+                    for (var i = 0; i < groupBuffer.Length; ++i)
                     {
-                        var activatorEntity = activatorBuffer[i];
+                        var group = groupBuffer[i];
 
-                        if (
-                            activatorEntity == Entity.Null ||
-                            !localToWorldFromEntity.HasComponent(activatorEntity) ||
-                            !activatorFromEntity.HasComponent(activatorEntity)
-                        ) continue;
+                        if (!groupToActivatorMap.ContainsKey(group)) continue;
 
-                        var activatorPosition = localToWorldFromEntity[activatorEntity].Position;
+                        var activatorEnumerator = groupToActivatorMap.GetValuesForKey(group);
 
-                        var activator = activatorFromEntity[activatorEntity];
+                        do
+                        {
+                            var currentActivator = activatorEnumerator.Current;
 
-                        var activatorBounds = activator.Bounds;
-                        activatorBounds.Center += activatorPosition;
+                            if (
+                                currentActivator == Entity.Null ||
+                                !localToWorldFromEntity.HasComponent(currentActivator) ||
+                                !activatorFromEntity.HasComponent(currentActivator)
+                            ) continue;
 
-                        if (HandleTriggerEntryAndExit(trigger, entriesFromEntity, exitsFromEntity, triggerBounds, activatorBounds, eventFromEntity, entity, activatorEntity, commandBuffer, entityInQueryIndex)) return;
+                            var activatorPosition = localToWorldFromEntity[currentActivator].Position;
+
+                            var activator = activatorFromEntity[currentActivator];
+
+                            var activatorBounds = activator.Bounds;
+                            activatorBounds.Center += activatorPosition;
+
+                            if (HandleTriggerEntryAndExit(trigger, entriesFromEntity, exitsFromEntity, triggerBounds, activatorBounds, eventFromEntity, entity, currentActivator, commandBuffer, entityInQueryIndex)) return;
+                        } while (activatorEnumerator.MoveNext());
                     }
                 })
+                .WithoutBurst()
                 .WithName("SpatialTriggerJob")
                 .ScheduleParallel();
-
-            var triggerFromEntity = GetComponentDataFromEntity<SpatialTrigger>(true);
 
             var job = Entities
                 .WithChangeFilter<Translation>() // If an activator moves, we know that it could have potentially moved into a trigger's bounds.
@@ -195,34 +250,44 @@ namespace Reese.Demo
                 .WithNativeDisableParallelForRestriction(entriesFromEntity)
                 .WithNativeDisableParallelForRestriction(exitsFromEntity)
                 .WithDisposeOnCompletion(changedTriggers)
-                .ForEach((Entity entity, int entityInQueryIndex, in SpatialActivator activator, in DynamicBuffer<SpatialTriggerBufferElement> triggerBuffer) =>
+                .ForEach((Entity entity, int entityInQueryIndex, in SpatialActivator activator, in DynamicBuffer<SpatialGroupBufferElement> groupBuffer) =>
                 {
-                    if (triggerBuffer.Length == 0 || !localToWorldFromEntity.HasComponent(entity)) return;
+                    if (groupBuffer.Length == 0 || !localToWorldFromEntity.HasComponent(entity)) return;
 
                     var activatorPosition = localToWorldFromEntity[entity].Position;
 
                     var activatorBounds = activator.Bounds;
                     activatorBounds.Center += activatorPosition;
 
-                    for (var i = 0; i < triggerBuffer.Length; ++i)
+                    for (var i = 0; i < groupBuffer.Length; ++i)
                     {
-                        var triggerEntity = triggerBuffer[i];
+                        var group = groupBuffer[i];
 
-                        if (
-                            triggerEntity == Entity.Null ||
-                            changedTriggers.Contains(triggerEntity) ||
-                            !localToWorldFromEntity.HasComponent(triggerEntity)
-                        ) continue;
+                        if (!groupToTriggerMap.ContainsKey(group)) continue;
 
-                        var trigger = triggerFromEntity[triggerEntity];
-                        var triggerPosition = localToWorldFromEntity[triggerEntity].Position;
+                        var triggerEnumerator = groupToTriggerMap.GetValuesForKey(group);
 
-                        var triggerBounds = trigger.Bounds;
-                        triggerBounds.Center += triggerPosition;
+                        do
+                        {
+                            var currentTrigger = triggerEnumerator.Current;
 
-                        HandleTriggerEntryAndExit(trigger, entriesFromEntity, exitsFromEntity, triggerBounds, activatorBounds, eventFromEntity, triggerEntity, entity, commandBuffer, entityInQueryIndex);
+                            if (
+                                currentTrigger == Entity.Null ||
+                                changedTriggers.Contains(currentTrigger) ||
+                                !localToWorldFromEntity.HasComponent(currentTrigger)
+                            ) continue;
+
+                            var trigger = triggerFromEntity[currentTrigger];
+                            var triggerPosition = localToWorldFromEntity[currentTrigger].Position;
+
+                            var triggerBounds = trigger.Bounds;
+                            triggerBounds.Center += triggerPosition;
+
+                            HandleTriggerEntryAndExit(trigger, entriesFromEntity, exitsFromEntity, triggerBounds, activatorBounds, eventFromEntity, currentTrigger, entity, commandBuffer, entityInQueryIndex);
+                        } while (triggerEnumerator.MoveNext());
                     }
                 })
+                .WithoutBurst()
                 .WithName("SpatialActivatorJob")
                 .ScheduleParallel(Dependency);
 

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -8,20 +10,25 @@ namespace Reese.Demo
     /// <summary>Authors a SpatialTrigger.</summary>
     public class SpatialTriggerAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
+        /// <summary>True if the trigger tracks activator entry events, false if not.</summary>
         [SerializeField]
         bool trackEntries = false;
 
+        /// <summary>True if the trigger tracks activator exit events, false if not.</summary>
         [SerializeField]
         bool trackExits = false;
 
+        /// <summary>The center of the trigger's bounds.</summary>
         [SerializeField]
         Vector3 center = Vector3.zero;
 
+        /// <summary>The scale of the trigger's bounds.</summary>
         [SerializeField]
         Vector3 scale = Vector3.one;
 
+        /// <summary>This trigger will be activated by all activators belonging to the same group.</summary>
         [SerializeField]
-        List<SpatialActivatorAuthoring> activators = new List<SpatialActivatorAuthoring>();
+        List<string> groups = new List<string>();
 
         void OnDrawGizmosSelected()
         {
@@ -33,7 +40,7 @@ namespace Reese.Demo
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            var renderer = GetComponent<Renderer>();
+            var renderer = (Renderer)GetComponentsInChildren(typeof(Renderer))[0];
 
             dstManager.AddComponentData<SpatialTrigger>(entity, new SpatialTrigger
             {
@@ -46,9 +53,11 @@ namespace Reese.Demo
                 TrackExits = trackExits
             });
 
-            dstManager.AddComponent(entity, typeof(SpatialActivatorBufferElement));
-            var activatorBuffer = dstManager.GetBuffer<SpatialActivatorBufferElement>(entity);
-            activators.ForEach(activator => activatorBuffer.Add(conversionSystem.GetPrimaryEntity(activator)));
+            dstManager.AddComponent(entity, typeof(SpatialGroupBufferElement));
+
+            var groupBuffer = dstManager.GetBuffer<SpatialGroupBufferElement>(entity);
+
+            groups.Distinct().ToList().ForEach(group => groupBuffer.Add(group));
         }
     }
 }
