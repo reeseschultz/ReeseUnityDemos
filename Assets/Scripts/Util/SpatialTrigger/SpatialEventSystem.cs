@@ -12,7 +12,7 @@ namespace Reese.Demo
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         /// <summary>True if adding an event to the trigger, false if otherwise.</summary>
-        static bool HandleTriggerEntryAndExit(AABB triggerBounds, AABB activatorBounds, ComponentDataFromEntity<SpatialEvent> eventFromEntity, Entity triggerEntity, Entity activatorEntity, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex)
+        static bool HandleTriggerEntryAndExit(SpatialTrigger trigger, BufferFromEntity<SpatialEntryBufferElement> entriesFromEntity, BufferFromEntity<SpatialExitBufferElement> exitsFromEntity, AABB triggerBounds, AABB activatorBounds, ComponentDataFromEntity<SpatialEvent> eventFromEntity, Entity triggerEntity, Entity activatorEntity, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex)
         {
             if (
                 !triggerBounds.Contains(activatorBounds) &&
@@ -21,6 +21,13 @@ namespace Reese.Demo
             )
             {
                 commandBuffer.RemoveComponent<SpatialEvent>(entityInQueryIndex, triggerEntity);
+
+                if (trigger.TrackExits)
+                {
+                    if (!exitsFromEntity.HasComponent(triggerEntity)) commandBuffer.AddBuffer<SpatialExitBufferElement>(entityInQueryIndex, triggerEntity);
+
+                    commandBuffer.AppendToBuffer<SpatialExitBufferElement>(entityInQueryIndex, triggerEntity, activatorEntity);
+                }
             }
             else if (
                 triggerBounds.Contains(activatorBounds) &&
@@ -32,6 +39,13 @@ namespace Reese.Demo
                     Activator = activatorEntity
                 });
 
+                if (trigger.TrackEntries)
+                {
+                    if (!exitsFromEntity.HasComponent(triggerEntity)) commandBuffer.AddBuffer<SpatialEntryBufferElement>(entityInQueryIndex, triggerEntity);
+
+                    commandBuffer.AppendToBuffer<SpatialEntryBufferElement>(entityInQueryIndex, triggerEntity, activatorEntity);
+                }
+
                 return true;
             }
 
@@ -42,7 +56,7 @@ namespace Reese.Demo
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
-            var triggerBufferFromEntity = GetBufferFromEntity<SpatialTriggerBufferElement>(false);
+            var triggerBufferFromEntity = GetBufferFromEntity<SpatialTriggerBufferElement>();
 
             var triggersWithChangedActivatorBuffers = new NativeList<Entity>(Allocator.TempJob);
 
@@ -133,6 +147,9 @@ namespace Reese.Demo
             var eventFromEntity = GetComponentDataFromEntity<SpatialEvent>(true);
             var activatorFromEntity = GetComponentDataFromEntity<SpatialActivator>(true);
 
+            var entriesFromEntity = GetBufferFromEntity<SpatialEntryBufferElement>();
+            var exitsFromEntity = GetBufferFromEntity<SpatialExitBufferElement>();
+
             var changedTriggers = new NativeHashSet<Entity>(10, Allocator.TempJob);
             var parallelChangedTriggers = changedTriggers.AsParallelWriter();
 
@@ -141,6 +158,8 @@ namespace Reese.Demo
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(eventFromEntity)
                 .WithReadOnly(activatorFromEntity)
+                .WithNativeDisableParallelForRestriction(entriesFromEntity)
+                .WithNativeDisableParallelForRestriction(exitsFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, in SpatialTrigger trigger, in DynamicBuffer<SpatialActivatorBufferElement> activatorBuffer) =>
                 {
                     parallelChangedTriggers.Add(entity);
@@ -165,7 +184,7 @@ namespace Reese.Demo
                         var activatorBounds = activator.Bounds;
                         activatorBounds.Center += activatorPosition;
 
-                        if (HandleTriggerEntryAndExit(triggerBounds, activatorBounds, eventFromEntity, entity, activatorEntity, commandBuffer, entityInQueryIndex)) return;
+                        if (HandleTriggerEntryAndExit(trigger, entriesFromEntity, exitsFromEntity, triggerBounds, activatorBounds, eventFromEntity, entity, activatorEntity, commandBuffer, entityInQueryIndex)) return;
                     }
                 })
                 .WithName("SpatialTriggerJob")
@@ -179,6 +198,8 @@ namespace Reese.Demo
                 .WithReadOnly(triggerFromEntity)
                 .WithReadOnly(eventFromEntity)
                 .WithReadOnly(changedTriggers)
+                .WithNativeDisableParallelForRestriction(entriesFromEntity)
+                .WithNativeDisableParallelForRestriction(exitsFromEntity)
                 .WithDisposeOnCompletion(changedTriggers)
                 .ForEach((Entity entity, int entityInQueryIndex, in SpatialActivator activator, in DynamicBuffer<SpatialTriggerBufferElement> triggerBuffer) =>
                 {
@@ -201,7 +222,7 @@ namespace Reese.Demo
                         var triggerBounds = trigger.Bounds;
                         triggerBounds.Center += triggerPosition;
 
-                        HandleTriggerEntryAndExit(triggerBounds, activatorBounds, eventFromEntity, triggerEntity, entity, commandBuffer, entityInQueryIndex);
+                        HandleTriggerEntryAndExit(trigger, entriesFromEntity, exitsFromEntity, triggerBounds, activatorBounds, eventFromEntity, triggerEntity, entity, commandBuffer, entityInQueryIndex);
                     }
                 })
                 .WithName("SpatialActivatorJob")
