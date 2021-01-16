@@ -12,10 +12,10 @@ namespace Reese.Demo
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         /// <summary>True if adding an event to the trigger, false if otherwise.</summary>
-        static bool HandleTriggerEntryAndExit(AABB bounds, float3 activatorPosition, ComponentDataFromEntity<SpatialEvent> eventFromEntity, Entity triggerEntity, Entity activatorEntity, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex)
+        static bool HandleTriggerEntryAndExit(AABB triggerBounds, AABB activatorBounds, ComponentDataFromEntity<SpatialEvent> eventFromEntity, Entity triggerEntity, Entity activatorEntity, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex)
         {
             if (
-                !bounds.Contains(activatorPosition) &&
+                !triggerBounds.Contains(activatorBounds) &&
                 eventFromEntity.HasComponent(triggerEntity) &&
                 eventFromEntity[triggerEntity].Activator == activatorEntity
             )
@@ -23,7 +23,7 @@ namespace Reese.Demo
                 commandBuffer.RemoveComponent<SpatialEvent>(entityInQueryIndex, triggerEntity);
             }
             else if (
-                bounds.Contains(activatorPosition) &&
+                triggerBounds.Contains(activatorBounds) &&
                 !eventFromEntity.HasComponent(triggerEntity)
             )
             {
@@ -131,6 +131,7 @@ namespace Reese.Demo
 
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var eventFromEntity = GetComponentDataFromEntity<SpatialEvent>(true);
+            var activatorFromEntity = GetComponentDataFromEntity<SpatialActivator>(true);
 
             var changedTriggers = new NativeHashSet<Entity>(10, Allocator.TempJob);
             var parallelChangedTriggers = changedTriggers.AsParallelWriter();
@@ -139,6 +140,7 @@ namespace Reese.Demo
                 .WithChangeFilter<Translation>() // If a trigger moves, we know that it could have moved into an activator's bounds.
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(eventFromEntity)
+                .WithReadOnly(activatorFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, in SpatialTrigger trigger, in DynamicBuffer<SpatialActivatorBufferElement> activatorBuffer) =>
                 {
                     parallelChangedTriggers.Add(entity);
@@ -147,18 +149,23 @@ namespace Reese.Demo
 
                     var triggerPosition = localToWorldFromEntity[entity].Position;
 
+                    var triggerBounds = trigger.Bounds;
+                    triggerBounds.Center += triggerPosition;
+
                     for (var i = 0; i < activatorBuffer.Length; ++i)
                     {
                         var activatorEntity = activatorBuffer[i];
 
-                        if (activatorEntity == Entity.Null || !localToWorldFromEntity.HasComponent(activatorEntity)) continue;
+                        if (activatorEntity == Entity.Null || !localToWorldFromEntity.HasComponent(activatorEntity) || !activatorFromEntity.HasComponent(activatorEntity)) continue;
 
                         var activatorPosition = localToWorldFromEntity[activatorEntity].Position;
 
-                        var bounds = trigger.Bounds;
-                        bounds.Center += triggerPosition;
+                        var activator = activatorFromEntity[activatorEntity];
 
-                        if (HandleTriggerEntryAndExit(bounds, activatorPosition, eventFromEntity, entity, activatorEntity, commandBuffer, entityInQueryIndex)) return;
+                        var activatorBounds = activator.Bounds;
+                        activatorBounds.Center += activatorPosition;
+
+                        if (HandleTriggerEntryAndExit(triggerBounds, activatorBounds, eventFromEntity, entity, activatorEntity, commandBuffer, entityInQueryIndex)) return;
                     }
                 })
                 .WithName("SpatialTriggerJob")
@@ -167,18 +174,20 @@ namespace Reese.Demo
             var triggerFromEntity = GetComponentDataFromEntity<SpatialTrigger>(true);
 
             var job = Entities
-                .WithAll<SpatialActivator>()
                 .WithChangeFilter<Translation>() // If an activator moves, we know that it could have potentially moved into a trigger's bounds.
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(triggerFromEntity)
                 .WithReadOnly(eventFromEntity)
                 .WithReadOnly(changedTriggers)
                 .WithDisposeOnCompletion(changedTriggers)
-                .ForEach((Entity entity, int entityInQueryIndex, in DynamicBuffer<SpatialTriggerBufferElement> triggerBuffer) =>
+                .ForEach((Entity entity, int entityInQueryIndex, in SpatialActivator activator, in DynamicBuffer<SpatialTriggerBufferElement> triggerBuffer) =>
                 {
                     if (triggerBuffer.Length == 0 || !localToWorldFromEntity.HasComponent(entity)) return;
 
                     var activatorPosition = localToWorldFromEntity[entity].Position;
+
+                    var activatorBounds = activator.Bounds;
+                    activatorBounds.Center += activatorPosition;
 
                     for (var i = 0; i < triggerBuffer.Length; ++i)
                     {
@@ -189,10 +198,10 @@ namespace Reese.Demo
                         var trigger = triggerFromEntity[triggerEntity];
                         var triggerPosition = localToWorldFromEntity[triggerEntity].Position;
 
-                        var bounds = trigger.Bounds;
-                        bounds.Center += triggerPosition;
+                        var triggerBounds = trigger.Bounds;
+                        triggerBounds.Center += triggerPosition;
 
-                        HandleTriggerEntryAndExit(bounds, activatorPosition, eventFromEntity, triggerEntity, entity, commandBuffer, entityInQueryIndex);
+                        HandleTriggerEntryAndExit(triggerBounds, activatorBounds, eventFromEntity, triggerEntity, entity, commandBuffer, entityInQueryIndex);
                     }
                 })
                 .WithName("SpatialActivatorJob")
