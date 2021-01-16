@@ -9,6 +9,12 @@ namespace Reese.Demo
     public class SpatialTriggerAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
         [SerializeField]
+        bool trackEntries = false;
+
+        [SerializeField]
+        bool trackExits = false;
+
+        [SerializeField]
         Vector3 center = Vector3.zero;
 
         [SerializeField]
@@ -35,7 +41,9 @@ namespace Reese.Demo
                 {
                     Center = center,
                     Extents = Vector3.Scale(renderer.bounds.extents, scale)
-                }
+                },
+                TrackEntries = trackEntries,
+                TrackExits = trackExits
             });
 
             dstManager.AddComponent(entity, typeof(SpatialActivatorBufferElement));

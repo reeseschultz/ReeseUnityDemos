@@ -50,6 +50,26 @@ namespace Reese.Demo.Stranded
                 .WithName("CatMeowJob")
                 .Run();
 
+            Entities
+                .WithChangeFilter<SpatialEntryBufferElement>()
+                .ForEach((Entity entity, in Cat cat, in DynamicBuffer<SpatialEntryBufferElement> entry) =>
+                {
+                    Debug.Log("Player has entered the cat's trigger bounds.");
+                })
+                .WithoutBurst()
+                .WithName("EntryJob")
+                .ScheduleParallel();
+
+            Entities
+                .WithChangeFilter<SpatialExitBufferElement>()
+                .ForEach((Entity entity, in Cat cat, in DynamicBuffer<SpatialExitBufferElement> entry) =>
+                {
+                    Debug.Log("Player has exited the cat's trigger bounds.");
+                })
+                .WithoutBurst()
+                .WithName("ExitJob")
+                .ScheduleParallel();
+
             var parallelCommandBuffer = commandBuffer.AsParallelWriter();
 
             Entities

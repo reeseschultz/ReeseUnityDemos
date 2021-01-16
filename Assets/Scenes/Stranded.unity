@@ -1272,6 +1272,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &519980198
 Canvas:
   m_ObjectHideFlags: 0
@@ -1837,6 +1838,7 @@ MonoBehaviour:
   m_StopNaN: 0
   m_Dithering: 0
   m_ClearDepth: 1
+  m_AllowXRRendering: 1
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
@@ -2217,6 +2219,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 0
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -4002,6 +4005,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &2099228886
@@ -6224,8 +6228,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60a02d0a728429e45875398d367ef8e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  trackEntries: 1
+  trackExits: 1
   center: {x: 0, y: 0, z: 0}
-  scale: {x: 4, y: 4, z: 4}
+  scale: {x: 4, y: 10, z: 4}
   activators:
   - {fileID: 4513328087602605686}
 --- !u!82 &8849378376642101707
