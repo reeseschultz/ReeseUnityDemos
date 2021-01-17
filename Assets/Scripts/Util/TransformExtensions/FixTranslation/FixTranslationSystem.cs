@@ -37,10 +37,7 @@ namespace Reese.Demo
                         return;
                     }
 
-                    translation.Value = NavUtil.MultiplyPoint3x4( // TODO : Transform extensions package.
-                        math.inverse(parentTransform.Value),
-                        translation.Value
-                    );
+                    translation.Value = translation.Value.MultiplyPoint3x4(math.inverse(parentTransform.Value));
 
                     commandBuffer.RemoveComponent<FixTranslation>(entityInQueryIndex, entity);
                 })

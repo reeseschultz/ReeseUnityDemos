@@ -65,16 +65,6 @@ namespace Reese.Demo
                             Value = hit.Entity
                         });
 
-                        // var localPosition = NavUtil.MultiplyPoint3x4( // TODO : Transform extensions package.
-                        //     math.inverse(localToWorldFromEntity[hit.Entity].Value),
-                        //     worldPosition
-                        // ) + hit.SurfaceNormal * sticky.Offset;
-
-                        // commandBuffer.AddComponent(entityInQueryIndex, entity, new Translation
-                        // {
-                        //     Value = localPosition
-                        // });
-
                         commandBuffer.RemoveComponent<Sticky>(entityInQueryIndex, entity);
                     }
                 })

@@ -9,7 +9,6 @@ namespace Reese.Demo
         public CollisionFilter Filter;
         public float3 WorldDirection;
         public float Radius;
-        public float Offset;
         public int StickAttempts;
     }
 }

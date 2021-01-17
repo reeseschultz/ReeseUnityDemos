@@ -28,9 +28,6 @@ namespace Reese.Demo
         float radius = default;
 
         [SerializeField]
-        float offset = default;
-
-        [SerializeField]
         int stickAttempts = 10;
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
@@ -49,7 +46,6 @@ namespace Reese.Demo
                 Filter = filter,
                 WorldDirection = worldDirection,
                 Radius = radius,
-                Offset = offset,
                 StickAttempts = stickAttempts
             });
 
