@@ -159,7 +159,7 @@ namespace Reese.Demo
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
             Entities
-                .WithChangeFilter<Translation>() // If a trigger moves, we know that it could have moved into an activator's bounds.
+                .WithChangeFilter<Translation>() // If a trigger moves, then it could have moved into an activator's bounds.
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(eventFromEntity)
                 .WithReadOnly(activatorFromEntity)
@@ -210,7 +210,7 @@ namespace Reese.Demo
                 .ScheduleParallel();
 
             Entities
-                .WithChangeFilter<Translation>() // If an activator moves, we know that it could have potentially moved into a trigger's bounds.
+                .WithChangeFilter<Translation>() // If an activator moves, then it could have moved into a trigger's bounds.
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(triggerFromEntity)
                 .WithReadOnly(eventFromEntity)
