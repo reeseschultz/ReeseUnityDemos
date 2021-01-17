@@ -1,5 +1,4 @@
-﻿using Reese.Nav;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 using static Unity.Entities.ConvertToEntity;
@@ -20,15 +19,13 @@ namespace Reese.Demo
             });
 
             var convertToEntity = GetComponent<ConvertToEntity>();
-            if (convertToEntity != null && convertToEntity.ConversionMode.Equals(Mode.ConvertAndInjectGameObject))
-            {
-                dstManager.AddComponent(entity, typeof(CopyTransformToGameObject));
 
-                var renderer = GetComponent<Renderer>();
-                if (renderer != null) renderer.enabled = false;
-            }
+            if (
+                convertToEntity != null &&
+                convertToEntity.ConversionMode.Equals(Mode.ConvertAndInjectGameObject)
+            ) dstManager.AddComponent(entity, typeof(CopyTransformToGameObject));
 
-            dstManager.AddComponent<NavFixTranslation>(entity); // TODO : Transform extensions package.
+            dstManager.AddComponent<FixTranslation>(entity);
         }
     }
 }

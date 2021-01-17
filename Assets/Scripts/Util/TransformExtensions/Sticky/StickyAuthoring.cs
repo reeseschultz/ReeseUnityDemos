@@ -1,6 +1,8 @@
 using Unity.Entities;
 using Unity.Physics;
+using Unity.Transforms;
 using UnityEngine;
+using static Unity.Entities.ConvertToEntity;
 
 namespace Reese.Demo
 {
@@ -50,6 +52,13 @@ namespace Reese.Demo
                 Offset = offset,
                 StickAttempts = stickAttempts
             });
+
+            var convertToEntity = GetComponent<ConvertToEntity>();
+
+            if (
+                convertToEntity != null &&
+                convertToEntity.ConversionMode.Equals(Mode.ConvertAndInjectGameObject)
+            ) dstManager.AddComponent(entity, typeof(CopyTransformToGameObject));
 
             dstManager.AddComponent<FixTranslation>(entity);
         }
