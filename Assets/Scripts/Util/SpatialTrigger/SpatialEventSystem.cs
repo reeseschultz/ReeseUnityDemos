@@ -297,6 +297,5 @@ namespace Reese.Demo
                 }
             }
         }
-
     }
 }
