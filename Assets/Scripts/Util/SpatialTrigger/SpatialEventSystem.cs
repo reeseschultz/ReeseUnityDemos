@@ -12,8 +12,7 @@ namespace Reese.Demo
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
-        /// <summary>True if adding an event to the trigger, false if otherwise.</summary>
-        static bool HandleTriggerEntryAndExit(SpatialTrigger trigger, BufferFromEntity<SpatialEntryBufferElement> entriesFromEntity, BufferFromEntity<SpatialExitBufferElement> exitsFromEntity, AABB triggerBounds, AABB activatorBounds, ComponentDataFromEntity<SpatialEvent> eventFromEntity, Entity triggerEntity, Entity activatorEntity, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex)
+        static void HandleTriggerEntryAndExit(SpatialTrigger trigger, BufferFromEntity<SpatialEntryBufferElement> entriesFromEntity, BufferFromEntity<SpatialExitBufferElement> exitsFromEntity, AABB triggerBounds, AABB activatorBounds, ComponentDataFromEntity<SpatialEvent> eventFromEntity, Entity triggerEntity, Entity activatorEntity, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex)
         {
             if (
                 !triggerBounds.Contains(activatorBounds) &&
@@ -46,11 +45,7 @@ namespace Reese.Demo
 
                     commandBuffer.AppendToBuffer<SpatialEntryBufferElement>(entityInQueryIndex, triggerEntity, activatorEntity);
                 }
-
-                return true;
             }
-
-            return false;
         }
 
         static NativeMultiHashMap<Entity, FixedString128> entityToGroupMap = default;
@@ -233,7 +228,7 @@ namespace Reese.Demo
                             var activatorBounds = activator.Bounds;
                             activatorBounds.Center += activatorPosition;
 
-                            if (HandleTriggerEntryAndExit(trigger, entriesFromEntity, exitsFromEntity, triggerBounds, activatorBounds, eventFromEntity, entity, currentActivator, commandBuffer, entityInQueryIndex)) return;
+                            HandleTriggerEntryAndExit(trigger, entriesFromEntity, exitsFromEntity, triggerBounds, activatorBounds, eventFromEntity, entity, currentActivator, commandBuffer, entityInQueryIndex);
                         } while (activatorEnumerator.MoveNext());
                     }
                 })
