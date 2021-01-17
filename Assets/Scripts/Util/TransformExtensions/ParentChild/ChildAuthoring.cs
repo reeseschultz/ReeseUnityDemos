@@ -29,8 +29,6 @@ namespace Reese.Demo
             }
 
             dstManager.AddComponent<NavFixTranslation>(entity); // TODO : Transform extensions package.
-
-            dstManager.RemoveComponent<MeshRenderer>(entity);
         }
     }
 }

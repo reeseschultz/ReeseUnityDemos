@@ -13,7 +13,8 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavSurfaceSystem))]
     public class NavDestinationSystem : SystemBase
     {
-        BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
+        BuildPhysicsWorld buildPhysicsWorld => World.GetOrCreateSystem<BuildPhysicsWorld>();
+
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override void OnUpdate()
