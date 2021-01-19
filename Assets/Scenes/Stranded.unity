@@ -5031,6 +5031,7 @@ GameObject:
   - component: {fileID: 4513328087602605687}
   - component: {fileID: 4513328087602605684}
   - component: {fileID: 4513328087602605688}
+  - component: {fileID: 4513328087602605689}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -5110,10 +5111,26 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 7
+  m_Radius: 10
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0.5, y: 6, z: 0}
+--- !u!54 &4513328087602605689
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4513328087602605683}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 3
 --- !u!4 &4625725187411406423
 Transform:
   m_ObjectHideFlags: 0
@@ -5851,7 +5868,6 @@ MonoBehaviour:
   groupIndex: 0
   useDefaultCollisionFilter: 1
   radius: 1
-  offset: 0
   stickAttempts: 10
 --- !u!1 &8216636411403158654
 GameObject:
@@ -6152,7 +6168,8 @@ GameObject:
   - component: {fileID: 8849378376642101703}
   - component: {fileID: 8849378376642101704}
   - component: {fileID: 8849378376642101709}
-  m_Layer: 29
+  - component: {fileID: 8849378376642101711}
+  m_Layer: 0
   m_Name: Cat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6193,7 +6210,6 @@ MonoBehaviour:
   groupIndex: 0
   useDefaultCollisionFilter: 1
   radius: 1
-  offset: 0
   stickAttempts: 10
 --- !u!114 &8849378376642101704
 MonoBehaviour:
@@ -6351,8 +6367,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 287c7d6df02045f10bbb86252867e0a8, type: 3}
   - {fileID: 8300000, guid: 69b5d82e2b9767d579af2da49ef2193b, type: 3}
   - {fileID: 8300000, guid: 6e3884b34d6dd15d2ae80c804f604123, type: 3}
---- !u!136 &8849378376642101709
-CapsuleCollider:
+--- !u!135 &8849378376642101709
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -6361,9 +6377,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 100
-  m_Height: 280.00003
-  m_Direction: 1
+  serializedVersion: 2
+  m_Radius: 500
   m_Center: {x: -39.999996, y: -9.999886, z: 60.00001}
 --- !u!114 &8849378376642101710
 MonoBehaviour:
@@ -6377,6 +6392,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1939c93f81cdc515a59a47476eeabc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &8849378376642101711
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8849378376642101701}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 3
 --- !u!4 &8985144725545747971
 Transform:
   m_ObjectHideFlags: 0

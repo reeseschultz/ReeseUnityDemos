@@ -6,10 +6,10 @@ using Unity.Transforms;
 using Collider = Unity.Physics.Collider;
 using SphereCollider = Unity.Physics.SphereCollider;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
-using Reese.Nav;
 
 namespace Reese.Demo
 {
+    [UpdateAfter(typeof(TransformSystemGroup))]
     public class StickySystem : SystemBase
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetOrCreateSystem<BuildPhysicsWorld>();

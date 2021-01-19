@@ -28,12 +28,11 @@ namespace Reese.Demo.Stranded
 
             var elapsedSeconds = (float)Time.ElapsedTime;
 
-            Entities
+            Entities // Example handling of the spatial entry buffer.
                 .WithAll<Cat>()
-                .WithStructuralChanges()
-                .WithChangeFilter<SpatialEvent>()
+                .WithChangeFilter<SpatialEntryBufferElement>()
                 .WithNone<Hopping>()
-                .ForEach((Entity entity, in Translation translation) =>
+                .ForEach((Entity entity, ref DynamicBuffer<SpatialEntryBufferElement> entryBuffer, in Translation translation) =>
                 {
                     var controller = go.GetComponent<CatSoundController>();
 
@@ -48,27 +47,14 @@ namespace Reese.Demo.Stranded
                         StartSeconds = elapsedSeconds,
                         Duration = 1
                     });
+
+                    Debug.Log(entryBuffer[0].Value + " has entered the cat's trigger bounds.");
+
+                    entryBuffer.Clear();
                 })
+                .WithoutBurst()
                 .WithName("CatMeowJob")
                 .Run();
-
-            Entities // Example handling of the spatial entry buffer.
-                .WithAll<Cat>()
-                .WithChangeFilter<SpatialEntryBufferElement>()
-                .ForEach((Entity entity, ref DynamicBuffer<SpatialEntryBufferElement> entryBuffer) =>
-                {
-                    for (var i = entryBuffer.Length - 1; i >= 0; --i) // Traversing from end of buffer so removal is straightforward and performant.
-                    {
-                        Debug.Log(entryBuffer[i].Value + " has entered the cat's trigger bounds.");
-
-                        // Potentially handle different kinds of entry events here.
-
-                        entryBuffer.RemoveAt(i); // If you don't remove entries, they'll pile up in the buffer and eventually consume lots of heap memory.
-                    }
-                })
-                .WithoutBurst() // Not using Burst since there's logging in the job.
-                .WithName("EntryJob")
-                .ScheduleParallel();
 
             Entities // Example handling of the spatial exit buffer.
                 .WithAll<Cat>()
