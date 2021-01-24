@@ -20,6 +20,7 @@ namespace Reese.Demo
                 JumpSecondsMax = 5,
                 ObstacleRaycastDistanceMax = 1000,
                 SurfaceRaycastDistanceMax = 1000,
+                StoppingDistance = 1,
                 SurfaceLayer = 28,
                 ObstacleLayer = 29,
                 ColliderLayer = 30,

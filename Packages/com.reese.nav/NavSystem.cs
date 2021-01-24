@@ -11,6 +11,7 @@ namespace Reese.Nav
             JumpSecondsMax = 5,
             ObstacleRaycastDistanceMax = 1000,
             SurfaceRaycastDistanceMax = 1000,
+            StoppingDistance = 1,
             SurfaceLayer = 28,
             ObstacleLayer = 29,
             ColliderLayer = 30,
@@ -35,6 +36,9 @@ namespace Reese.Nav
 
             /// <summary>Upper limit on the raycast distance when searching for a surface below a given NavAgent.</summary>
             public float SurfaceRaycastDistanceMax;
+
+            /// <summary>Stopping distance of an agent from its destination.</summary>
+            public float StoppingDistance;
 
             /// <summary>The layer for surfaces.</summary>
             public int SurfaceLayer;
