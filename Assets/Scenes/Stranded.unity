@@ -5085,8 +5085,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49bf61acc4c2877fd847ee2daa8c9274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  center: {x: 0, y: 0, z: 0}
-  scale: {x: 1, y: 1, z: 1}
   groups:
   - Meow
 --- !u!114 &4513328087602605687
@@ -6248,10 +6246,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60a02d0a728429e45875398d367ef8e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trackEntries: 1
-  trackExits: 1
-  center: {x: 0, y: 0, z: 0}
-  scale: {x: 4, y: 10, z: 4}
   groups:
   - Meow
 --- !u!82 &8849378376642101707

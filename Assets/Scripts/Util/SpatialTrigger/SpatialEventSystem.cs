@@ -1,11 +1,9 @@
 ﻿using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Reese.Demo
 {
@@ -19,28 +17,23 @@ namespace Reese.Demo
 
         protected override void OnUpdate()
         {
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
+
             var activatorFromEntity = GetComponentDataFromEntity<SpatialActivator>(true);
 
             var entriesFromEntity = GetBufferFromEntity<SpatialEntryBufferElement>();
             var exitsFromEntity = GetBufferFromEntity<SpatialExitBufferElement>();
 
-            var changedTriggers = new NativeHashSet<Entity>(10, Allocator.TempJob);
-            var parallelChangedTriggers = changedTriggers.AsParallelWriter();
-
-            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
-
-            var physicsWorld = buildPhysicsWorld.PhysicsWorld;
-            var collisionWorld = physicsWorld.CollisionWorld;
-
             var groupBufferFromEntity = GetBufferFromEntity<SpatialGroupBufferElement>(true);
-
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             var previousEntryBufferFromEntity = GetBufferFromEntity<SpatialPreviousEntryBufferElement>();
 
+            var collisionWorld = buildPhysicsWorld.PhysicsWorld.CollisionWorld;
+
+            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
+
             Entities
                 .WithAll<SpatialGroupBufferElement>()
-                .WithChangeFilter<LocalToWorld>() // If a trigger moves, then it could have moved into an activator's bounds. TODO : switch back to translation
                 .WithReadOnly(activatorFromEntity)
                 .WithReadOnly(collisionWorld)
                 .WithReadOnly(groupBufferFromEntity)
@@ -52,8 +45,6 @@ namespace Reese.Demo
                     var groupBuffer = groupBufferFromEntity[entity];
 
                     if (groupBuffer.Length <= 0) return;
-
-                    parallelChangedTriggers.Add(entity);
 
                     var overlaps = new NativeList<int>(Allocator.Temp);
 
@@ -97,12 +88,8 @@ namespace Reese.Demo
 
                         if (overlappingActivatorEntitySet.Contains(previousEntryEntity)) continue;
 
-                        if (trigger.TrackExits)
-                        {
-                            if (!exitsFromEntity.HasComponent(entity)) commandBuffer.AddBuffer<SpatialExitBufferElement>(entityInQueryIndex, entity);
-
-                            commandBuffer.AppendToBuffer<SpatialExitBufferElement>(entityInQueryIndex, entity, previousEntryEntity);
-                        }
+                        if (!exitsFromEntity.HasComponent(entity)) commandBuffer.AddBuffer<SpatialExitBufferElement>(entityInQueryIndex, entity);
+                        commandBuffer.AppendToBuffer<SpatialExitBufferElement>(entityInQueryIndex, entity, previousEntryEntity);
 
                         for (var j = 0; j < previousEntryBuffer.Length; ++j)
                         {
@@ -148,12 +135,8 @@ namespace Reese.Demo
 
                         if (!sharesGroup) continue;
 
-                        if (trigger.TrackEntries)
-                        {
-                            if (!entriesFromEntity.HasComponent(entity)) commandBuffer.AddBuffer<SpatialEntryBufferElement>(entityInQueryIndex, entity);
-
-                            commandBuffer.AppendToBuffer<SpatialEntryBufferElement>(entityInQueryIndex, entity, overlappingEntity);
-                        }
+                        if (!entriesFromEntity.HasComponent(entity)) commandBuffer.AddBuffer<SpatialEntryBufferElement>(entityInQueryIndex, entity);
+                        commandBuffer.AppendToBuffer<SpatialEntryBufferElement>(entityInQueryIndex, entity, overlappingEntity);
 
                         previousEntryBuffer.Add(overlappingEntity);
                     }
@@ -162,12 +145,9 @@ namespace Reese.Demo
                     groupSet.Dispose();
                     overlappingActivators.Dispose();
                 })
-                .WithName("SpatialTriggerJob")
+                .WithName("SpatialEventJob")
                 .ScheduleParallel();
 
-            Dependency.Complete();
-
-            changedTriggers.Dispose();
             barrier.AddJobHandleForProducer(Dependency);
         }
     }
