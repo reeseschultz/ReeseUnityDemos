@@ -11,7 +11,7 @@ namespace Reese.Nav
     public static class NavUtil
     {
         /// <summary>Gets a point on a navigable surface (either the current surface or a jumpable one) for the provided agent entity via the out hit parameter. Returns true if there is a navigable surface, false if not.</summary>
-        public static bool GetPointOnNavigableSurface(Vector3 point, Entity agentEntity, Camera cam, PhysicsWorld physicsWorld, float raycastDistance, EntityManager entityManager, out Unity.Physics.RaycastHit hit)
+        public static bool GetPointOnNavigableSurface(Vector3 point, Entity agentEntity, Camera cam, PhysicsWorld physicsWorld, float raycastDistance, EntityManager entityManager, CollisionFilter filter, out Unity.Physics.RaycastHit hit)
         {
             var screenPointToRay = cam.ScreenPointToRay(point);
 
@@ -19,7 +19,7 @@ namespace Reese.Nav
             {
                 Start = screenPointToRay.origin,
                 End = screenPointToRay.GetPoint(raycastDistance),
-                Filter = CollisionFilter.Default
+                Filter = filter
             };
 
             if (!physicsWorld.CastRay(rayInput, out hit) || hit.RigidBodyIndex == -1) return false;
