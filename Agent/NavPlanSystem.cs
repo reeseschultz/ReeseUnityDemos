@@ -40,7 +40,7 @@ namespace Reese.Nav
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface, in NavNeedsDestination needsDestination) =>
                 {
                     if (
                         surface.Value.Equals(Entity.Null) ||
@@ -77,6 +77,8 @@ namespace Reese.Nav
                         settings.IterationMax,
                         out int iterationsPerformed
                     );
+
+                    var customLerp = needsDestination.CustomLerp;
 
                     if (!NavUtil.HasStatus(status, PathQueryStatus.Success))
                     {
@@ -137,6 +139,9 @@ namespace Reese.Nav
                         if (jumpBuffer.Length > 0)
                         {
                             commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
+
+                            if (customLerp) commandBuffer.AddComponent<NavCustomLerping>(entityInQueryIndex, entity);
+                            else commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
                         }
                     }
                     else if (status == PathQueryStatus.Success)
@@ -153,7 +158,9 @@ namespace Reese.Nav
                         if (pathBuffer.Length > 0)
                         {
                             commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
-                            commandBuffer.AddComponent<NavWalking>(entityInQueryIndex, entity);
+
+                            if (customLerp) commandBuffer.AddComponent<NavCustomLerping>(entityInQueryIndex, entity);
+                            else commandBuffer.AddComponent<NavWalking>(entityInQueryIndex, entity);
                         }
                     }
 

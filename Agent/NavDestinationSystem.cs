@@ -34,11 +34,7 @@ namespace Reese.Nav
                 .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination needsDestination) =>
                 {
-                    if (elapsedSeconds - agent.DestinationSeconds < settings.DestinationRateLimitSeconds)
-                    {
-                        commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
-                        return;
-                    }
+                    if (elapsedSeconds - agent.DestinationSeconds < settings.DestinationRateLimitSeconds) return;
 
                     var collider = SphereCollider.Create(
                         new SphereGeometry()
