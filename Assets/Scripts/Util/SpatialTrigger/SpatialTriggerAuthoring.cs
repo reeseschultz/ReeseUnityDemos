@@ -35,8 +35,8 @@ namespace Reese.Demo
             {
                 Filter = useDefaultCollisionFilter ? CollisionFilter.Default : new CollisionFilter
                 {
-                    BelongsTo = TransformUtil.ToBitMask(belongsToLayer),
-                    CollidesWith = TransformUtil.ToBitMask(collidesWithLayer),
+                    BelongsTo = Util.ToBitMask(belongsToLayer),
+                    CollidesWith = Util.ToBitMask(collidesWithLayer),
                     GroupIndex = groupIndex
                 }
             });

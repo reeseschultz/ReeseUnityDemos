@@ -2,7 +2,7 @@ using Unity.Mathematics;
 
 namespace Reese.Demo
 {
-    public static class TransformUtil
+    public static class Util
     {
         /// <summary>Transforms a point (equivalent to Matrix4x4.MultiplyPoint3x4, but uses Unity.Mathematics).</summary>
         public static float3 MultiplyPoint3x4(this float4x4 transform, float3 point)
