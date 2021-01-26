@@ -56,7 +56,7 @@ namespace Reese.Demo
                         new OverlapAabbInput
                         {
                             Aabb = aabb,
-                            Filter = CollisionFilter.Default // TODO : permit CollisionFilter override.
+                            Filter = trigger.Filter
                         },
                         ref overlaps
                     ))
