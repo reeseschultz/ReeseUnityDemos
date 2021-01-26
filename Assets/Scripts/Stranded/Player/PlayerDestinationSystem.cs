@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Unity.Physics;
 using Unity.Physics.Systems;
+using static Reese.Nav.NavSystem;
 
 namespace Reese.Demo.Stranded
 {
@@ -13,6 +14,7 @@ namespace Reese.Demo.Stranded
     class PlayerDestinationSystem : SystemBase
     {
         PhysicsWorld physicsWorld => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<BuildPhysicsWorld>().PhysicsWorld;
+        NavSettings settings => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavSystem>().Settings;
 
         GameObject agentTransformGO = default;
 
@@ -20,6 +22,17 @@ namespace Reese.Demo.Stranded
         Renderer cursorRenderer = default;
 
         Entity agentEntity = default;
+
+        CollisionFilter filter = CollisionFilter.Default;
+
+        protected override void OnCreate()
+        {
+            var filter = new CollisionFilter
+            {
+                BelongsTo = Util.ToBitMask(settings.SurfaceLayer),
+                CollidesWith = Util.ToBitMask(settings.SurfaceLayer)
+            };
+        }
 
         protected override void OnUpdate()
         {
@@ -83,6 +96,7 @@ namespace Reese.Demo.Stranded
                 physicsWorld,
                 500,
                 EntityManager,
+                filter,
                 out var hit
             );
 
