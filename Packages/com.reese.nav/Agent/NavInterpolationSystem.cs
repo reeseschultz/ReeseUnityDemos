@@ -6,6 +6,7 @@ using Unity.Transforms;
 using RaycastHit = Unity.Physics.RaycastHit;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 using UnityEngine;
+using static Reese.Nav.NavSystem;
 
 namespace Reese.Nav
 {
@@ -20,19 +21,20 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavDestinationSystem))]
     public class NavInterpolationSystem : SystemBase
     {
+        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
-        static void HandleCompletePath(ComponentDataFromEntity<LocalToWorld> localToWorldFromEntity, Entity entity, Rotation rotation, ref NavAgent agent, ref DynamicBuffer<NavPathBufferElement> pathBuffer, Parent surface, Translation translation, PhysicsWorld physicsWorld, float elapsedSeconds, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex)
+        static void HandleCompletePath(ComponentDataFromEntity<LocalToWorld> localToWorldFromEntity, Entity entity, Rotation rotation, ref NavAgent agent, ref DynamicBuffer<NavPathBufferElement> pathBuffer, Parent surface, Translation translation, PhysicsWorld physicsWorld, float elapsedSeconds, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex, NavSettings settings)
         {
             var rayInput = new RaycastInput
             {
                 Start = localToWorldFromEntity[entity].Position + agent.Offset,
-                End = math.forward(rotation.Value) * NavConstants.OBSTACLE_RAYCAST_DISTANCE_MAX,
+                End = math.forward(rotation.Value) * settings.ObstacleRaycastDistanceMax,
                 Filter = new CollisionFilter
                 {
-                    BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
-                    CollidesWith = NavUtil.ToBitMask(NavConstants.OBSTACLE_LAYER)
+                    BelongsTo = NavUtil.ToBitMask(settings.ColliderLayer),
+                    CollidesWith = NavUtil.ToBitMask(settings.ObstacleLayer)
                 }
             };
 
@@ -63,6 +65,7 @@ namespace Reese.Nav
             var elapsedSeconds = (float)Time.ElapsedTime;
             var deltaSeconds = Time.DeltaTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
+            var settings = navSystem.Settings;
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
@@ -82,7 +85,7 @@ namespace Reese.Nav
 
                     if (pathBuffer.Length == 0)
                     {
-                        HandleCompletePath(localToWorldFromEntity, entity, rotation, ref agent, ref pathBuffer, surface, translation, physicsWorld, elapsedSeconds, commandBuffer, entityInQueryIndex);
+                        HandleCompletePath(localToWorldFromEntity, entity, rotation, ref agent, ref pathBuffer, surface, translation, physicsWorld, elapsedSeconds, commandBuffer, entityInQueryIndex, settings);
                         return;
                     }
 
@@ -169,7 +172,7 @@ namespace Reese.Nav
 
                     translation.Value.y += (yVelocity - (elapsedSeconds - agent.JumpSeconds) * agent.JumpGravity) * deltaSeconds * agent.JumpSpeedMultiplierY;
 
-                    if (elapsedSeconds - agent.JumpSeconds >= NavConstants.JUMP_SECONDS_MAX)
+                    if (elapsedSeconds - agent.JumpSeconds >= settings.JumpSecondsMax)
                     {
                         commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
                         commandBuffer.AddComponent<NavFalling>(entityInQueryIndex, entity);

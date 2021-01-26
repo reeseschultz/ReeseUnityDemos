@@ -17,6 +17,8 @@ namespace Reese.Nav
     [UpdateBefore(typeof(NavDestinationSystem))]
     unsafe public class NavPlanSystem : SystemBase
     {
+        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
+
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override void OnUpdate()
@@ -24,6 +26,8 @@ namespace Reese.Nav
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
+            var settings = navSystem.Settings;
+            var translationFromEntity = GetComponentDataFromEntity<Translation>(true);
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var navMeshQueryPointerArray = World.GetExistingSystem<NavMeshQuerySystem>().PointerArray;
@@ -64,13 +68,13 @@ namespace Reese.Nav
                     UnsafeUtility.CopyPtrToStructure(navMeshQueryPointer.Value, out NavMeshQuery navMeshQuery);
 
                     var status = navMeshQuery.BeginFindPath(
-                        navMeshQuery.MapLocation(worldPosition, Vector3.one * NavConstants.PATH_SEARCH_MAX, agent.TypeID),
-                        navMeshQuery.MapLocation(worldDestination, Vector3.one * NavConstants.PATH_SEARCH_MAX, agent.TypeID),
+                        navMeshQuery.MapLocation(worldPosition, Vector3.one * settings.PathSearchMax, agent.TypeID),
+                        navMeshQuery.MapLocation(worldDestination, Vector3.one * settings.PathSearchMax, agent.TypeID),
                         NavMesh.AllAreas
                     );
 
                     while (NavUtil.HasStatus(status, PathQueryStatus.InProgress)) status = navMeshQuery.UpdateFindPath(
-                        NavConstants.ITERATION_MAX,
+                        settings.IterationMax,
                         out int iterationsPerformed
                     );
 

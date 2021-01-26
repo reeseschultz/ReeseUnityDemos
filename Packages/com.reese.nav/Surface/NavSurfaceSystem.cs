@@ -16,6 +16,7 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavBasisSystem))]
     public class NavSurfaceSystem : SystemBase
     {
+        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         Dictionary<int, GameObject> gameObjectMap = new Dictionary<int, GameObject>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
@@ -104,6 +105,7 @@ namespace Reese.Nav
 
             var elapsedSeconds = (float)Time.ElapsedTime;
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
+            var settings = navSystem.Settings;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
 
@@ -122,17 +124,17 @@ namespace Reese.Nav
                     var rayInput = new RaycastInput
                     {
                         Start = localToWorld.Position + agent.Offset,
-                        End = -localToWorld.Up * NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
+                        End = -localToWorld.Up * settings.SurfaceRaycastDistanceMax,
                         Filter = new CollisionFilter()
                         {
-                            BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
-                            CollidesWith = NavUtil.ToBitMask(NavConstants.SURFACE_LAYER),
+                            BelongsTo = NavUtil.ToBitMask(settings.ColliderLayer),
+                            CollidesWith = NavUtil.ToBitMask(settings.SurfaceLayer),
                         }
                     };
 
                     if (!physicsWorld.CastRay(rayInput, out RaycastHit hit))
                     {
-                        if (++agent.SurfaceRaycastCount >= NavConstants.SURFACE_RAYCAST_MAX)
+                        if (++agent.SurfaceRaycastCount >= settings.SurfaceRaycastMax)
                         {
                             agent.FallSeconds = elapsedSeconds;
 

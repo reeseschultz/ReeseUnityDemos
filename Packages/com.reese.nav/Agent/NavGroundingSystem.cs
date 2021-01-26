@@ -12,11 +12,13 @@ namespace Reese.Nav
     {
         public bool IsDebugging = false;
 
+        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
 
         protected override void OnUpdate()
         {
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
+            var settings = navSystem.Settings;
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
@@ -32,11 +34,11 @@ namespace Reese.Nav
                    var rayInput = new RaycastInput
                    {
                        Start = localToWorld.Position + agent.Offset,
-                       End = -math.up() * NavConstants.SURFACE_RAYCAST_DISTANCE_MAX,
+                       End = -math.up() * settings.SurfaceRaycastDistanceMax,
                        Filter = new CollisionFilter()
                        {
-                           BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
-                           CollidesWith = NavUtil.ToBitMask(NavConstants.SURFACE_LAYER),
+                           BelongsTo = NavUtil.ToBitMask(settings.ColliderLayer),
+                           CollidesWith = NavUtil.ToBitMask(settings.SurfaceLayer),
                        }
                    };
 
