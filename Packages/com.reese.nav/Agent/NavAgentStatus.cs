@@ -20,6 +20,9 @@ namespace Reese.Nav
     /// <summary>Exists if the agent is walking.</summary>
     public struct NavWalking : IComponentData { }
 
+    /// <summary>Exists if the user needs to handle lerping.</summary>
+    public struct NavCustomLerping : IComponentData { }
+
     /// <summary>Exists if the agent needs a destination.</summary>
     public struct NavNeedsDestination : IComponentData
     {
@@ -31,6 +34,15 @@ namespace Reese.Nav
 
         /// <summary>If this destination is within the provided tolerance of the last destination for a given agent, it will be ignored. Useful for mouselook since many new destinations can block interpolation.</summary>
         public float Tolerance;
+
+        /// <summary>True if lerping should be disabled by the navigation
+        /// package so that it can be handled by user code. Users must
+        /// then manage components and buffers themselves (the
+        /// NavPathBufferElement class is the most important to that end).
+        /// False if otherwise. Note that the NavCustomLerping component
+        /// will exist on the agent if planning is done and custom lerping
+        /// is required.</summary>
+        public bool CustomLerp;
     }
 
     /// <summary>Exists if the agent needs a surface. This component should be
