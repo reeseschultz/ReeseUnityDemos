@@ -13,17 +13,17 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavSurfaceSystem))]
     public class NavDestinationSystem : SystemBase
     {
+        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetOrCreateSystem<BuildPhysicsWorld>();
-
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
-
+            var elapsedSeconds = (float)Time.ElapsedTime;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
-            var elapsedSeconds = (float)Time.ElapsedTime;
+            var settings = navSystem.Settings;
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
@@ -34,7 +34,7 @@ namespace Reese.Nav
                 .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination needsDestination) =>
                 {
-                    if (elapsedSeconds - agent.DestinationSeconds < NavConstants.DESTINATION_RATE_LIMIT_SECONDS)
+                    if (elapsedSeconds - agent.DestinationSeconds < settings.DestinationRateLimitSeconds)
                     {
                         commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
                         return;
@@ -44,12 +44,12 @@ namespace Reese.Nav
                         new SphereGeometry()
                         {
                             Center = needsDestination.Destination,
-                            Radius = NavConstants.DESTINATION_SURFACE_COLLIDER_RADIUS
+                            Radius = settings.DestinationSurfaceColliderRadius
                         },
                         new CollisionFilter()
                         {
-                            BelongsTo = NavUtil.ToBitMask(NavConstants.COLLIDER_LAYER),
-                            CollidesWith = NavUtil.ToBitMask(NavConstants.SURFACE_LAYER),
+                            BelongsTo = NavUtil.ToBitMask(settings.ColliderLayer),
+                            CollidesWith = NavUtil.ToBitMask(settings.SurfaceLayer),
                         }
                     );
 
