@@ -9,15 +9,15 @@ namespace Reese.Demo
     /// <summary>Authors a SpatialTrigger.</summary>
     public class SpatialTriggerAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
-        /// <summary>A bit mask describing which layers this object belongs to.</summary>
+        /// <summary>The layer this object belongs to. Valid layers range from 8 to 30, inclusive. All other layers are invalid, and will always result in layer 8, since they are used by Unity internally. See https://docs.unity3d.com/Manual/class-TagManager.html and https://docs.unity3d.com/Manual/Layers.html for more information.</summary>
         [SerializeField]
-        uint belongsTo = default;
+        int belongsToLayer = default;
 
-        /// <summary>A bit mask describing which layers this object can collide with.</summary>
+        /// <summary>The layer this object can collide with. Valid layers range from 8 to 30, inclusive. All other layers are invalid, and will always result in layer 8, since they are used by Unity internally. See https://docs.unity3d.com/Manual/class-TagManager.html and https://docs.unity3d.com/Manual/Layers.html for more information.</summary>
         [SerializeField]
-        uint collidesWith = default;
+        int collidesWithLayer = default;
 
-        /// <summary>An optional override for the bit mask checks. If the value in both objects is equal and positive, the objects always collide. If the value in both objects is equal and negative, the objects never collide.</summary>
+        /// <summary>An optional override for the belongs to / collides with checks. If the value in both objects is equal and positive, the objects always collide. If the value in both objects is equal and negative, the objects never collide.</summary>
         [SerializeField]
         int groupIndex = default;
 
@@ -35,8 +35,8 @@ namespace Reese.Demo
             {
                 Filter = useDefaultCollisionFilter ? CollisionFilter.Default : new CollisionFilter
                 {
-                    BelongsTo = belongsTo,
-                    CollidesWith = collidesWith,
+                    BelongsTo = TransformUtil.ToBitMask(belongsToLayer),
+                    CollidesWith = TransformUtil.ToBitMask(collidesWithLayer),
                     GroupIndex = groupIndex
                 }
             });
