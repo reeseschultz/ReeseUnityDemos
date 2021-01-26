@@ -75,6 +75,10 @@ namespace Reese.Nav
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
         NavSurfaceSystem surfaceSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavSurfaceSystem>();
 
+        /// <summary>Stops the agent from navigating (waits for jumping or falling to complete).
+        public void Stop()
+            => entityManager.AddComponent<NavStop>(entity);
+
         void InitializeEntityTransform()
         {
             entityManager.AddComponentData<LocalToWorld>(entity, new LocalToWorld
