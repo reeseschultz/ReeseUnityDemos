@@ -70,6 +70,12 @@ To retain navigating agents *as* GameObjects, rather than converting them into e
 
 ### [NavAgentHybrid](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentHybrid.cs) (exclusively for GameObjects)
 
+#### Public Methods
+
+| Method                     | Type      | Description                                                                 |
+|----------------------------|-----------|-----------------------------------------------------------------------------|
+| **`Stop`**                 | `void`    | Stops the agent from navigating (waits for jumping or falling to complete). |
+
 #### Initialization Variables
 
 | Variable                   | Type      | Description                                   | Default Value       |
@@ -135,10 +141,11 @@ Here are the internally-managed components (defined in [NavAgentStatus](https://
 
 Other components you **may** add and write to:
 
-| `IComponentData`          | Description                                                                                                                                                                                                                                                                                                                                                                                                 |
-|---------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **`NavNeedsDestination`** | Exists if the agent needs a destination. In this `struct`, there's a `float3` named `Destination` (relative to the world). There's an optional `bool` named `Teleport`, which toggles teleportation to the provided `Destination`. Finally, there's a `float` called `Tolerance`, so if the `Destination` is within the provided `Tolerance` of the last destination for a given agent, it will be ignored. |
-| **`NavTerrainCapable`**   | Only needed if your agents must navigate on terrain. Don't use it otherwise, since it may negatively impact performance.                                                                                                                                                                                                                                                                                    |
+| `IComponentData`          | Description                                                                                                                                                                                                                             |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **`NavNeedsDestination`** | Exists if the agent needs a destination. In this `struct`, there's a `float3` named `Destination` (relative to the world). There's also an optional `bool` named `Teleport`, which toggles teleportation to the provided `Destination`. |
+| **`NavStop`**             | Exists if the agent needs to stop moving (waits for jumping or falling to complete).                                                                                                                                                    |
+| **`NavTerrainCapable`**   | Only needed if your agents must navigate on terrain. Don't use it otherwise, since it may negatively impact performance.                                                                                                                |
 
 (See the [demo destination systems](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/Destination) for examples of status component and variable usage.)
 
