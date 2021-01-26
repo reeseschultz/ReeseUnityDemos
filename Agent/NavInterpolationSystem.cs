@@ -42,7 +42,7 @@ namespace Reese.Nav
 
             if (
                 !surface.Value.Equals(agent.DestinationSurface) &&
-                !NavUtil.ApproxEquals(translation.Value, agent.LocalDestination, 1) &&
+                !NavUtil.ApproxEquals(translation.Value, agent.LocalDestination, settings.StoppingDistance) &&
                 !physicsWorld.CastRay(rayInput, out RaycastHit hit)
             )
             {
@@ -91,7 +91,7 @@ namespace Reese.Nav
 
                     var pathBufferIndex = pathBuffer.Length - 1;
 
-                    if (NavUtil.ApproxEquals(translation.Value, pathBuffer[pathBufferIndex].Value, 1)) pathBuffer.RemoveAt(pathBufferIndex);
+                    if (NavUtil.ApproxEquals(translation.Value, pathBuffer[pathBufferIndex].Value, settings.StoppingDistance)) pathBuffer.RemoveAt(pathBufferIndex);
 
                     if (pathBuffer.Length == 0) return;
 
