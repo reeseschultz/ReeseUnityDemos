@@ -26,13 +26,11 @@ namespace Reese.Demo.Stranded
         CollisionFilter filter = CollisionFilter.Default;
 
         protected override void OnCreate()
-        {
-            var filter = new CollisionFilter
+            => filter = new CollisionFilter
             {
                 BelongsTo = Util.ToBitMask(settings.SurfaceLayer),
                 CollidesWith = Util.ToBitMask(settings.SurfaceLayer)
             };
-        }
 
         protected override void OnUpdate()
         {
