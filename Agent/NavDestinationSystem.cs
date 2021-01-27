@@ -34,7 +34,11 @@ namespace Reese.Nav
                 .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination needsDestination) =>
                 {
-                    if (elapsedSeconds - agent.DestinationSeconds < settings.DestinationRateLimitSeconds) return;
+                    if (elapsedSeconds - agent.DestinationSeconds < settings.DestinationRateLimitSeconds)
+                    {
+                        commandBuffer.AddComponent<NavNeedsDestination>(entityInQueryIndex, entity, needsDestination); // So that the change filter applies next frame.
+                        return;
+                    }
 
                     var collider = SphereCollider.Create(
                         new SphereGeometry()
