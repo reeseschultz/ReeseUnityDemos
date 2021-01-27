@@ -16,6 +16,7 @@ namespace Reese.Demo
 
             navSystem.Settings = new NavSettings
             {
+                DestinationRateLimitSeconds = 0.8f,
                 DestinationSurfaceColliderRadius = 1,
                 JumpSecondsMax = 5,
                 ObstacleRaycastDistanceMax = 1000,

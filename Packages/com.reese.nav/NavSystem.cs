@@ -6,7 +6,9 @@ namespace Reese.Nav
     public class NavSystem : SystemBase
     {
         /// <summary>Settings that can be updated at runtime.</summary>
-        public NavSettings Settings = new NavSettings {
+        public NavSettings Settings = new NavSettings
+        {
+            DestinationRateLimitSeconds = 0.8f,
             DestinationSurfaceColliderRadius = 1,
             JumpSecondsMax = 5,
             ObstacleRaycastDistanceMax = 1000,
@@ -25,6 +27,9 @@ namespace Reese.Nav
         /// <summary>Includes settings used by the navigation systems.</summary>
         public struct NavSettings
         {
+            /// <summary>Duration in seconds before a new destination will take effect after another. Prevents planning from being clogged with destinations which can then block interpolation of agents.</summary>
+            public float DestinationRateLimitSeconds;
+
             /// <summary>A sphere collider of the specified radius is used to detect the destination surface.</summary>
             public float DestinationSurfaceColliderRadius;
 

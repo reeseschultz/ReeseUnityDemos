@@ -27,7 +27,7 @@ namespace Reese.Nav
             Entities
                .WithNone<NavHasProblem>()
                .WithNone<NavPlanning, NavJumping, NavFalling>()
-               .WithAll<NavLerping, LocalToParent, NavTerrainCapable>()
+               .WithAll<NavWalking, LocalToParent, NavTerrainCapable>()
                .WithReadOnly(physicsWorld)
                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, ref NavAgent agent, in LocalToWorld localToWorld, in Parent surface) =>
                {

@@ -20,7 +20,7 @@ namespace Reese.Demo
 
         void Update()
         {
-            animator.SetBool(RUNNING, agent.IsLerping);
+            animator.SetBool(RUNNING, agent.IsWalking);
             animator.SetBool(JUMPING, agent.IsJumping);
             animator.SetBool(FALLING, agent.IsFalling);
         }

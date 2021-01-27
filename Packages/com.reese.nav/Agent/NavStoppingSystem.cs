@@ -11,20 +11,20 @@ namespace Reese.Nav
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
-            var lerpingFromEntity = GetComponentDataFromEntity<NavLerping>(true);
+            var walkingFromEntity = GetComponentDataFromEntity<NavWalking>(true);
             var destinationFromEntity = GetComponentDataFromEntity<NavNeedsDestination>(true);
             var planningFromEntity = GetComponentDataFromEntity<NavPlanning>(true);
 
             var job = Entities
                 .WithNone<NavFalling, NavJumping>()
-                .WithReadOnly(lerpingFromEntity)
+                .WithReadOnly(walkingFromEntity)
                 .WithReadOnly(destinationFromEntity)
                 .WithReadOnly(planningFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, in NavStop stop) =>
                 {
                     commandBuffer.RemoveComponent<NavStop>(entityInQueryIndex, entity);
 
-                    if (lerpingFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavLerping>(entityInQueryIndex, entity);
+                    if (walkingFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavWalking>(entityInQueryIndex, entity);
 
                     if (destinationFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
 

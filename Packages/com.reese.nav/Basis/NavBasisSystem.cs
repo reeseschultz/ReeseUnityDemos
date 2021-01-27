@@ -15,7 +15,6 @@ namespace Reese.Nav
         /// surfaces are parented to.</summary>
         public Entity DefaultBasis { get; private set; }
 
-        /// <summary>For ensuring parent-child relationships.</summary>
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
         protected override void OnCreate()
@@ -32,8 +31,7 @@ namespace Reese.Nav
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
-            // Below job is needed because Unity.Physics removes the Parent
-            // component for dynamic bodies.
+            // Prevents Unity.Physics from removing the Parent component from dynamic bodies.
             Entities
                 .WithNone<Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavBasis basis) =>
@@ -45,9 +43,8 @@ namespace Reese.Nav
                         Value = basis.ParentBasis
                     });
 
-                    commandBuffer.AddComponent(entityInQueryIndex, entity, typeof(LocalToParent));
+                    commandBuffer.AddComponent<LocalToParent>(entityInQueryIndex, entity);
                 })
-                .WithoutBurst()
                 .WithName("NavAddParentToBasisJob")
                 .ScheduleParallel();
 

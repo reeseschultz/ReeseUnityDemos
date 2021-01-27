@@ -40,7 +40,7 @@ namespace Reese.Nav
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface, in NavNeedsDestination navNeedsDestination) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface, in NavNeedsDestination needsDestination) =>
                 {
                     if (
                         surface.Value.Equals(Entity.Null) ||
@@ -78,7 +78,7 @@ namespace Reese.Nav
                         out int iterationsPerformed
                     );
 
-                    var customLerp = navNeedsDestination.CustomLerp;
+                    var customLerp = needsDestination.CustomLerp;
 
                     if (!NavUtil.HasStatus(status, PathQueryStatus.Success))
                     {
@@ -141,15 +141,14 @@ namespace Reese.Nav
                             commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
 
                             if (customLerp) commandBuffer.AddComponent<NavCustomLerping>(entityInQueryIndex, entity);
-                            else commandBuffer.AddComponent<NavLerping>(entityInQueryIndex, entity);
+                            else commandBuffer.AddComponent<NavJumping>(entityInQueryIndex, entity);
                         }
                     }
                     else if (status == PathQueryStatus.Success)
                     {
-                        pathBuffer.Clear();
-                        agent.PathBufferIndex = 0;
+                        if (pathBuffer.Length > 0) pathBuffer.RemoveAt(pathBuffer.Length - 1);
 
-                        for (var i = 0; i < straightPathCount; ++i) pathBuffer.Add(
+                        for (var i = straightPathCount - 1; i > 0; --i) pathBuffer.Add(
                             NavUtil.MultiplyPoint3x4(
                                 math.inverse(localToWorldFromEntity[surface.Value].Value),
                                 (float3)straightPath[i].position + agent.Offset
@@ -161,7 +160,7 @@ namespace Reese.Nav
                             commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
 
                             if (customLerp) commandBuffer.AddComponent<NavCustomLerping>(entityInQueryIndex, entity);
-                            else commandBuffer.AddComponent<NavLerping>(entityInQueryIndex, entity);
+                            else commandBuffer.AddComponent<NavWalking>(entityInQueryIndex, entity);
                         }
                     }
 
