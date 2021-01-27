@@ -65,7 +65,7 @@ namespace Reese.Demo
             var selectedEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
             var renderMesh = entityManager.GetSharedComponentData<RenderMesh>(selectedEntity);
             var mat = new UnityEngine.Material(renderMesh.material);
-            mat.SetColor("_Color", UnityEngine.Random.ColorHSV());
+            mat.SetColor("_BaseColor", UnityEngine.Random.ColorHSV());
             renderMesh.material = mat;
 
             entityManager.SetSharedComponentData(selectedEntity, renderMesh);
