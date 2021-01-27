@@ -2,6 +2,8 @@
 
 [![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
 
+![Various demo scenes.](/preview.gif)
+
 Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by me, Reese.
 
 ## Packages
@@ -11,49 +13,11 @@ This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [
 1. [Nav](https://openupm.com/packages/com.reese.nav/) - DOTS navigation with auto-jumping agents and movable surfaces; released as a package on the `nav` branch.
 2. [Randomization](https://openupm.com/packages/com.reese.random/) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones; released as a package on the `random` branch.
 
+Other packages are currently under development, such as the spatial event system, and are temporarily being used as demo code until they're ready to be released.
+
 ## Demos
 
-![Gif of agents navigating complex terrain.](/Gifs/nav-terrain-demo.gif)
-
-⇒ `Assets/Scenes/Nav/NavTerrainDemo.unity`.
-
----
-
-![Gif of agents jumping across moving surfaces.](/Gifs/nav-moving-jump-demo.gif)
-
-⇒ `Assets/Scenes/Nav/NavMovingJumpDemo.unity`.
-
----
-
-![Gif of agents spawning and avoiding obstacles.](/Gifs/nav-performance-demo.gif)
-
-⇒ `Assets/Scenes/Nav/NavPerformanceDemo.unity`.
-
----
-
-![Gif of an agent moving to point-and-clicked destinations.](/Gifs/nav-point-and-click-demo.gif)
-
-⇒ `Assets/Scenes/Nav/NavPointAndClickDemo.unity`.
-
----
-
-![Gif of changing prefab colors with Unity ECS.](/Gifs/point-and-click-demo.gif)
-
-⇒ `Assets/Scenes/PointAndClickDemo.unity`.
-
----
-
-![Gif of projectile motion demonstration with Unity DOTS.](/Gifs/projectile-demo.gif)
-
-⇒ `Assets/Scenes/ProjectileDemo.unity`
-
----
-
-![Gif of spawning prefabs with Unity ECS.](/Gifs/spawn-demo.gif)
-
-⇒ `Assets/Scenes/SpawnDemo.unity`
-
----
+There are various demo scenes included in `Assets/Scenes`. Take a look!
 
 ## Linux & You
 
