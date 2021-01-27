@@ -9,8 +9,7 @@ using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 
 namespace Reese.Nav
 {
-    /// <summary>Creates and updates destinations as persistent entities that
-    /// retain location information pertinent to nav agents.</summary>
+    /// <summary>Manages destinations for agents.</summary>
     [UpdateAfter(typeof(NavSurfaceSystem))]
     public class NavDestinationSystem : SystemBase
     {
@@ -21,6 +20,7 @@ namespace Reese.Nav
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
+            var elapsedSeconds = (float)Time.ElapsedTime;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var settings = navSystem.Settings;
@@ -34,6 +34,12 @@ namespace Reese.Nav
                 .WithReadOnly(physicsWorld)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination needsDestination) =>
                 {
+                    if (elapsedSeconds - agent.DestinationSeconds < settings.DestinationRateLimitSeconds)
+                    {
+                        commandBuffer.AddComponent<NavNeedsDestination>(entityInQueryIndex, entity, needsDestination); // So that the change filter applies next frame.
+                        return;
+                    }
+
                     var collider = SphereCollider.Create(
                         new SphereGeometry()
                         {
@@ -66,6 +72,8 @@ namespace Reese.Nav
                             needsDestination.Destination
                         ) + agent.Offset;
 
+                        if (NavUtil.ApproxEquals(destination, agent.LocalDestination, needsDestination.Tolerance)) return;
+
                         if (needsDestination.Teleport)
                         {
                             commandBuffer.SetComponent<Parent>(entityInQueryIndex, entity, new Parent
@@ -85,6 +93,7 @@ namespace Reese.Nav
 
                         agent.DestinationSurface = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                         agent.LocalDestination = destination;
+                        agent.DestinationSeconds = elapsedSeconds;
 
                         commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                     }

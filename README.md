@@ -42,19 +42,27 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 
 ## Usage at a Glance
 
-For this navigation package, whether you're using it with GameObjects or entities, there are **three key components** you should be familiar with:
+For this navigation package, whether you're using it with GameObjects or entities, there are three concepts to be familiar with:
 
-1. [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) - A component added to any entity you want to, well, navigate. There is a facade for this component called the [NavAgentHybrid](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentHybrid.cs) to be used exclusively with GameObjects. It works by creating an entity with the `NavAgent` component in the background. The `NavAgentHybrid` updates its GameObject transform to match that of the invisible "background" entity which drives the navigation.
-2. [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurface.cs) - A component added to [GameObjects](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/GameObject.html) during authoring that also have the [NavMeshSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/ThirdParty/NavMeshComponents/Scripts/NavMeshSurface.cs) attached. Make sure you bake your surfaces!
-3. [NavBasis](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Basis/NavBasis.cs) - A glorified parent transform you may attach to any arbitrary [GameObject](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/GameObject.html). If you don't assign your surfaces to a basis, then they will be parented to a shared default basis. A basis is normally used to translate multiple surfaces as a whole.
+1. **Agent** - An actor or character that navigates. Agents are parented to surfaces.
+2. **Surface** - A space for agents to navigate upon. Surfaces are parented to bases (if no explicit basis is provided, a default basis is used at the world origin).
+3. **Basis** - A glorified parent transform that allows multiple surfaces to move as a whole.
 
-### A Note on Usage with GameObjects
+### Authoring Components
 
-If you want to use this package with standard GameObjects, you're in luck. Alternatively, if you want to use a skinned mesh renderer (bone-based animation), using GameObjects may be your only option until the official DOTS animation package is more mature.
+1. [NavAgentAuthoring](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Authoring/NavAgentAuthoring.cs) - Converts GameObjects into entities with the `NavAgent` component, and other needed components.
+2. [NavSurfaceAuthoring](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Authoring/NavSurfaceAuthoring.cs) - Converts GameObjects into entities with the `NavSurface` component, and other needed components.
+3. [NavBasisAuthoring](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Authoring/NavBasisAuthoring.cs) - Converts GameObjects into entities with the `NavBasis` component, and other needed components.
 
-Either way, the `NavHybridDemo` in `Assets/Scenes/Nav` of the containing project will illuminate the GameObject workflow. The prefab used in that scene has the `NavAgentHybrid` component attached to it. It also features sample animation controllers in [Assets/Scripts/Nav/NavHybridDemo](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/), one of which is a script that shows you how to interface with the `NavAgentHybrid` component to play animations.
+### Usage with GameObjects
 
-Consider that, even when using GameObjects, you would still want to attach the DOTS-based surface, and, optionally, basis code as well. For more on that, see the API section to follow.
+To retain navigating agents *as* GameObjects, rather than converting them into entities, add the [NavAgentHybrid](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentHybrid.cs) to them *instead* of `NavAgentAuthoring`. Such hybrid agents are still able to interact with other objects with `NavSurfaceAuthoring` and `NavBasisAuthoring` components, so long as as the Conversion Mode for them is set to "Convert and Inject Game Object." FYI, `NavAgentAuthoring` works by creating an invisible entity with the `NavAgent` component in the background. The `NavAgentHybrid` updates its GameObject transform to match that of the background entity.
+
+### Entity Components
+
+1. [NavAgent](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) - A component for making entities into agents.
+2. [NavSurface](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Surface/NavSurface.cs) - A component for making entities into entities into surfaces.
+3. [NavBasis](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Basis/NavBasis.cs) - A component for making entities into bases. 
 
 ## API
 
@@ -83,15 +91,15 @@ Consider that, even when using GameObjects, you would still want to attach the D
 
 #### Status Variables
 
-| Variable               | Type               | Description                                                                                                                                                                | Default Value |
-|------------------------|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| **`IsLerping`**        | `bool`             | `true` if the agent is lerping, `false` if not.                                                                                                                            | `false`       |
-| **`IsJumping`**        | `bool`             | `true` if the agent is jumping, `false` if not.                                                                                                                            | `false`       |
-| **`IsFalling`**        | `bool`             | `true` if the agent is falling, `false` if not.                                                                                                                            | `false`       |
-| **`IsPlanning`**       | `bool`             | `true` if the agent is planning, `false` if not.                                                                                                                           | `false`       |
-| **`IsTerrainCapable`** | `bool`             | `true` if the agent is terrain-capable, `false` if not.                                                                                                                    | `false`       |
-| **`NeedsSurface`**     | `bool`             | `true` if the agent needs a surface, `false` if not.                                                                                                                       | `false`       |
-| **`HasProblem`**       | `PathQueryStatus?` | Has a value of [PathQueryStatus](https://docs.unity3d.com/ScriptReference/Experimental.AI.PathQueryStatus.html) if the agent has a problem, `null` if not.                 | `null`        |
+| Variable               | Type               | Description                                                                                                                                                                                                                                                | Default Value |
+|------------------------|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| **`IsWalking`**        | `bool`             | `true` if the agent is walking, `false` if not.                                                                                                                                                                                                            | `false`       |
+| **`IsJumping`**        | `bool`             | `true` if the agent is jumping, `false` if not.                                                                                                                                                                                                            | `false`       |
+| **`IsFalling`**        | `bool`             | `true` if the agent is falling, `false` if not.                                                                                                                                                                                                            | `false`       |
+| **`IsPlanning`**       | `bool`             | `true` if the agent is planning, `false` if not.                                                                                                                                                                                                           | `false`       |
+| **`IsTerrainCapable`** | `bool`             | `true` if the agent is terrain-capable, `false` if not.                                                                                                                                                                                                    | `false`       |
+| **`NeedsSurface`**     | `bool`             | `true` if the agent needs a surface, `false` if not.                                                                                                                                                                                                       | `false`       |
+| **`HasProblem`**       | `PathQueryStatus?` | Has a value of [PathQueryStatus](https://docs.unity3d.com/ScriptReference/Experimental.AI.PathQueryStatus.html) if the agent has a problem, `null` if not. Problems tend to arise to due incorrect values set in `NavConstants`, which is discussed later. | `null`        |
 
 ### Destination Variables
 
@@ -123,13 +131,13 @@ Consider that, even when using GameObjects, you would still want to attach the D
 
 Here are the internally-managed components (defined in [NavAgentStatus](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgentStatus.cs)) that are applied to [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs) throughout the navigation lifecycle. Do **not** write to these, just query them to check existence:
 
-| `IComponentData`      | Description                          |
-|-----------------------|--------------------------------------|
-| **`NavLerping`**      | Exists if the agent is lerping.      |
-| **`NavJumping`**      | Exists if the agent is jumping.      |
-| **`NavFalling`**      | Exists if the agent is falling.      |
-| **`NavPlanning`**     | Exists if the agent is planning.     |
-| **`NavNeedsSurface`** | Exists if the agent needs a surface. |
+| `IComponentData`      | Description                                                              |
+|-----------------------|--------------------------------------------------------------------------|
+| **`NavWalking`**      | Exists if the agent is walking.                                          |
+| **`NavJumping`**      | Exists if the agent is jumping.                                          |
+| **`NavFalling`**      | Exists if the agent is falling.                                          |
+| **`NavPlanning`**     | Exists if the agent is planning.                                         |
+| **`NavNeedsSurface`** | Exists if the agent needs a surface.                                     |
 
 Other components you **may** add and write to:
 
@@ -190,6 +198,7 @@ And then there's the rest of the settings you may want to change:
 
 | Setting                                    | Type    | Description                                                                                                                                                                                                                                                                                                    | Default Value |
 |--------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| **`DestinationRateLimitSeconds`**          | `float` | Duration in seconds before a new destination will take effect after another. Prevents planning from being clogged with destinations which can then block interpolation of agents.                                                                                                                              | `0.8f`        |
 | **`DestinationSurfaceColliderRadius`**     | `float` | A sphere collider of the specified radius is used to detect the destination surface.                                                                                                                                                                                                                           | `1`           |
 | **`JumpSecondsMax`**                       | `float` | Upper limit on the *duration* spent jumping before the agent is actually considered falling. This limit can be reached when the agent tries to jump too close to the edge of a surface and misses.                                                                                                             | `5`           |
 | **`ObstacleRaycastDistanceMax`**           | `float` | Upper limit on the raycast distance when searching for an obstacle in front of a given NavAgent.                                                                                                                                                                                                               | `1000`        |
@@ -216,3 +225,17 @@ In addition to settings, there are also compile-time constants. You *can* change
 * The compatible version of [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents) is *already* in [Packages/com.reese.nav/ThirdParty](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.nav/ThirdParty/)! Use that and nothing else, and I mean for your entire project. Do not try to mix and match it with other versions.
 * Upon spawning [NavAgents](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/Agent/NavAgent.cs), ensure you have their initial [Translation.Value](https://docs.unity3d.com/Packages/com.unity.entities@0.11/api/Unity.Transforms.Translation.html?q=translation) right, along with their `Offset`. Getting these things wrong may result in your agents being unable to raycast the surface below them, since they may be raycasting underneath it!
 * Obstacles need the [NavMeshObstacle](https://docs.unity3d.com/2019.3/Documentation/Manual/class-NavMeshObstacle.html), colliders, and the [ConvertToEntity](https://docs.unity3d.com/Packages/com.unity.entities@0.11/api/Unity.Entities.ConvertToEntity.html?q=convert%20to%20ent) script on them. Otherwise obstacles will not be detected by raycasts. By the way, `Carve` should be `true`.
+
+## Credits
+
+* The demos extensively use [Mini Mike's Metro Minis](https://mikelovesrobots.github.io/mmmm) (licensed with [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/?)) by [Mike Judge](https://github.com/mikelovesrobots). That project is embedded in this one by way of `Assets/MMMM/`. I modified its directory structure, and generated my own prefabs rather than using the included ones.
+* One demo leverages animations from [Mixamo](https://www.mixamo.com) by [Adobe](https://www.adobe.com/).
+* The sounds mixed in the demos are from [Freesound](https://freesound.org/); only ones licensed with [CC0](https://creativecommons.org/share-your-work/public-domain/cc0/) are used here.
+* The navigation package uses [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents) (licensed with [MIT](https://opensource.org/licenses/MIT)) by [Unity Technologies](https://github.com/Unity-Technologies).
+* The navigation package also uses [PathUtils](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.nav/ThirdParty/PathUtils) (licensed with [zlib](https://opensource.org/licenses/Zlib)) by [Mikko Mononen](https://github.com/memononen), and modified by [Unity Technologies](https://github.com/Unity-Technologies). Did you know that Mikko is credited in [Death Stranding](https://en.wikipedia.org/wiki/Death_Stranding) for [Recast & Detour](https://github.com/recastnavigation/recastnavigation)?
+
+## Contributing
+
+Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever. All that said, [GitHub Issues](https://github.com/reeseschultz/ReeseUnityDemos/issues/new/choose) is fine for constructive discussion.
+
+By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
