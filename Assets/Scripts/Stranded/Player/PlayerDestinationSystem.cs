@@ -21,7 +21,7 @@ namespace Reese.Demo.Stranded
         GameObject cursor = default;
         Renderer cursorRenderer = default;
 
-        Entity agentEntity = default;
+        Entity playerEntity = default;
 
         CollisionFilter filter = CollisionFilter.Default;
 
@@ -67,16 +67,16 @@ namespace Reese.Demo.Stranded
 
             try
             {
-                agentEntity = GetSingletonEntity<NavAgent>();
+                playerEntity = GetSingletonEntity<Player>();
             }
             catch
             {
                 return;
             }
 
-            if (agentEntity.Equals(Entity.Null)) return;
+            if (playerEntity.Equals(Entity.Null)) return;
 
-            var agentPosition = EntityManager.GetComponentData<LocalToWorld>(agentEntity).Position;
+            var agentPosition = EntityManager.GetComponentData<LocalToWorld>(playerEntity).Position;
 
             agentTransformGO.transform.SetPositionAndRotation(agentPosition, Quaternion.identity);
 
@@ -89,7 +89,7 @@ namespace Reese.Demo.Stranded
 
             var pointOnNavigableSurface = NavUtil.GetPointOnNavigableSurface(
                 point,
-                agentEntity,
+                playerEntity,
                 Camera.main,
                 physicsWorld,
                 500,
@@ -111,7 +111,7 @@ namespace Reese.Demo.Stranded
 
                 if (mouse != null && mouse.leftButton.isPressed)
                 {
-                    EntityManager.AddComponentData(agentEntity, new NavNeedsDestination
+                    EntityManager.AddComponentData(playerEntity, new NavNeedsDestination
                     {
                         Destination = hit.Position,
                         Tolerance = 1
