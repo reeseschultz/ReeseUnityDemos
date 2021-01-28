@@ -3,7 +3,7 @@
 [![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
 [![openupm](https://img.shields.io/npm/v/com.reese.nav?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.reese.nav/)
 
-![Video of navigation agents jumping across moving surfaces.](https://raw.githubusercontent.com/reeseschultz/ReeseUnityDemos/master/Gifs/nav-moving-jump-demo.gif)
+![Video of navigation agents jumping across moving surfaces.](https://raw.githubusercontent.com/reeseschultz/ReeseUnityDemos/master/preview.gif)
 
 ## Introduction
 
@@ -103,10 +103,13 @@ To retain navigating agents *as* GameObjects, rather than converting them into e
 
 ### Destination Variables
 
-| Variable               | Type      | Description                                                          | Default Value |
-|------------------------|-----------|----------------------------------------------------------------------|---------------|
-| **`Teleport`**         | `bool`    | `true` if the agent should teleport to destinations, `false` if not. | `false`       |
-| **`WorldDestination`** | `Vector3` | The agent's world destination.                                       | `(0, 0, 0)`   |
+| Variable                | Type         | Description                                                                                                                                                                     | Default Value |
+|-------------------------|--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| **`Teleport`**          | `bool`       | `true` if the agent should teleport to destinations, `false` if not.                                                                                                            | `false`       |
+| **`WorldDestination`**  | `Vector3`    | The agent's world destination.                                                                                                                                                  | `(0, 0, 0)`   |
+| **`FollowTarget`**      | `GameObject` | Set if this agent should follow another GameObject with a NavAgentHybrid component.                                                                                             | `null`        |
+| **`FollowMaxDistance`** | `float`      | Maximum distance before this agent will stop following the target Entity. If less than or equal to zero, this agent will follow the target Entity no matter how far it is away. | `0`           |
+| **`FollowMinDistance`** | `float`      | Minimum distance this agent maintains between itself and the target Entity it follows.                                                                                          | `0`           |
 
 ---
 
@@ -141,11 +144,12 @@ Here are the internally-managed components (defined in [NavAgentStatus](https://
 
 Other components you **may** add and write to:
 
-| `IComponentData`          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **`NavNeedsDestination`** | Exists if the agent needs a destination. In this `struct`, there's a `float3` named `Destination` (relative to the world). There's also an optional `bool` named `Teleport`, which toggles teleportation to the provided `Destination`. Additionally, the `CustomLerp` property, if `true`, disables lerping by the navigation package so that it can be handled by user code (the `NavCustomLerping` component will exist on the agent if planning is done and custom lerping is required). |
-| **`NavStop`**             | Exists if the agent needs to stop moving (waits for jumping or falling to complete).                                                                                                                                                                                                                                                                                                                                                                                                         |
-| **`NavTerrainCapable`**   | Only needed if your agents must navigate on terrain. Don't use it otherwise, since it may negatively impact performance.                                                                                                                                                                                                                                                                                                                                                                     |
+| `IComponentData`          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **`NavNeedsDestination`** | Exists if the agent needs a destination. In this `struct`, there's a `float3` named `Destination` (relative to the world). There's also an optional `bool` named `Teleport`, which toggles teleportation to the provided `Destination`. Additionally, the `CustomLerp` property, if `true`, disables lerping by the navigation package so that it can be handled by user code (the `NavCustomLerping` component will exist on the agent if planning is done and custom lerping is required).        |
+| **`NavFollow`**           | Exists if the agent is following an entity. One important property is the `Entity` `Target`, which is self-explanatory. There's also the `float` `MaxDistance`, which is the maximum distance before this agent will stop following the target entity. If `MaxDistance` is less than or equal to zero, this agent will follow the target entity no matter how far it is away. Finally, the `float` `MinDistance` is that which the agent maintains between itself and the target entity it follows. |
+| **`NavStop`**             | Exists if the agent needs to stop moving (waits for jumping or falling to complete).                                                                                                                                                                                                                                                                                                                                                                                                                |
+| **`NavTerrainCapable`**   | Only needed if your agents must navigate on terrain. Don't use it otherwise, since it may negatively impact performance.                                                                                                                                                                                                                                                                                                                                                                            |
 
 (See the [demo destination systems](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/Destination) for examples of status component and variable usage.)
 
@@ -228,11 +232,11 @@ In addition to settings, there are also compile-time constants. You *can* change
 
 ## Credits
 
-* The demos extensively use [Mini Mike's Metro Minis](https://mikelovesrobots.github.io/mmmm) (licensed with [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/?)) by [Mike Judge](https://github.com/mikelovesrobots). That project is embedded in this one by way of `Assets/MMMM/`. I modified its directory structure, and generated my own prefabs rather than using the included ones.
-* One demo leverages animations from [Mixamo](https://www.mixamo.com) by [Adobe](https://www.adobe.com/).
-* The sounds mixed in the demos are from [Freesound](https://freesound.org/); only ones licensed with [CC0](https://creativecommons.org/share-your-work/public-domain/cc0/) are used here.
-* The navigation package uses [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents) (licensed with [MIT](https://opensource.org/licenses/MIT)) by [Unity Technologies](https://github.com/Unity-Technologies).
-* The navigation package also uses [PathUtils](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.nav/ThirdParty/PathUtils) (licensed with [zlib](https://opensource.org/licenses/Zlib)) by [Mikko Mononen](https://github.com/memononen), and modified by [Unity Technologies](https://github.com/Unity-Technologies). Did you know that Mikko is credited in [Death Stranding](https://en.wikipedia.org/wiki/Death_Stranding) for [Recast & Detour](https://github.com/recastnavigation/recastnavigation)?
+* The `Stranded` demo extensively uses [Mini Mike's Metro Minis](https://mikelovesrobots.github.io/mmmm) (licensed with [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/?)) by [Mike Judge](https://github.com/mikelovesrobots). That project is embedded in this one by way of `Assets/MMMM/`. Its directory structure was modified, and new prefabs were generated for it rather than using the included ones.
+* The sounds mixed in the `Stranded` demo are from [Freesound](https://freesound.org/); only ones licensed with [CC0](https://creativecommons.org/share-your-work/public-domain/cc0/) are used here.
+* The `NavHybridDemo` leverages animations from [Mixamo](https://www.mixamo.com) by [Adobe](https://www.adobe.com/).
+* The navigation package uses [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents) (licensed with [MIT](https://opensource.org/licenses/MIT)) by [Unity Technologies](https://github.com/Unity-Technologies); this means, for example, that runtime baking is supported, but just from the main thread.
+* The navigation package uses [PathUtils](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.nav/ThirdParty/PathUtils) (licensed with [zlib](https://opensource.org/licenses/Zlib)) by [Mikko Mononen](https://github.com/memononen), and modified by [Unity Technologies](https://github.com/Unity-Technologies). Did you know that Mikko is credited in [Death Stranding](https://en.wikipedia.org/wiki/Death_Stranding) for [Recast & Detour](https://github.com/recastnavigation/recastnavigation)?
 
 ## Contributing
 
