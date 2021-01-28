@@ -9,25 +9,37 @@ namespace Reese.Nav
     public class NavAgentHybrid : MonoBehaviour
     {
         /// <summary>True if the agent is walking, false if not.</summary>
-        public bool IsWalking { get; private set; }
+        public bool IsWalking { get; private set; } = default;
 
         /// <summary>True if the agent is jumping, false if not.</summary>
-        public bool IsJumping { get; private set; }
+        public bool IsJumping { get; private set; } = default;
 
         /// <summary>True if the agent is falling, false if not.</summary>
-        public bool IsFalling { get; private set; }
+        public bool IsFalling { get; private set; } = default;
 
         /// <summary>True if the agent is planning, false if not.</summary>
-        public bool IsPlanning { get; private set; }
+        public bool IsPlanning { get; private set; } = default;
 
         /// <summary>True if the agent is terrain-capable, false if not.</summary>
-        public bool IsTerrainCapable { get; set; }
+        public bool IsTerrainCapable { get; set; } = default;
 
         /// <summary>Has a value of PathQueryStatus if the agent has a problem, null if not.</summary>
-        public PathQueryStatus? HasProblem { get; private set; }
+        public PathQueryStatus? HasProblem { get; private set; } = default;
 
         /// <summary>True if the agent needs a surface, false if not.</summary>
-        public bool NeedsSurface { get; private set; }
+        public bool NeedsSurface { get; private set; } = default;
+
+        /// <summary>Set if this agent should follow another GameObject with a NavAgentHybrid component.</summary>
+        public GameObject FollowTarget { get; set; } = default;
+
+        /// <summary>Maximum distance before this agent will stop following the target Entity. If less than or equal to zero, this agent will follow the target Entity no matter how far it is away.</summary>
+        public float FollowMaxDistance { get; set; } = default;
+
+        /// <summary>Minimum distance this agent maintains between itself and the target Entity it follows.</summary>
+        public float FollowMinDistance { get; set; } = default;
+
+        /// <summary>Entity representation of this GameObject, which is used by the navigation package.</summary>
+        public Entity Entity { get; private set; } = default;
 
         /// <summary>The agent's jump angle in degrees.</summary>
         [SerializeField]
@@ -71,17 +83,16 @@ namespace Reese.Nav
 
         Vector3 lastWorldDestination = default;
 
-        Entity entity = default;
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
         NavSurfaceSystem surfaceSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavSurfaceSystem>();
 
         /// <summary>Stops the agent from navigating (waits for jumping or falling to complete).</summary>
         public void Stop()
-            => entityManager.AddComponent<NavStop>(entity);
+            => entityManager.AddComponent<NavStop>(Entity);
 
         void InitializeEntityTransform()
         {
-            entityManager.AddComponentData<LocalToWorld>(entity, new LocalToWorld
+            entityManager.AddComponentData<LocalToWorld>(Entity, new LocalToWorld
             {
                 Value = float4x4.TRS(
                     transform.position,
@@ -90,24 +101,24 @@ namespace Reese.Nav
                 )
             });
 
-            if (!entityManager.HasComponent<Rotation>(entity)) entityManager.AddComponent<Rotation>(entity);
+            if (!entityManager.HasComponent<Rotation>(Entity)) entityManager.AddComponent<Rotation>(Entity);
 
-            if (!entityManager.HasComponent<Parent>(entity))
+            if (!entityManager.HasComponent<Parent>(Entity))
             {
-                entityManager.AddComponent<Parent>(entity);
-                entityManager.AddComponent<LocalToParent>(entity);
+                entityManager.AddComponent<Parent>(Entity);
+                entityManager.AddComponent<LocalToParent>(Entity);
             }
 
-            if (!entityManager.HasComponent<Translation>(entity)) entityManager.AddComponent<Translation>(entity);
+            if (!entityManager.HasComponent<Translation>(Entity)) entityManager.AddComponent<Translation>(Entity);
 
-            entityManager.AddComponent<NavNeedsSurface>(entity);
+            entityManager.AddComponent<NavNeedsSurface>(Entity);
         }
 
         void Start()
         {
-            entity = entityManager.CreateEntity();
+            Entity = entityManager.CreateEntity();
 
-            entityManager.AddComponentData(entity, new NavAgent
+            entityManager.AddComponentData(Entity, new NavAgent
             {
                 JumpDegrees = JumpDegrees,
                 JumpGravity = JumpGravity,
@@ -124,33 +135,33 @@ namespace Reese.Nav
 
         void Update()
         {
-            if (entity.Equals(Entity.Null)) return;
+            if (Entity.Equals(Entity.Null)) return;
 
-            IsWalking = entityManager.HasComponent<NavWalking>(entity);
-            IsJumping = entityManager.HasComponent<NavJumping>(entity);
-            IsFalling = entityManager.HasComponent<NavFalling>(entity);
-            IsPlanning = entityManager.HasComponent<NavPlanning>(entity);
+            IsWalking = entityManager.HasComponent<NavWalking>(Entity);
+            IsJumping = entityManager.HasComponent<NavJumping>(Entity);
+            IsFalling = entityManager.HasComponent<NavFalling>(Entity);
+            IsPlanning = entityManager.HasComponent<NavPlanning>(Entity);
 
-            NeedsSurface = entityManager.HasComponent<NavNeedsSurface>(entity);
+            NeedsSurface = entityManager.HasComponent<NavNeedsSurface>(Entity);
 
-            if (IsTerrainCapable && !entityManager.HasComponent<NavTerrainCapable>(entity)) entityManager.AddComponent<NavTerrainCapable>(entity);
-            else entityManager.RemoveComponent<NavTerrainCapable>(entity);
+            if (IsTerrainCapable && !entityManager.HasComponent<NavTerrainCapable>(Entity)) entityManager.AddComponent<NavTerrainCapable>(Entity);
+            else entityManager.RemoveComponent<NavTerrainCapable>(Entity);
 
-            if (entityManager.HasComponent<NavHasProblem>(entity)) HasProblem = entityManager.GetComponentData<NavHasProblem>(entity).Value;
+            if (entityManager.HasComponent<NavHasProblem>(Entity)) HasProblem = entityManager.GetComponentData<NavHasProblem>(Entity).Value;
             else HasProblem = null;
         }
 
         void FixedUpdate()
         {
             if (
-                entity.Equals(Entity.Null) ||
-                !entityManager.HasComponent<NavAgent>(entity) ||
-                !entityManager.HasComponent<Parent>(entity) ||
-                !entityManager.HasComponent<Translation>(entity) ||
-                !entityManager.HasComponent<Rotation>(entity)
+                Entity.Equals(Entity.Null) ||
+                !entityManager.HasComponent<NavAgent>(Entity) ||
+                !entityManager.HasComponent<Parent>(Entity) ||
+                !entityManager.HasComponent<Translation>(Entity) ||
+                !entityManager.HasComponent<Rotation>(Entity)
             ) return;
 
-            var agent = entityManager.GetComponentData<NavAgent>(entity);
+            var agent = entityManager.GetComponentData<NavAgent>(Entity);
 
             agent.JumpDegrees = JumpDegrees;
             agent.JumpGravity = JumpGravity;
@@ -161,11 +172,11 @@ namespace Reese.Nav
             agent.TypeID = NavUtil.GetAgentType(Type);
             agent.Offset = Offset;
 
-            entityManager.SetComponentData(entity, agent);
+            entityManager.SetComponentData(Entity, agent);
 
             if (!lastWorldDestination.Equals(WorldDestination))
             {
-                entityManager.AddComponentData<NavNeedsDestination>(entity, new NavNeedsDestination
+                entityManager.AddComponentData<NavNeedsDestination>(Entity, new NavNeedsDestination
                 {
                     Destination = WorldDestination,
                     Teleport = Teleport
@@ -176,7 +187,7 @@ namespace Reese.Nav
                 InitializeEntityTransform(); // Reinitialize in case GameObject transform changes in-between pathing.
             }
 
-            var surfaceEntity = entityManager.GetComponentData<Parent>(entity);
+            var surfaceEntity = entityManager.GetComponentData<Parent>(Entity);
 
             if (surfaceEntity.Value.Equals(Entity.Null) || !entityManager.HasComponent<NavSurface>(surfaceEntity.Value)) return;
 
@@ -188,8 +199,22 @@ namespace Reese.Nav
             if (surfaceGameObject == null) return;
 
             gameObject.transform.SetParent(surfaceGameObject.transform);
-            gameObject.transform.localPosition = entityManager.GetComponentData<Translation>(entity).Value / surfaceGameObject.transform.localScale;
-            gameObject.transform.localRotation = entityManager.GetComponentData<Rotation>(entity).Value;
+            gameObject.transform.localPosition = entityManager.GetComponentData<Translation>(Entity).Value / surfaceGameObject.transform.localScale;
+            gameObject.transform.localRotation = entityManager.GetComponentData<Rotation>(Entity).Value;
+
+            if (FollowTarget != null && FollowTarget.GetComponent<NavAgentHybrid>() != null)
+            {
+                entityManager.AddComponentData(Entity, new NavFollow
+                {
+                    Target = FollowTarget.GetComponent<NavAgentHybrid>().Entity,
+                    MaxDistance = FollowMaxDistance,
+                    MinDistance = FollowMinDistance,
+                });
+            }
+            else if (entityManager.HasComponent<NavFollow>(Entity))
+            {
+                entityManager.RemoveComponent<NavFollow>(Entity);
+            }
         }
     }
 }
