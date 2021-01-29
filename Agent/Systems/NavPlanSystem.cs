@@ -33,7 +33,7 @@ namespace Reese.Nav
             var navMeshQueryPointerArray = World.GetExistingSystem<NavMeshQuerySystem>().PointerArray;
 
             Entities
-                .WithNone<NavHasProblem>()
+                .WithNone<NavProblem>()
                 .WithAll<NavPlanning, LocalToParent>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(jumpingFromEntity)
@@ -83,11 +83,14 @@ namespace Reese.Nav
                     if (!NavUtil.HasStatus(status, PathQueryStatus.Success))
                     {
                         commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
+
                         commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity);
-                        commandBuffer.AddComponent<NavHasProblem>(entityInQueryIndex, entity, new NavHasProblem
+
+                        commandBuffer.AddComponent<NavProblem>(entityInQueryIndex, entity, new NavProblem
                         {
                             Value = status
                         });
+
                         return;
                     }
 

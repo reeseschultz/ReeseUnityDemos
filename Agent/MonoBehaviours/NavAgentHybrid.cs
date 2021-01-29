@@ -147,7 +147,7 @@ namespace Reese.Nav
             if (IsTerrainCapable && !entityManager.HasComponent<NavTerrainCapable>(Entity)) entityManager.AddComponent<NavTerrainCapable>(Entity);
             else entityManager.RemoveComponent<NavTerrainCapable>(Entity);
 
-            if (entityManager.HasComponent<NavHasProblem>(Entity)) HasProblem = entityManager.GetComponentData<NavHasProblem>(Entity).Value;
+            if (entityManager.HasComponent<NavProblem>(Entity)) HasProblem = entityManager.GetComponentData<NavProblem>(Entity).Value;
             else HasProblem = null;
         }
 

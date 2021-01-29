@@ -18,7 +18,7 @@ namespace Reese.Nav
 
             Entities
                 .WithAll<NavAgent, LocalToWorld>()
-                .WithNone<NavHasProblem, NavFalling, NavJumping>()
+                .WithNone<NavProblem, NavFalling, NavJumping>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(needsDestinationFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, in NavFollow follow) =>

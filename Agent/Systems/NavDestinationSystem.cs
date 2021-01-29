@@ -28,7 +28,7 @@ namespace Reese.Nav
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithNone<NavHasProblem>()
+                .WithNone<NavProblem>()
                 .WithChangeFilter<NavDestination>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(physicsWorld)
