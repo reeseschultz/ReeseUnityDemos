@@ -13,8 +13,7 @@ This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [
 1. [Navigation](https://github.com/reeseschultz/ReeseUnityDemos/tree/nav#reeses-dots-navigation) - DOTS navigation with auto-jumping agents and movable surfaces; released as a package on the `nav` branch.
 2. [Randomization](https://github.com/reeseschultz/ReeseUnityDemos/tree/random#reeses-dots-randomization) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones; released as a package on the `random` branch.
 3. [Spatial Events](https://github.com/reeseschultz/ReeseUnityDemos/tree/spatial#reeses-dots-spatial-events) - Reactive entry and exit events in Burst-capable jobs; released as a package on the `spatial` branch.
-
-Other packages are currently under development and are temporarily being used as demo code until they're ready to be released.
+4. [Utility Code](https://github.com/reeseschultz/ReeseUnityDemos/tree/utility#reeses-utility-code) - General utility code for Unity, mainly DOTS-oriented; released as a package on the `utility` branch.
 
 ## Demos
 

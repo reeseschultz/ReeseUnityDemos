@@ -4,12 +4,12 @@ using Unity.Transforms;
 using UnityEngine;
 using static Unity.Entities.ConvertToEntity;
 
-namespace Reese.Demo
+namespace Reese.Utility
 {
     /// <summary>Authors a sticky.</summary>
     public class StickyAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     {
-        /// <summary>World direction in which the object should attempt to stick to another.</summary>
+        /// <summary>World direction unit vector in which the object should attempt to stick to another.</summary>
         [SerializeField]
         Vector3 worldDirection = Vector3.down;
 
@@ -29,7 +29,7 @@ namespace Reese.Demo
         [SerializeField]
         bool useDefaultCollisionFilter = true;
 
-        /// <summary>Radius of raycasting SphereGeometry used to stick this object to another.</summary>
+        /// <summary>Radius of collider-casting SphereGeometry used to stick this object to another.</summary>
         [SerializeField]
         float radius = default;
 

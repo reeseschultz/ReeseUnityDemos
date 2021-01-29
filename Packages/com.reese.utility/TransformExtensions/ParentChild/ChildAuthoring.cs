@@ -3,7 +3,7 @@ using Unity.Transforms;
 using UnityEngine;
 using static Unity.Entities.ConvertToEntity;
 
-namespace Reese.Demo
+namespace Reese.Utility
 {
     /// <summary>Authors a child.</summary>
     public class ChildAuthoring : MonoBehaviour, IConvertGameObjectToEntity

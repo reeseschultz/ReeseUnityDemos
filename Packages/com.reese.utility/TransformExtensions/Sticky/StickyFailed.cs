@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace Reese.Demo
+namespace Reese.Utility
 {
     public struct StickyFailed : IComponentData { }
 }

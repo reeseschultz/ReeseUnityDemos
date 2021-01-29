@@ -7,7 +7,7 @@ using Collider = Unity.Physics.Collider;
 using SphereCollider = Unity.Physics.SphereCollider;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 
-namespace Reese.Demo
+namespace Reese.Utility
 {
     [UpdateAfter(typeof(TransformSystemGroup))]
     public class StickySystem : SystemBase

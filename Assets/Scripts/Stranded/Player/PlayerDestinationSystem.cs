@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using Unity.Physics;
 using Unity.Physics.Systems;
 using static Reese.Nav.NavSystem;
+using Reese.Utility;
 
 namespace Reese.Demo.Stranded
 {

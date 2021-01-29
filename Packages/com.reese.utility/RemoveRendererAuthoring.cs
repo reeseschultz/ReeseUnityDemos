@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace Reese.Demo
+namespace Reese.Utility
 {
     /// <summary>Removes mesh renderer from injected GameObject in authoring.</summary>
     public class RemoveRendererAuthoring : MonoBehaviour, IConvertGameObjectToEntity

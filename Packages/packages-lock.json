@@ -27,6 +27,15 @@
         "com.unity.physics": "0.5.1-preview.2"
       }
     },
+    "com.reese.utility": {
+      "version": "file:com.reese.utility",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.entities": "0.17.0-preview.41",
+        "com.unity.physics": "0.5.1-preview.2"
+      }
+    },
     "com.unity.burst": {
       "version": "1.4.1",
       "depth": 1,

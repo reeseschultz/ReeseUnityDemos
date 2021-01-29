@@ -3,9 +3,8 @@ using Unity.Jobs;
 using Unity.Transforms;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 using Unity.Mathematics;
-using Reese.Nav;
 
-namespace Reese.Demo
+namespace Reese.Utility
 {
     public class FixTranslationSystem : SystemBase
     {
