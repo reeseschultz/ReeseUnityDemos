@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using Reese.Spatial;
+using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -7,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo.Stranded
 {
-    [UpdateAfter(typeof(SpatialEventSystem))]
+    [UpdateAfter(typeof(SpatialSystem))]
     class CatSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
@@ -28,19 +29,17 @@ namespace Reese.Demo.Stranded
 
             var elapsedSeconds = (float)Time.ElapsedTime;
 
-            Entities // Example handling of the spatial entry buffer.
-                .WithAll<Cat>()
+            Entities
+                .WithAll<SpatialTrigger, Cat>()
                 .WithChangeFilter<SpatialEntryBufferElement>()
                 .WithNone<Hopping>()
                 .ForEach((Entity entity, ref DynamicBuffer<SpatialEntryBufferElement> entryBuffer, in Translation translation) =>
                 {
                     var controller = go.GetComponent<CatSoundController>();
 
-                    if (controller == null) return;
-
-                    for (var i = entryBuffer.Length - 1; i >= 0; --i) // Traversing from end of buffer so removal is straightforward and performant.
+                    for (var i = entryBuffer.Length - 1; i >= 0; --i) // Traversing from the end of the buffer for performance reasons.
                     {
-                        controller.Meow();
+                        if (controller != null) controller.Meow();
 
                         commandBuffer.AddComponent(entity, new Hopping
                         {
@@ -50,31 +49,29 @@ namespace Reese.Demo.Stranded
                             Duration = 1
                         });
 
-                        Debug.Log(entryBuffer[0].Value + " has entered the cat's trigger bounds.");
+                        Debug.Log(entryBuffer[i].Value + " is making me purr! Purrrrrrrr!");
 
                         entryBuffer.RemoveAt(i); // If you don't remove exits, they'll pile up in the buffer and eventually consume lots of heap memory.
                     }
                 })
-                .WithoutBurst()
-                .WithName("CatMeowJob")
+                .WithoutBurst() // Not using Burst since there's logging in the job.
+                .WithName("CatEntryJob")
                 .Run();
 
-            Entities // Example handling of the spatial exit buffer.
-                .WithAll<Cat>()
+            Entities
+                .WithAll<SpatialTrigger, Cat>()
                 .WithChangeFilter<SpatialExitBufferElement>()
                 .ForEach((Entity entity, ref DynamicBuffer<SpatialExitBufferElement> exitBuffer) =>
                 {
-                    for (var i = exitBuffer.Length - 1; i >= 0; --i) // Traversing from end of buffer so removal is straightforward and performant.
+                    for (var i = exitBuffer.Length - 1; i >= 0; --i) // Traversing from the end of the buffer for performance reasons.
                     {
-                        Debug.Log(exitBuffer[i].Value + " has exited the cat's trigger bounds.");
-
-                        // Potentially handle different kinds of exit events here.
+                        Debug.Log(exitBuffer[i].Value + " is making me meow for attention! MEEEOWWWWWWW!");
 
                         exitBuffer.RemoveAt(i); // If you don't remove exits, they'll pile up in the buffer and eventually consume lots of heap memory.
                     }
                 })
                 .WithoutBurst() // Not using Burst since there's logging in the job.
-                .WithName("ExitJob")
+                .WithName("CatExitJob")
                 .ScheduleParallel();
 
             var parallelCommandBuffer = commandBuffer.AsParallelWriter();

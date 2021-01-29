@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace Reese.Demo
+namespace Reese.Spatial
 {
     [InternalBufferCapacity(10)]
     public struct SpatialExitBufferElement : IBufferElementData

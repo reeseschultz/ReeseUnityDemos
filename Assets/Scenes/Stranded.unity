@@ -5132,7 +5132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49bf61acc4c2877fd847ee2daa8c9274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groups:
+  tags:
   - Meow
 --- !u!54 &4312274113086250728
 Rigidbody:
@@ -5264,7 +5264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49bf61acc4c2877fd847ee2daa8c9274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groups:
+  tags:
   - Meow
 --- !u!114 &4513328087602605687
 MonoBehaviour:
@@ -6462,7 +6462,7 @@ MonoBehaviour:
   collidesWithLayer: 0
   groupIndex: 0
   useDefaultCollisionFilter: 1
-  groups:
+  tags:
   - Meow
 --- !u!82 &8849378376642101707
 AudioSource:

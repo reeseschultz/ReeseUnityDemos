@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace Reese.Demo
+namespace Reese.Spatial
 {
     public struct SpatialActivator : IComponentData { }
 }

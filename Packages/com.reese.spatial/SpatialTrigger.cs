@@ -1,7 +1,7 @@
 ﻿using Unity.Entities;
 using Unity.Physics;
 
-namespace Reese.Demo
+namespace Reese.Spatial
 {
     public struct SpatialTrigger : IComponentData
     {

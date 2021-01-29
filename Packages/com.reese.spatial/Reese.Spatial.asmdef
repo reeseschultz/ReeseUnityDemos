@@ -1,9 +1,6 @@
 {
-    "name": "Reese.Demo",
+    "name": "Reese.Spatial",
     "references": [
-        "Reese.Nav",
-        "Reese.Random",
-        "Reese.Spatial",
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Entities",
@@ -13,7 +10,6 @@
         "Unity.Mathematics.Extensions",
         "Unity.Physics",
         "Unity.Physics.Hybrid",
-        "Unity.Rendering.Hybrid",
         "Unity.Transforms",
         "Unity.Transforms.Hybrid"
     ],

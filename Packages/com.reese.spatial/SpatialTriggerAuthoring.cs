@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Physics;
 using UnityEngine;
 
-namespace Reese.Demo
+namespace Reese.Spatial
 {
     /// <summary>Authors a SpatialTrigger.</summary>
     public class SpatialTriggerAuthoring : MonoBehaviour, IConvertGameObjectToEntity
@@ -25,9 +25,9 @@ namespace Reese.Demo
         [SerializeField]
         bool useDefaultCollisionFilter = true;
 
-        /// <summary>This trigger will be activated by any overlapping activators belonging to the same group.</summary>
+        /// <summary>This trigger will be activated by any overlapping activators belonging to the same tag.</summary>
         [SerializeField]
-        List<string> groups = new List<string>();
+        List<string> tags = new List<string>();
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
@@ -35,17 +35,17 @@ namespace Reese.Demo
             {
                 Filter = useDefaultCollisionFilter ? CollisionFilter.Default : new CollisionFilter
                 {
-                    BelongsTo = Util.ToBitMask(belongsToLayer),
-                    CollidesWith = Util.ToBitMask(collidesWithLayer),
+                    BelongsTo = SpatialUtil.ToBitMask(belongsToLayer),
+                    CollidesWith = SpatialUtil.ToBitMask(collidesWithLayer),
                     GroupIndex = groupIndex
                 }
             });
 
-            dstManager.AddComponent(entity, typeof(SpatialGroupBufferElement));
+            dstManager.AddComponent(entity, typeof(SpatialTagBufferElement));
 
-            var groupBuffer = dstManager.GetBuffer<SpatialGroupBufferElement>(entity);
+            var tagBuffer = dstManager.GetBuffer<SpatialTagBufferElement>(entity);
 
-            groups.Distinct().ToList().ForEach(group => groupBuffer.Add(group));
+            tags.Distinct().ToList().ForEach(tag => tagBuffer.Add(tag));
         }
     }
 }

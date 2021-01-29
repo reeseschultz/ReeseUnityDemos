@@ -5,11 +5,11 @@ using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
 
-namespace Reese.Demo
+namespace Reese.Spatial
 {
     /// <summary>Detects the entry and exit of activators to and from the bounds of triggers.</summary>
     [UpdateBefore(typeof(TransformSystemGroup))]
-    public class SpatialEventSystem : SystemBase
+    public class SpatialSystem : SystemBase
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetOrCreateSystem<BuildPhysicsWorld>();
 
@@ -24,7 +24,7 @@ namespace Reese.Demo
             var entriesFromEntity = GetBufferFromEntity<SpatialEntryBufferElement>();
             var exitsFromEntity = GetBufferFromEntity<SpatialExitBufferElement>();
 
-            var groupBufferFromEntity = GetBufferFromEntity<SpatialGroupBufferElement>(true);
+            var tagBufferFromEntity = GetBufferFromEntity<SpatialTagBufferElement>(true);
 
             var previousEntryBufferFromEntity = GetBufferFromEntity<SpatialPreviousEntryBufferElement>();
 
@@ -33,18 +33,18 @@ namespace Reese.Demo
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithAll<SpatialGroupBufferElement>()
+                .WithAll<SpatialTagBufferElement>()
                 .WithReadOnly(activatorFromEntity)
                 .WithReadOnly(collisionWorld)
-                .WithReadOnly(groupBufferFromEntity)
+                .WithReadOnly(tagBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(entriesFromEntity)
                 .WithNativeDisableParallelForRestriction(exitsFromEntity)
                 .WithNativeDisableParallelForRestriction(previousEntryBufferFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, in SpatialTrigger trigger, in PhysicsCollider collider, in LocalToWorld localToWorld) =>
                 {
-                    var groupBuffer = groupBufferFromEntity[entity];
+                    var tagBuffer = tagBufferFromEntity[entity];
 
-                    if (groupBuffer.Length <= 0) return;
+                    if (tagBuffer.Length <= 0) return;
 
                     var overlaps = new NativeList<int>(Allocator.Temp);
 
@@ -104,8 +104,8 @@ namespace Reese.Demo
 
                     overlappingActivatorEntitySet.Dispose();
 
-                    var groupSet = new NativeHashSet<FixedString128>(1, Allocator.Temp);
-                    for (var i = 0; i < groupBuffer.Length; ++i) groupSet.Add(groupBuffer[i]);
+                    var tagSet = new NativeHashSet<FixedString128>(1, Allocator.Temp);
+                    for (var i = 0; i < tagBuffer.Length; ++i) tagSet.Add(tagBuffer[i]);
 
                     var previousEntrySet = new NativeHashSet<Entity>(1, Allocator.Temp);
                     for (var i = 0; i < previousEntryBuffer.Length; ++i) previousEntrySet.Add(previousEntryBuffer[i]);
@@ -117,23 +117,23 @@ namespace Reese.Demo
                         if (
                             overlappingEntity == Entity.Null ||
                             !activatorFromEntity.HasComponent(overlappingEntity) ||
-                            !groupBufferFromEntity.HasComponent(overlappingEntity) ||
+                            !tagBufferFromEntity.HasComponent(overlappingEntity) ||
                             previousEntrySet.Contains(overlappingEntity)
                         ) continue;
 
-                        var overlappingGroups = groupBufferFromEntity[overlappingEntity];
+                        var overlappingTags = tagBufferFromEntity[overlappingEntity];
 
-                        var sharesGroup = false;
+                        var sharesTag = false;
 
-                        for (var j = 0; j < overlappingGroups.Length; ++j)
+                        for (var j = 0; j < overlappingTags.Length; ++j)
                         {
-                            if (!groupSet.Contains(overlappingGroups[j])) continue;
+                            if (!tagSet.Contains(overlappingTags[j])) continue;
 
-                            sharesGroup = true;
+                            sharesTag = true;
                             break;
                         }
 
-                        if (!sharesGroup) continue;
+                        if (!sharesTag) continue;
 
                         if (!entriesFromEntity.HasComponent(entity)) commandBuffer.AddBuffer<SpatialEntryBufferElement>(entityInQueryIndex, entity);
                         commandBuffer.AppendToBuffer<SpatialEntryBufferElement>(entityInQueryIndex, entity, overlappingEntity);
@@ -142,10 +142,10 @@ namespace Reese.Demo
                     }
 
                     previousEntrySet.Dispose();
-                    groupSet.Dispose();
+                    tagSet.Dispose();
                     overlappingActivators.Dispose();
                 })
-                .WithName("SpatialEventJob")
+                .WithName("SpatialJob")
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
