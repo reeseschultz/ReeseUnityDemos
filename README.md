@@ -10,10 +10,11 @@ Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by me,
 
 This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [monorepo](https://en.wikipedia.org/wiki/Monorepo) that supports the included demos, featuring:
 
-1. [Nav](https://openupm.com/packages/com.reese.nav/) - DOTS navigation with auto-jumping agents and movable surfaces; released as a package on the `nav` branch.
-2. [Randomization](https://openupm.com/packages/com.reese.random/) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones; released as a package on the `random` branch.
+1. [Navigation](https://github.com/reeseschultz/ReeseUnityDemos/tree/nav#reeses-dots-navigation) - DOTS navigation with auto-jumping agents and movable surfaces; released as a package on the `nav` branch.
+2. [Randomization](https://github.com/reeseschultz/ReeseUnityDemos/tree/random#reeses-dots-randomization) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones; released as a package on the `random` branch.
+3. [Spatial Events](https://github.com/reeseschultz/ReeseUnityDemos/tree/spatial#reeses-dots-spatial-events) - Reactive entry and exit events in Burst-capable jobs; released as a package on the `spatial` branch.
 
-Other packages are currently under development, such as the spatial event system, and are temporarily being used as demo code until they're ready to be released.
+Other packages are currently under development and are temporarily being used as demo code until they're ready to be released.
 
 ## Demos
 
