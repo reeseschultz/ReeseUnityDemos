@@ -7,8 +7,8 @@ using Unity.Transforms;
 
 namespace Reese.Nav
 {
-    [UpdateAfter(typeof(NavInterpolationSystem))]
-    public class NavGroundingSystem : SystemBase
+    [UpdateAfter(typeof(NavLerpSystem))]
+    public class NavGroundSystem : SystemBase
     {
         public bool IsDebugging = false;
 

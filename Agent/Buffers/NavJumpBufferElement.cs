@@ -5,7 +5,7 @@ namespace Reese.Nav
 {
     /// <summary>A buffer of a single "jumpable" position intended for
     /// NavAgents. Written to in the NavPlanSystem. Read in the
-    /// NavInterpolationSystem, but also written to from there in order to
+    /// NavLerpSystem, but also written to from there in order to
     /// clear the buffer when jumping is complete.</summary>
     [InternalBufferCapacity(1)]
     public struct NavJumpBufferElement : IBufferElementData
