@@ -2,7 +2,7 @@
 
 # Reese's DOTS Spawning (***DEPRECATED!***)
 
-***This package is no longer maintained! Please use the EntityManager or CommandBuffer to instantiate entities from prefabs instead.***
+***This package is no longer maintained! Please use the `EntityManager` or `CommandBuffer` to instantiate entities from prefabs instead.***
 
 ---
 
