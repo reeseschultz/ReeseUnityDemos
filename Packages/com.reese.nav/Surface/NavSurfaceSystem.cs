@@ -79,7 +79,7 @@ namespace Reese.Nav
 
             // Adds Parent and LocalToParent components when to agents:
             Entities
-                .WithNone<NavHasProblem, Parent>()
+                .WithNone<NavProblem, Parent>()
                 .ForEach((Entity entity, int entityInQueryIndex, in NavAgent agent) =>
                 {
                     commandBuffer.AddComponent<Parent>(entityInQueryIndex, entity);
@@ -112,7 +112,7 @@ namespace Reese.Nav
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithNone<NavHasProblem, NavFalling, NavJumping>()
+                .WithNone<NavProblem, NavFalling, NavJumping>()
                 .WithAll<NavNeedsSurface, LocalToParent>()
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)

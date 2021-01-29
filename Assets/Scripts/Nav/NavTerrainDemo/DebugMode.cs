@@ -62,7 +62,7 @@ namespace Reese.Demo
         {
             if (LogNavError)
             {
-                Entities.ForEach((Entity entity, in NavHasProblem navHasProblem) =>
+                Entities.ForEach((Entity entity, in NavProblem navHasProblem) =>
                 {
                     Debug.Log(string.Format("{0} has a nav problem! {1}", entity, navHasProblem.Value));
                 }).Run();

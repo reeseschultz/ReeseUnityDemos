@@ -32,7 +32,7 @@ namespace Reese.Demo.Stranded
             var ran = false;
 
             Entities
-                .WithAny<NavHasProblem, NavFalling>()
+                .WithAny<NavProblem, NavFalling>()
                 .ForEach((in NavAgent agent, in Player player) =>
                 {
                     controller.Run();

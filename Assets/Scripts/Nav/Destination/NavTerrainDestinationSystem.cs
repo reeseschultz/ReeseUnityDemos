@@ -33,7 +33,7 @@ namespace Reese.Demo
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithNone<NavHasProblem, NavDestination, NavPlanning>()
+                .WithNone<NavProblem, NavDestination, NavPlanning>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
                 .WithReadOnly(physicsWorld)

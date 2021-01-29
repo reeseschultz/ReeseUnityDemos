@@ -25,7 +25,7 @@ namespace Reese.Nav
             var isDebugging = IsDebugging;
 
             Entities
-               .WithNone<NavHasProblem>()
+               .WithNone<NavProblem>()
                .WithNone<NavPlanning, NavJumping, NavFalling>()
                .WithAll<NavWalking, LocalToParent, NavTerrainCapable>()
                .WithReadOnly(physicsWorld)
