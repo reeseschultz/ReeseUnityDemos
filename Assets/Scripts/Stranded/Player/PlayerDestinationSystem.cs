@@ -111,9 +111,9 @@ namespace Reese.Demo.Stranded
 
                 if (mouse != null && mouse.leftButton.isPressed)
                 {
-                    EntityManager.AddComponentData(playerEntity, new NavNeedsDestination
+                    EntityManager.AddComponentData(playerEntity, new NavDestination
                     {
-                        Destination = hit.Position,
+                        WorldPoint = hit.Position,
                         Tolerance = 1
                     });
                 }

@@ -71,9 +71,9 @@ namespace Reese.Demo
                 !Physics.Raycast(Camera.main.ScreenPointToRay(new Vector2(mouse.position.x.ReadValue(), mouse.position.y.ReadValue())), out RaycastHit hit)
             ) return;
 
-            EntityManager.AddComponentData(agentEntity, new NavNeedsDestination
+            EntityManager.AddComponentData(agentEntity, new NavDestination
             {
-                Destination = hit.point,
+                WorldPoint = hit.point,
                 Teleport = teleport
             });
         }

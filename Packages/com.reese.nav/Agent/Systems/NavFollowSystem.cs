@@ -14,7 +14,7 @@ namespace Reese.Nav
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
-            var needsDestinationFromEntity = GetComponentDataFromEntity<NavNeedsDestination>(true);
+            var needsDestinationFromEntity = GetComponentDataFromEntity<NavDestination>(true);
 
             Entities
                 .WithAll<NavAgent, LocalToWorld>()
@@ -42,9 +42,9 @@ namespace Reese.Nav
 
                     var targetDestination = needsDestinationFromEntity[follow.Target];
 
-                    commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination
+                    commandBuffer.AddComponent(entityInQueryIndex, entity, new NavDestination
                     {
-                        Destination = targetPosition,
+                        WorldPoint = targetPosition,
                         Tolerance = targetDestination.Tolerance,
                         CustomLerp = targetDestination.CustomLerp
                     });

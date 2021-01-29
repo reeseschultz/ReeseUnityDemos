@@ -27,7 +27,7 @@ namespace Reese.Demo
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
             Entities
-                .WithNone<NavHasProblem, NavNeedsDestination>()
+                .WithNone<NavHasProblem, NavDestination>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
                 .WithReadOnly(localToWorldFromEntity)
@@ -55,9 +55,9 @@ namespace Reese.Demo
                         localPoint
                     );
 
-                    commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination
+                    commandBuffer.AddComponent(entityInQueryIndex, entity, new NavDestination
                     {
-                        Destination = worldPoint
+                        WorldPoint = worldPoint
                     });
 
                     randomArray[nativeThreadIndex] = random;

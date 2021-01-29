@@ -33,7 +33,7 @@ namespace Reese.Demo
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithNone<NavHasProblem, NavNeedsDestination, NavPlanning>()
+                .WithNone<NavHasProblem, NavDestination, NavPlanning>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
                 .WithReadOnly(physicsWorld)
@@ -63,9 +63,9 @@ namespace Reese.Demo
                         )
                     )
                     {
-                        commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination
+                        commandBuffer.AddComponent(entityInQueryIndex, entity, new NavDestination
                         {
-                            Destination = validDestination
+                            WorldPoint = validDestination
                         });
                     }
 

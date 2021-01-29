@@ -29,21 +29,21 @@ namespace Reese.Nav
 
             Entities
                 .WithNone<NavHasProblem>()
-                .WithChangeFilter<NavNeedsDestination>()
+                .WithChangeFilter<NavDestination>()
                 .WithReadOnly(localToWorldFromEntity)
                 .WithReadOnly(physicsWorld)
-                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavNeedsDestination needsDestination) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, in NavDestination destination) =>
                 {
                     if (elapsedSeconds - agent.DestinationSeconds < settings.DestinationRateLimitSeconds)
                     {
-                        commandBuffer.AddComponent<NavNeedsDestination>(entityInQueryIndex, entity, needsDestination); // So that the change filter applies next frame.
+                        commandBuffer.AddComponent<NavDestination>(entityInQueryIndex, entity, destination); // So that the change filter applies next frame.
                         return;
                     }
 
                     var collider = SphereCollider.Create(
                         new SphereGeometry()
                         {
-                            Center = needsDestination.Destination,
+                            Center = destination.WorldPoint,
                             Radius = settings.DestinationSurfaceColliderRadius
                         },
                         new CollisionFilter()
@@ -63,18 +63,18 @@ namespace Reese.Nav
 
                         if (!physicsWorld.CastCollider(castInput, out ColliderCastHit hit))
                         {
-                            commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity); // Ignore invalid destinations.
+                            commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity); // Ignore invalid destinations.
                             return;
                         }
 
-                        var destination = NavUtil.MultiplyPoint3x4(
+                        var destinationPoint = NavUtil.MultiplyPoint3x4(
                             math.inverse(localToWorldFromEntity[hit.Entity].Value),
-                            needsDestination.Destination
+                            destination.WorldPoint
                         ) + agent.Offset;
 
-                        if (NavUtil.ApproxEquals(destination, agent.LocalDestination, needsDestination.Tolerance)) return;
+                        if (NavUtil.ApproxEquals(destinationPoint, agent.LocalDestination, destination.Tolerance)) return;
 
-                        if (needsDestination.Teleport)
+                        if (destination.Teleport)
                         {
                             commandBuffer.SetComponent<Parent>(entityInQueryIndex, entity, new Parent
                             {
@@ -83,16 +83,16 @@ namespace Reese.Nav
 
                             commandBuffer.SetComponent<Translation>(entityInQueryIndex, entity, new Translation
                             {
-                                Value = destination
+                                Value = destinationPoint
                             });
 
-                            commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
+                            commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity);
 
                             return;
                         }
 
                         agent.DestinationSurface = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-                        agent.LocalDestination = destination;
+                        agent.LocalDestination = destinationPoint;
                         agent.DestinationSeconds = elapsedSeconds;
 
                         commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);

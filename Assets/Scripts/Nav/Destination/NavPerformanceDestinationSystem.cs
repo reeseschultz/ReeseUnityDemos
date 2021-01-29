@@ -26,7 +26,7 @@ namespace Reese.Demo
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
 
             Entities
-                .WithNone<NavHasProblem, NavNeedsDestination>()
+                .WithNone<NavHasProblem, NavDestination>()
                 .WithReadOnly(jumpableBufferFromEntity)
                 .WithReadOnly(renderBoundsFromEntity)
                 .WithNativeDisableParallelForRestriction(randomArray)
@@ -40,9 +40,9 @@ namespace Reese.Demo
                     var jumpableSurfaces = jumpableBufferFromEntity[surface.Value];
                     var random = randomArray[nativeThreadIndex];
 
-                    commandBuffer.AddComponent(entityInQueryIndex, entity, new NavNeedsDestination
+                    commandBuffer.AddComponent(entityInQueryIndex, entity, new NavDestination
                     {
-                        Destination = NavUtil.GetRandomPointInBounds(
+                        WorldPoint = NavUtil.GetRandomPointInBounds(
                             ref random,
                             renderBoundsFromEntity[surface.Value].Value,
                             99
