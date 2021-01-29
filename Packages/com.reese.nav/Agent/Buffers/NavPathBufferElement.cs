@@ -5,7 +5,7 @@ namespace Reese.Nav
 {
     /// <summary>A buffer of positions NavAgents may traverse to reach their
     /// destinations. Written to in the NavPlanSystem for path and jump
-    /// planning. Read in the NavInterpolationSystem for interpolation.
+    /// planning. Read in the NavLerpSystem for interpolation.
     /// </summary>
     [InternalBufferCapacity(NavConstants.PATH_NODE_MAX)]
     public struct NavPathBufferElement : IBufferElementData

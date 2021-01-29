@@ -3,7 +3,7 @@ using Unity.Jobs;
 
 namespace Reese.Nav
 {
-    public class NavStoppingSystem : SystemBase
+    public class NavStopSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
@@ -15,7 +15,7 @@ namespace Reese.Nav
             var destinationFromEntity = GetComponentDataFromEntity<NavNeedsDestination>(true);
             var planningFromEntity = GetComponentDataFromEntity<NavPlanning>(true);
 
-            var job = Entities
+            Entities
                 .WithNone<NavFalling, NavJumping>()
                 .WithReadOnly(walkingFromEntity)
                 .WithReadOnly(destinationFromEntity)
@@ -30,10 +30,10 @@ namespace Reese.Nav
 
                     if (planningFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
                 })
-                .WithName("NavStoppingJob")
-                .ScheduleParallel(Dependency);
+                .WithName("NavStopJob")
+                .ScheduleParallel();
 
-            job.Complete();
+            barrier.AddJobHandleForProducer(Dependency);
         }
     }
 }

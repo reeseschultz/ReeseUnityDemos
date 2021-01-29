@@ -26,7 +26,7 @@ namespace Reese.Nav
 
         /// <summary>This is the *point* in time when the agent started jumping,
         /// *not* the duration. This is written to specifically by the
-        /// NavInterpolationSystem to calculate projectile motion. Outside the
+        /// NavLerpSystem to calculate projectile motion. Outside the
         /// nav systems and debugging, this is only intended to be read, not
         /// written.</summary>
         public float JumpSeconds;
@@ -38,7 +38,7 @@ namespace Reese.Nav
         public float JumpSpeedMultiplierY;
 
         /// <summary>Writing to this is *required* when spawning an agent. It's
-        /// artifical gravity used specifically for the NavInterpolationSystem
+        /// artifical gravity used specifically for the NavLerpSystem
         /// to calculate projectile motion. 200 is a reasonable value to try.
         /// </summary>
         public float JumpGravity;

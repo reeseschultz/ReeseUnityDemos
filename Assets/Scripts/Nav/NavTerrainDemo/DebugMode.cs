@@ -4,7 +4,8 @@ using Unity.Transforms;
 using Reese.Nav;
 using Unity.Mathematics;
 
-namespace Reese.Demo {
+namespace Reese.Demo
+{
     public class DebugMode : MonoBehaviour
     {
         [SerializeField]
@@ -25,7 +26,7 @@ namespace Reese.Demo {
         EntityManager entityManager;
         EntityQuery entityQuery;
 
-        NavGroundingSystem navGroundingSystem;
+        NavGroundSystem navGroundSystem;
         DebugSystem debugSystem;
 
         void OnEnable()
@@ -38,14 +39,14 @@ namespace Reese.Demo {
                     None = new ComponentType[] { typeof(NavPlanning), typeof(NavJumping) }
                 }
             );
-            navGroundingSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavGroundingSystem>();
+            navGroundSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavGroundSystem>();
             debugSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<DebugSystem>();
             debugSystem.DrawPathOffset = offsetForDrawPath;
         }
 
         void Update()
         {
-            navGroundingSystem.IsDebugging = isDebugging && drawUnitVectors;
+            navGroundSystem.IsDebugging = isDebugging && drawUnitVectors;
             debugSystem.LogNavError = isDebugging && logNavError;
             debugSystem.DrawPath = isDebugging && drawnPath;
         }

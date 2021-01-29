@@ -19,7 +19,7 @@ namespace Reese.Nav
     /// math.
     /// </summary>
     [UpdateAfter(typeof(NavDestinationSystem))]
-    public class NavInterpolationSystem : SystemBase
+    public class NavLerpSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
@@ -181,7 +181,7 @@ namespace Reese.Nav
                     commandBuffer.AddComponent<NavNeedsSurface>(entityInQueryIndex, entity);
                     commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
                 })
-                .WithName("NavArtificialGravityJob")
+                .WithName("NavGravJob")
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
