@@ -38,19 +38,22 @@ namespace Reese.Demo.Stranded
 
                     if (controller == null) return;
 
-                    controller.Meow();
-
-                    commandBuffer.AddComponent(entity, new Hopping
+                    for (var i = entryBuffer.Length - 1; i >= 0; --i) // Traversing from end of buffer so removal is straightforward and performant.
                     {
-                        OriginalPosition = translation.Value,
-                        Height = 10,
-                        StartSeconds = elapsedSeconds,
-                        Duration = 1
-                    });
+                        controller.Meow();
 
-                    Debug.Log(entryBuffer[0].Value + " has entered the cat's trigger bounds.");
+                        commandBuffer.AddComponent(entity, new Hopping
+                        {
+                            OriginalPosition = translation.Value,
+                            Height = 10,
+                            StartSeconds = elapsedSeconds,
+                            Duration = 1
+                        });
 
-                    entryBuffer.Clear();
+                        Debug.Log(entryBuffer[0].Value + " has entered the cat's trigger bounds.");
+
+                        entryBuffer.RemoveAt(i); // If you don't remove exits, they'll pile up in the buffer and eventually consume lots of heap memory.
+                    }
                 })
                 .WithoutBurst()
                 .WithName("CatMeowJob")
