@@ -176,9 +176,9 @@ namespace Reese.Nav
 
             if (!lastWorldDestination.Equals(WorldDestination))
             {
-                entityManager.AddComponentData<NavNeedsDestination>(Entity, new NavNeedsDestination
+                entityManager.AddComponentData<NavDestination>(Entity, new NavDestination
                 {
-                    Destination = WorldDestination,
+                    WorldPoint = WorldDestination,
                     Teleport = Teleport
                 });
 

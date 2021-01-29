@@ -12,7 +12,7 @@ namespace Reese.Nav
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
             var walkingFromEntity = GetComponentDataFromEntity<NavWalking>(true);
-            var destinationFromEntity = GetComponentDataFromEntity<NavNeedsDestination>(true);
+            var destinationFromEntity = GetComponentDataFromEntity<NavDestination>(true);
             var planningFromEntity = GetComponentDataFromEntity<NavPlanning>(true);
 
             Entities
@@ -26,7 +26,7 @@ namespace Reese.Nav
 
                     if (walkingFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavWalking>(entityInQueryIndex, entity);
 
-                    if (destinationFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
+                    if (destinationFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity);
 
                     if (planningFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
                 })

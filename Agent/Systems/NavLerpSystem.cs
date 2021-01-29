@@ -54,7 +54,7 @@ namespace Reese.Nav
             }
 
             commandBuffer.RemoveComponent<NavWalking>(entityInQueryIndex, entity);
-            commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
+            commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity);
         }
 
         protected override void OnUpdate()

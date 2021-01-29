@@ -40,7 +40,7 @@ namespace Reese.Nav
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .WithNativeDisableParallelForRestriction(navMeshQueryPointerArray)
-                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface, in NavNeedsDestination needsDestination) =>
+                .ForEach((Entity entity, int entityInQueryIndex, int nativeThreadIndex, ref NavAgent agent, in Parent surface, in NavDestination destination) =>
                 {
                     if (
                         surface.Value.Equals(Entity.Null) ||
@@ -78,12 +78,12 @@ namespace Reese.Nav
                         out int iterationsPerformed
                     );
 
-                    var customLerp = needsDestination.CustomLerp;
+                    var customLerp = destination.CustomLerp;
 
                     if (!NavUtil.HasStatus(status, PathQueryStatus.Success))
                     {
                         commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
-                        commandBuffer.RemoveComponent<NavNeedsDestination>(entityInQueryIndex, entity);
+                        commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity);
                         commandBuffer.AddComponent<NavHasProblem>(entityInQueryIndex, entity, new NavHasProblem
                         {
                             Value = status
