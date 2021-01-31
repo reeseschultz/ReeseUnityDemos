@@ -48,7 +48,7 @@ class CatSystem : SystemBase
                 {
                     Debug.Log(entryBuffer[i].Value + " is making me purr! Purrrrrrrr!");
 
-                    entryBuffer.RemoveAt(i); // If you don't remove exits, they'll pile up in the buffer and eventually consume lots of heap memory.
+                    entryBuffer.RemoveAt(i); // If you don't remove entries, they'll pile up in the buffer and eventually consume lots of heap memory.
                 }
             })
             .WithoutBurst() // Can't use Burst when logging. Remove this line if you're not logging in the job!
