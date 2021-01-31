@@ -2,6 +2,7 @@
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,7 +31,7 @@ namespace Reese.Demo.Stranded
             var elapsedSeconds = (float)Time.ElapsedTime;
 
             Entities
-                .WithAll<SpatialTrigger, Cat>()
+                .WithAll<Cat, SpatialTrigger, PhysicsCollider>()
                 .ForEach((in DynamicBuffer<SpatialOverlapBufferElement> overlaps) => // Do NOT modify the buffer, hence the in keyword.
                 {
                     // There could be code here to process what currently overlaps in a given frame.
@@ -40,7 +41,7 @@ namespace Reese.Demo.Stranded
                 .ScheduleParallel();
 
             Entities
-                .WithAll<SpatialTrigger, Cat>()
+                .WithAll<Cat, SpatialTrigger, PhysicsCollider>()
                 .WithChangeFilter<SpatialEntryBufferElement>()
                 .WithNone<Hopping>()
                 .ForEach((Entity entity, in DynamicBuffer<SpatialEntryBufferElement> entryBuffer, in Translation translation) =>
@@ -67,7 +68,7 @@ namespace Reese.Demo.Stranded
                 .Run();
 
             Entities
-                .WithAll<SpatialTrigger, Cat>()
+                .WithAll<Cat, SpatialTrigger, PhysicsCollider>()
                 .WithChangeFilter<SpatialExitBufferElement>()
                 .ForEach((in DynamicBuffer<SpatialExitBufferElement> exitBuffer) =>
                 {
