@@ -1,6 +1,6 @@
 {
 	"name": "com.reese.spatial",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"displayName": "Reese's DOTS Spatial Events",
 	"description": "Reactive entry and exit events in Burst-capable jobs.",
 	"dependencies": {
