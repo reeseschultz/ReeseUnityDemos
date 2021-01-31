@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo.Stranded
 {
-    [UpdateAfter(typeof(SpatialSystem))]
+    [UpdateAfter(typeof(SpatialStartSystem)), UpdateBefore(typeof(SpatialEndSystem))]
     class CatSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
@@ -31,9 +31,19 @@ namespace Reese.Demo.Stranded
 
             Entities
                 .WithAll<SpatialTrigger, Cat>()
+                .ForEach((in DynamicBuffer<SpatialOverlapBufferElement> overlaps) => // Do NOT modify the buffer, hence the in keyword.
+                {
+                    // There could be code here to process what currently overlaps in a given frame.
+                })
+                .WithoutBurst() // Can NOT use Burst when logging. Remove this line if you're not logging in the job!
+                .WithName("CatOverlapJob")
+                .ScheduleParallel();
+
+            Entities
+                .WithAll<SpatialTrigger, Cat>()
                 .WithChangeFilter<SpatialEntryBufferElement>()
                 .WithNone<Hopping>()
-                .ForEach((Entity entity, ref DynamicBuffer<SpatialEntryBufferElement> entryBuffer, in Translation translation) =>
+                .ForEach((Entity entity, in DynamicBuffer<SpatialEntryBufferElement> entryBuffer, in Translation translation) =>
                 {
                     var controller = go.GetComponent<CatSoundController>();
 
@@ -50,27 +60,23 @@ namespace Reese.Demo.Stranded
                         });
 
                         Debug.Log(entryBuffer[i].Value + " is making me purr! Purrrrrrrr!");
-
-                        entryBuffer.RemoveAt(i); // If you don't remove exits, they'll pile up in the buffer and eventually consume lots of heap memory.
                     }
                 })
-                .WithoutBurst() // Not using Burst since there's logging in the job.
+                .WithoutBurst() // Can NOT use Burst when logging. Remove this line if you're not logging in the job!
                 .WithName("CatEntryJob")
                 .Run();
 
             Entities
                 .WithAll<SpatialTrigger, Cat>()
                 .WithChangeFilter<SpatialExitBufferElement>()
-                .ForEach((Entity entity, ref DynamicBuffer<SpatialExitBufferElement> exitBuffer) =>
+                .ForEach((in DynamicBuffer<SpatialExitBufferElement> exitBuffer) =>
                 {
                     for (var i = exitBuffer.Length - 1; i >= 0; --i) // Traversing from the end of the buffer for performance reasons.
                     {
                         Debug.Log(exitBuffer[i].Value + " is making me meow for attention! MEEEOWWWWWWW!");
-
-                        exitBuffer.RemoveAt(i); // If you don't remove exits, they'll pile up in the buffer and eventually consume lots of heap memory.
                     }
                 })
-                .WithoutBurst() // Not using Burst since there's logging in the job.
+                .WithoutBurst() // Can NOT use Burst when logging. Remove this line if you're not logging in the job!
                 .WithName("CatExitJob")
                 .ScheduleParallel();
 
