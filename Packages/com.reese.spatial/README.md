@@ -39,8 +39,6 @@ class CatSystem : SystemBase
 {
     protected override void OnUpdate()
     {
-        var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
-
         Entities // Example handling of the spatial entry buffer.
             .WithAll<SpatialTrigger, Cat>()
             .WithChangeFilter<SpatialEntryBufferElement>() // Allows us to only process new entries.
