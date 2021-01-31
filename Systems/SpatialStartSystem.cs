@@ -18,43 +18,50 @@ namespace Reese.Spatial
 
         protected override void OnUpdate()
         {
-            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
+            // Can NOT use a command buffer to add the following dynamic buffers
+            // or else Unity complains that 'The entity does not exist':
 
             Entities
                 .WithNone<SpatialEntryBufferElement>()
-                .ForEach((Entity entity, int entityInQueryIndex) =>
+                .ForEach((Entity entity) =>
                 {
-                    commandBuffer.AddBuffer<SpatialEntryBufferElement>(entityInQueryIndex, entity);
+                    EntityManager.AddBuffer<SpatialEntryBufferElement>(entity);
                 })
                 .WithName("SpatialAddEntryBufferJob")
-                .ScheduleParallel();
+                .WithStructuralChanges()
+                .Run();
 
             Entities
                 .WithNone<SpatialExitBufferElement>()
-                .ForEach((Entity entity, int entityInQueryIndex) =>
+                .ForEach((Entity entity) =>
                 {
-                    commandBuffer.AddBuffer<SpatialExitBufferElement>(entityInQueryIndex, entity);
+                    EntityManager.AddBuffer<SpatialExitBufferElement>(entity);
                 })
                 .WithName("SpatialAddExitBufferJob")
-                .ScheduleParallel();
+                .WithStructuralChanges()
+                .Run();
 
             Entities
                 .WithNone<SpatialOverlapBufferElement>()
-                .ForEach((Entity entity, int entityInQueryIndex) =>
+                .ForEach((Entity entity) =>
                 {
-                    commandBuffer.AddBuffer<SpatialOverlapBufferElement>(entityInQueryIndex, entity);
+                    EntityManager.AddBuffer<SpatialOverlapBufferElement>(entity);
                 })
                 .WithName("SpatialAddOverlapBufferJob")
-                .ScheduleParallel();
+                .WithStructuralChanges()
+                .Run();
 
             Entities
                 .WithNone<SpatialTagBufferElement>()
-                .ForEach((Entity entity, int entityInQueryIndex) =>
+                .ForEach((Entity entity) =>
                 {
-                    commandBuffer.AddBuffer<SpatialTagBufferElement>(entityInQueryIndex, entity);
+                    EntityManager.AddBuffer<SpatialTagBufferElement>(entity);
                 })
                 .WithName("SpatialAddTagBufferJob")
-                .ScheduleParallel();
+                .WithStructuralChanges()
+                .Run();
+
+            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
             var activatorFromEntity = GetComponentDataFromEntity<SpatialActivator>(true);
 
