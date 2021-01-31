@@ -139,6 +139,7 @@ namespace Reese.Spatial
 
                         if (
                             overlappingEntity == Entity.Null ||
+                            overlappingEntity == entity || // Cannot self-activate!
                             !activatorFromEntity.HasComponent(overlappingEntity) ||
                             !tagsFromEntity.HasComponent(overlappingEntity) ||
                             overlapSet.Contains(overlappingEntity)

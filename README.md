@@ -87,6 +87,8 @@ In this example we have a `Cat` that happens to be a trigger. It is easy to tell
 
 If you want to handle different kinds of events per trigger, you would most likely want to check for existence of a component per entry or exit. To that end, you could use `GetComponentFromEntity`.
 
+Also, it is perfectly fine for an object to be *both* a trigger and activator (even though it may belong to the same tag as itself, self-activation is **not** possible).
+
 ## Contributing
 
 Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever. All that said, [GitHub Issues](https://github.com/reeseschultz/ReeseUnityDemos/issues/new/choose) is fine for constructive discussion.
