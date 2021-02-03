@@ -22,6 +22,7 @@ namespace Reese.Spatial
             // or else Unity complains that 'The entity does not exist':
 
             Entities
+                .WithAll<SpatialTrigger>()
                 .WithNone<SpatialEntryBufferElement>()
                 .ForEach((Entity entity) =>
                 {
@@ -32,6 +33,7 @@ namespace Reese.Spatial
                 .Run();
 
             Entities
+                .WithAll<SpatialTrigger>()
                 .WithNone<SpatialExitBufferElement>()
                 .ForEach((Entity entity) =>
                 {
@@ -42,6 +44,7 @@ namespace Reese.Spatial
                 .Run();
 
             Entities
+                .WithAll<SpatialTrigger>()
                 .WithNone<SpatialOverlapBufferElement>()
                 .ForEach((Entity entity) =>
                 {
@@ -52,6 +55,7 @@ namespace Reese.Spatial
                 .Run();
 
             Entities
+                .WithAny<SpatialTrigger, SpatialActivator>()
                 .WithNone<SpatialTagBufferElement>()
                 .ForEach((Entity entity) =>
                 {
