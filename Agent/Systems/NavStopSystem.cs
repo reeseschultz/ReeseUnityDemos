@@ -3,6 +3,7 @@ using Unity.Jobs;
 
 namespace Reese.Nav
 {
+    [UpdateAfter(typeof(NavLerpSystem))]
     public class NavStopSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
@@ -20,15 +21,15 @@ namespace Reese.Nav
                 .WithReadOnly(walkingFromEntity)
                 .WithReadOnly(destinationFromEntity)
                 .WithReadOnly(planningFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, in NavStop stop) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref DynamicBuffer<NavPathBufferElement> pathBuffer, in NavStop stop) =>
                 {
                     commandBuffer.RemoveComponent<NavStop>(entityInQueryIndex, entity);
 
                     if (walkingFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavWalking>(entityInQueryIndex, entity);
-
                     if (destinationFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity);
-
                     if (planningFromEntity.HasComponent(entity)) commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
+
+                    pathBuffer.Clear();
                 })
                 .WithName("NavStopJob")
                 .ScheduleParallel();
