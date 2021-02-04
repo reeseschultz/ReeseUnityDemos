@@ -10,8 +10,8 @@ General utility code for Unity, mainly DOTS-oriented.
 
 This requires Unity editor `2019.3` or greater. Copy one of the below Git URLs:
 
-* **HTTPS:** `https://github.com/reeseschultz/ReeseUnityDemos.git#spatial`
-* **SSH:** `git@github.com:reeseschultz/ReeseUnityDemos.git#spatial`
+* **HTTPS:** `https://github.com/reeseschultz/ReeseUnityDemos.git#utility`
+* **SSH:** `git@github.com:reeseschultz/ReeseUnityDemos.git#utility`
 
 Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in the top-left corner, and then click on `Add package from git URL`. Paste the text you copied and finally click `Add`.
 
