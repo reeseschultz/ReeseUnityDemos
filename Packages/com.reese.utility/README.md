@@ -15,6 +15,12 @@ This requires Unity editor `2019.3` or greater. Copy one of the below Git URLs:
 
 Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in the top-left corner, and then click on `Add package from git URL`. Paste the text you copied and finally click `Add`.
 
+## Root
+
+Just by adding the utility package to your project, any entity instantiated from a prefab will possess a `Root` component. Its singular property is the root entity of said prefab. This is extremely useful when you use complex prefabs, because component changes on the root entity tend to have implications for children in game logic. While it is possible to check for parents and their components repeatedly from the children, that is time-consuming and error-prone. Plus, the `Root` ends up being a standard expectation of *any* child entity. `Root`s are added by the `RootSystem` when a parent with a `LinkedEntityGroup` changes.
+
+Note that a root entity is its own root.
+
 ## Transform Extensions
 
 ### FixTranslation
