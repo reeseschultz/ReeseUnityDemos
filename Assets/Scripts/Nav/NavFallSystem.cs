@@ -23,10 +23,9 @@ namespace Reese.Demo
                     if (elapsedSeconds - agent.FallSeconds >= fallSecondsMax)
                     {
                         commandBuffer.DestroyEntity(entityInQueryIndex, entity);
-                        Debug.Log("Agent with entity ID = " + entity.Index + " has fallen to their death.");
+                        Debug.Log($"Agent with entity ID = {entity.Index} has fallen to their death.");
                     }
                 })
-                .WithoutBurst()
                 .WithName("NavFallJob")
                 .ScheduleParallel();
 

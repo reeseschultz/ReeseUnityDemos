@@ -60,10 +60,10 @@ namespace Reese.Demo.Stranded
                             Duration = 1
                         });
 
-                        Debug.Log(entryBuffer[i].Value + " is making me purr! Purrrrrrrr!");
+                        Debug.Log($"{entryBuffer[i].Value} is making me purr! Purrrrrrrr!");
                     }
                 })
-                .WithoutBurst() // Can NOT use Burst when logging. Remove this line if you're not logging in the job!
+                .WithoutBurst()
                 .WithName("CatEntryJob")
                 .Run();
 
@@ -74,10 +74,9 @@ namespace Reese.Demo.Stranded
                 {
                     for (var i = exitBuffer.Length - 1; i >= 0; --i) // Traversing from the end of the buffer for performance reasons.
                     {
-                        Debug.Log(exitBuffer[i].Value + " is making me meow for attention! MEEEOWWWWWWW!");
+                        Debug.Log($"{exitBuffer[i].Value} is making me meow for attention! MEEEOWWWWWWW!");
                     }
                 })
-                .WithoutBurst() // Can NOT use Burst when logging. Remove this line if you're not logging in the job!
                 .WithName("CatExitJob")
                 .ScheduleParallel();
 

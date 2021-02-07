@@ -60,7 +60,6 @@ Entities // Example handling of the overlap buffer.
     {
         // There could be code here to process what currently overlaps in a given frame.
     })
-    .WithoutBurst() // Can NOT use Burst when logging. Remove this line if you're not logging in the job!
     .WithName("CatOverlapJob")
     .ScheduleParallel();
 ```
@@ -77,10 +76,9 @@ Entities // Example handling of the spatial entry buffer.
     {
         for (var i = entries.Length - 1; i >= 0; --i) // Traversing from the end of the buffer for performance reasons.
         {
-            Debug.Log(entries[i].Value + " is making me purr! Purrrrrrrr!");
+            Debug.Log($"{entries[i].Value} is making me purr! Purrrrrrrr!");
         }
     })
-    .WithoutBurst() // Can NOT use Burst when logging. Remove this line if you're not logging in the job!
     .WithName("CatEntryJob")
     .ScheduleParallel();
 ```
@@ -99,10 +97,9 @@ Entities // Example handling of the spatial exit buffer.
     {
         for (var i = exits.Length - 1; i >= 0; --i) // Traversing from the end of the buffer for performance reasons.
         {
-            Debug.Log(exits[i].Value + " is making me meow for attention! MEEEOWWWWWWW!");
+            Debug.Log($"{exits[i].Value} making me meow for attention! MEEEOWWWWWWW!");
         }
     })
-    .WithoutBurst() // Can NOT use Burst when logging. Remove this line if you're not logging in the job!
     .WithName("CatExitJob")
     .ScheduleParallel();
 ```
