@@ -11,8 +11,8 @@ namespace Reese.Spatial
         {
             Entities
                 .WithAll<SpatialTrigger>()
-                .WithChangeFilter<SpatialEntryBufferElement>()
-                .ForEach((ref DynamicBuffer<SpatialEntryBufferElement> entries) => {
+                .WithChangeFilter<SpatialEntry>()
+                .ForEach((ref DynamicBuffer<SpatialEntry> entries) => {
                     entries.Clear();
                 })
                 .WithName("SpatialClearEntriesJob")
@@ -20,8 +20,8 @@ namespace Reese.Spatial
 
             Entities
                 .WithAll<SpatialTrigger>()
-                .WithChangeFilter<SpatialExitBufferElement>()
-                .ForEach((ref DynamicBuffer<SpatialExitBufferElement> exits) => {
+                .WithChangeFilter<SpatialExit>()
+                .ForEach((ref DynamicBuffer<SpatialExit> exits) => {
                     exits.Clear();
                 })
                 .WithName("SpatialClearExitsJob")

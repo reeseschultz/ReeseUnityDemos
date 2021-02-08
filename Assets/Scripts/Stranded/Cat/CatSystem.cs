@@ -32,7 +32,7 @@ namespace Reese.Demo.Stranded
 
             Entities
                 .WithAll<Cat, SpatialTrigger, PhysicsCollider>()
-                .ForEach((in DynamicBuffer<SpatialOverlapBufferElement> overlaps) => // Do NOT modify the buffer, hence the in keyword.
+                .ForEach((in DynamicBuffer<SpatialOverlap> overlaps) => // Do NOT modify the buffer, hence the in keyword.
                 {
                     // There could be code here to process what currently overlaps in a given frame.
                 })
@@ -42,9 +42,9 @@ namespace Reese.Demo.Stranded
 
             Entities
                 .WithAll<Cat, SpatialTrigger, PhysicsCollider>()
-                .WithChangeFilter<SpatialEntryBufferElement>()
+                .WithChangeFilter<SpatialEntry>()
                 .WithNone<Hopping>()
-                .ForEach((Entity entity, in DynamicBuffer<SpatialEntryBufferElement> entryBuffer, in Translation translation) =>
+                .ForEach((Entity entity, in DynamicBuffer<SpatialEntry> entryBuffer, in Translation translation) =>
                 {
                     var controller = go.GetComponent<CatSoundController>();
 
@@ -69,8 +69,8 @@ namespace Reese.Demo.Stranded
 
             Entities
                 .WithAll<Cat, SpatialTrigger, PhysicsCollider>()
-                .WithChangeFilter<SpatialExitBufferElement>()
-                .ForEach((in DynamicBuffer<SpatialExitBufferElement> exitBuffer) =>
+                .WithChangeFilter<SpatialExit>()
+                .ForEach((in DynamicBuffer<SpatialExit> exitBuffer) =>
                 {
                     for (var i = exitBuffer.Length - 1; i >= 0; --i) // Traversing from the end of the buffer for performance reasons.
                     {

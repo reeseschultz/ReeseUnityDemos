@@ -41,9 +41,9 @@ namespace Reese.Spatial
                 }
             });
 
-            dstManager.AddComponent(entity, typeof(SpatialTagBufferElement));
+            dstManager.AddComponent(entity, typeof(SpatialTag));
 
-            var tagBuffer = dstManager.GetBuffer<SpatialTagBufferElement>(entity);
+            var tagBuffer = dstManager.GetBuffer<SpatialTag>(entity);
 
             tags.Distinct().ToList().ForEach(tag => tagBuffer.Add(tag));
         }
