@@ -23,10 +23,10 @@ namespace Reese.Spatial
 
             Entities
                 .WithAll<SpatialTrigger>()
-                .WithNone<SpatialEntryBufferElement>()
+                .WithNone<SpatialEntry>()
                 .ForEach((Entity entity) =>
                 {
-                    EntityManager.AddBuffer<SpatialEntryBufferElement>(entity);
+                    EntityManager.AddBuffer<SpatialEntry>(entity);
                 })
                 .WithName("SpatialAddEntryBufferJob")
                 .WithStructuralChanges()
@@ -34,10 +34,10 @@ namespace Reese.Spatial
 
             Entities
                 .WithAll<SpatialTrigger>()
-                .WithNone<SpatialExitBufferElement>()
+                .WithNone<SpatialExit>()
                 .ForEach((Entity entity) =>
                 {
-                    EntityManager.AddBuffer<SpatialExitBufferElement>(entity);
+                    EntityManager.AddBuffer<SpatialExit>(entity);
                 })
                 .WithName("SpatialAddExitBufferJob")
                 .WithStructuralChanges()
@@ -45,10 +45,10 @@ namespace Reese.Spatial
 
             Entities
                 .WithAll<SpatialTrigger>()
-                .WithNone<SpatialOverlapBufferElement>()
+                .WithNone<SpatialOverlap>()
                 .ForEach((Entity entity) =>
                 {
-                    EntityManager.AddBuffer<SpatialOverlapBufferElement>(entity);
+                    EntityManager.AddBuffer<SpatialOverlap>(entity);
                 })
                 .WithName("SpatialAddOverlapBufferJob")
                 .WithStructuralChanges()
@@ -56,10 +56,10 @@ namespace Reese.Spatial
 
             Entities
                 .WithAny<SpatialTrigger, SpatialActivator>()
-                .WithNone<SpatialTagBufferElement>()
+                .WithNone<SpatialTag>()
                 .ForEach((Entity entity) =>
                 {
-                    EntityManager.AddBuffer<SpatialTagBufferElement>(entity);
+                    EntityManager.AddBuffer<SpatialTag>(entity);
                 })
                 .WithName("SpatialAddTagBufferJob")
                 .WithStructuralChanges()
@@ -69,18 +69,18 @@ namespace Reese.Spatial
 
             var activatorFromEntity = GetComponentDataFromEntity<SpatialActivator>(true);
 
-            var tagsFromEntity = GetBufferFromEntity<SpatialTagBufferElement>(true);
+            var tagsFromEntity = GetBufferFromEntity<SpatialTag>(true);
 
             var collisionWorld = buildPhysicsWorld.PhysicsWorld.CollisionWorld;
 
             Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
-                .WithAll<SpatialTagBufferElement>()
+                .WithAll<SpatialTag>()
                 .WithReadOnly(activatorFromEntity)
                 .WithReadOnly(collisionWorld)
                 .WithReadOnly(tagsFromEntity)
-                .ForEach((Entity entity, int entityInQueryIndex, ref DynamicBuffer<SpatialEntryBufferElement> entries, ref DynamicBuffer<SpatialExitBufferElement> exits, ref DynamicBuffer<SpatialOverlapBufferElement> overlaps, in SpatialTrigger trigger, in PhysicsCollider collider, in LocalToWorld localToWorld) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref DynamicBuffer<SpatialEntry> entries, ref DynamicBuffer<SpatialExit> exits, ref DynamicBuffer<SpatialOverlap> overlaps, in SpatialTrigger trigger, in PhysicsCollider collider, in LocalToWorld localToWorld) =>
                 {
                     var tags = tagsFromEntity[entity];
 
@@ -170,7 +170,7 @@ namespace Reese.Spatial
 
                         if (!sharesTag) continue;
 
-                        commandBuffer.AppendToBuffer<SpatialEntryBufferElement>(entityInQueryIndex, entity, overlappingEntity);
+                        commandBuffer.AppendToBuffer<SpatialEntry>(entityInQueryIndex, entity, overlappingEntity);
 
                         entries.Add(overlappingEntity);
                         overlaps.Add(overlappingEntity);

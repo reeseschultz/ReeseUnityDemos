@@ -4,7 +4,7 @@
 
 ![Video of agents spawning and avoiding obstacles.](https://raw.githubusercontent.com/reeseschultz/ReeseUnityDemos/master/preview.gif)
 
-Reactive entry and exit events in Burst-capable jobs.
+Reactive entry, overlap and exit events in Burst-capable jobs.
 
 ## Import
 
@@ -21,7 +21,7 @@ This package uses these concepts:
 
 1. **Triggers** - Triggers react to overlapping activators. Entities with the `SpatialTrigger` component are processed as triggers. `SpatialTriggerAuthoring` is provided for convenience.
 2. **Activators** - Activators activate overlapping triggers. Any activator that is currently overlapping a trigger is an **overlap**. Activators that enter a trigger are **entries**. Activators that exit a trigger are **exits**. Entities with the `SpatialActivator` component are processed as activators. `SpatialActivatorAuthoring` is provided for convenience.
-3. **Tags** - Grouping of triggers and activators. Triggers and tags should both have a `DynamicBuffer` of the type `SpatialTagBufferElement`. It's comprised of `FixedString128`s—these are the tags. When at least one tag of an activator matches that of a trigger, that trigger is considered activated (as long as collision filters permit)! A `DynamicBuffer` of type `SpatialEntryBufferElement` is populated upon entry, and a `DynamicBuffer` of type `SpatialExitBufferElement` is populated upon exit. Current overlaps are in a `DynamicBuffer` of type `SpatialOverlapBufferElement`.
+3. **Tags** - Grouping of triggers and activators. Triggers and tags should both have a `DynamicBuffer` of the type `SpatialTag`. It's comprised of `FixedString128`s—these are the tags. When at least one tag of an activator matches that of a trigger, that trigger is considered activated (as long as collision filters permit)! A `DynamicBuffer` of type `SpatialEntry` is populated upon entry, and a `DynamicBuffer` of type `SpatialExit` is populated upon exit. Current overlaps are in a `DynamicBuffer` of type `SpatialOverlap`.
 
 Note that `Unity.Physics` is used behind the scenes for efficiency. It uses a [bounding volume hierarchy](https://en.wikipedia.org/wiki/Bounding_volume_hierarchy) (BVH) to quickly detect collisions between collidable objects. What this means for you, the user, is that your activators and triggers **must** have colliders attached to them! This package will not work otherwise.
 
@@ -56,7 +56,7 @@ To handle what is currently overlapping, add this block to the `OnUpdate` method
 ```csharp
 Entities // Example handling of the overlap buffer.
     .WithAll<Cat, SpatialTrigger, PhysicsCollider>()
-    .ForEach((in DynamicBuffer<SpatialOverlapBufferElement> overlaps) => // Do NOT modify the buffer, hence the in keyword.
+    .ForEach((in DynamicBuffer<SpatialOverlap> overlaps) => // Do NOT modify the buffer, hence the in keyword.
     {
         // There could be code here to process what currently overlaps in a given frame.
     })
@@ -71,8 +71,8 @@ To handle entries, add this block to the `OnUpdate` method:
 ```csharp
 Entities // Example handling of the spatial entry buffer.
     .WithAll<Cat, SpatialTrigger, PhysicsCollider>()
-    .WithChangeFilter<SpatialEntryBufferElement>() // Allows us to process (only) new entries once.
-    .ForEach((in DynamicBuffer<SpatialEntryBufferElement> entries) => // Do NOT modify the buffer, hence the in keyword.
+    .WithChangeFilter<SpatialEntry>() // Allows us to process (only) new entries once.
+    .ForEach((in DynamicBuffer<SpatialEntry> entries) => // Do NOT modify the buffer, hence the in keyword.
     {
         for (var i = entries.Length - 1; i >= 0; --i) // Traversing from the end of the buffer for performance reasons.
         {
@@ -92,8 +92,8 @@ To handle exits, add this block to the `OnUpdate` method:
 ```csharp
 Entities // Example handling of the spatial exit buffer.
     .WithAll<Cat, SpatialTrigger, PhysicsCollider>()
-    .WithChangeFilter<SpatialExitBufferElement>() // Allows us to process (only) new exits once.
-    .ForEach((in DynamicBuffer<SpatialExitBufferElement> exits) => // Do NOT modify the buffer, hence the in keyword.
+    .WithChangeFilter<SpatialExit>() // Allows us to process (only) new exits once.
+    .ForEach((in DynamicBuffer<SpatialExit> exits) => // Do NOT modify the buffer, hence the in keyword.
     {
         for (var i = exits.Length - 1; i >= 0; --i) // Traversing from the end of the buffer for performance reasons.
         {

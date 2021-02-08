@@ -16,9 +16,9 @@ namespace Reese.Spatial
         {
             dstManager.AddComponent<SpatialActivator>(entity);
 
-            dstManager.AddComponent(entity, typeof(SpatialTagBufferElement));
+            dstManager.AddComponent(entity, typeof(SpatialTag));
 
-            var tagBuffer = dstManager.GetBuffer<SpatialTagBufferElement>(entity);
+            var tagBuffer = dstManager.GetBuffer<SpatialTag>(entity);
 
             tags.Distinct().ToList().ForEach(group => tagBuffer.Add(group)); 
         }
