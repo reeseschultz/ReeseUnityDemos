@@ -1,6 +1,6 @@
 {
 	"name": "com.reese.utility",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"displayName": "Reese's Utility Code",
 	"description": "General utility code for Unity, mainly DOTS-oriented.",
 	"dependencies": {
@@ -8,7 +8,7 @@
 		"com.unity.physics": "0.5.1-preview.2"
 	},
 	"unity": "2020.2",
-	"unityRelease": "1f1",
+	"unityRelease": "3f1",
 	"author": {
 		"name": "Reese Schultz",
 		"email": "reeseschultz@gmail.com",
