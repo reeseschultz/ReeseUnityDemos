@@ -82,6 +82,18 @@ namespace Reese.Spatial
                 .WithReadOnly(tagsFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref DynamicBuffer<SpatialEntry> entries, ref DynamicBuffer<SpatialExit> exits, ref DynamicBuffer<SpatialOverlap> overlaps, in SpatialTrigger trigger, in PhysicsCollider collider, in LocalToWorld localToWorld) =>
                 {
+                    for (var i = 0; i < entries.Length; ++i)
+                        if (entries[i].Value == Entity.Null)
+                            entries.RemoveAt(i);
+
+                    for (var i = 0; i < exits.Length; ++i)
+                        if (exits[i].Value == Entity.Null)
+                            exits.RemoveAt(i);
+
+                    for (var i = 0; i < overlaps.Length; ++i)
+                        if (overlaps[i].Value == Entity.Null)
+                            overlaps.RemoveAt(i);
+
                     var tags = tagsFromEntity[entity];
 
                     if (tags.Length <= 0) return;
