@@ -12,6 +12,7 @@ namespace Reese.Utility
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
             Entities
+                .WithAll<Prefab>()
                 .WithChangeFilter<LinkedEntityGroup>()
                 .ForEach((Entity entity, int nativeThreadIndex, ref DynamicBuffer<LinkedEntityGroup> linkedEntities) =>
                 {
