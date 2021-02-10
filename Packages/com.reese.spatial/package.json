@@ -1,6 +1,6 @@
 {
 	"name": "com.reese.spatial",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"displayName": "Reese's DOTS Spatial Events",
 	"description": "Reactive entry, overlap and exit events in Burst-capable jobs.",
 	"dependencies": {
@@ -8,7 +8,7 @@
 		"com.unity.physics": "0.5.1-preview.2"
 	},
 	"unity": "2020.2",
-	"unityRelease": "1f1",
+	"unityRelease": "3f1",
 	"author": {
 		"name": "Reese Schultz",
 		"email": "reeseschultz@gmail.com",
