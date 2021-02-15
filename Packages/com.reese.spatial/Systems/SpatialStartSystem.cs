@@ -9,18 +9,12 @@ using UnityEngine;
 namespace Reese.Spatial
 {
     /// <summary>Detects the entry and exit of activators to and from the bounds of triggers.</summary>
-    [UpdateBefore(typeof(TransformSystemGroup))]
     public class SpatialStartSystem : SystemBase
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetOrCreateSystem<BuildPhysicsWorld>();
 
-        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-
         protected override void OnUpdate()
         {
-            // Can NOT use a command buffer to add the following dynamic buffers
-            // or else Unity complains that 'The entity does not exist':
-
             Entities
                 .WithAll<SpatialTrigger>()
                 .WithNone<SpatialEntry>()
@@ -64,8 +58,6 @@ namespace Reese.Spatial
                 .WithName("SpatialAddTagBufferJob")
                 .WithStructuralChanges()
                 .Run();
-
-            var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
 
             var activatorFromEntity = GetComponentDataFromEntity<SpatialActivator>(true);
 
@@ -182,8 +174,6 @@ namespace Reese.Spatial
 
                         if (!sharesTag) continue;
 
-                        commandBuffer.AppendToBuffer<SpatialEntry>(entityInQueryIndex, entity, overlappingEntity);
-
                         entries.Add(overlappingEntity);
                         overlaps.Add(overlappingEntity);
                     }
@@ -194,8 +184,6 @@ namespace Reese.Spatial
                 })
                 .WithName("SpatialStartJob")
                 .ScheduleParallel();
-
-            barrier.AddJobHandleForProducer(Dependency);
         }
     }
 }
