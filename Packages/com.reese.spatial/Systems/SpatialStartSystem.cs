@@ -74,6 +74,8 @@ namespace Reese.Spatial
                 .WithReadOnly(tagsFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref DynamicBuffer<SpatialEntry> entries, ref DynamicBuffer<SpatialExit> exits, ref DynamicBuffer<SpatialOverlap> overlaps, in SpatialTrigger trigger, in PhysicsCollider collider, in LocalToWorld localToWorld) =>
                 {
+                    if (collider.Value == BlobAssetReference<Unity.Physics.Collider>.Null) return;
+
                     for (var i = 0; i < entries.Length; ++i)
                         if (entries[i].Value == Entity.Null)
                             entries.RemoveAt(i);
