@@ -1,9 +1,11 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Reese.Demo
 {
-    struct Projectile : IComponentData
+    [Serializable]
+    public struct Projectile : IComponentData
     {
         public bool HasTarget;
         public float AngleInDegrees;

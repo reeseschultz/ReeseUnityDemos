@@ -1,6 +1,8 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 
 namespace Reese.Demo
 {
-    struct Person : IComponentData { }
+    [Serializable]
+    public struct Person : IComponentData { }
 }

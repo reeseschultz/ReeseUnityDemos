@@ -1,8 +1,10 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 
 namespace Reese.Nav
 {
     /// <summary>Exists if the agent is following an entity.</summary>
+    [Serializable]
     public struct NavFollow : IComponentData
     {
         /// <summary>The target entity that this entity will follow.</summary>

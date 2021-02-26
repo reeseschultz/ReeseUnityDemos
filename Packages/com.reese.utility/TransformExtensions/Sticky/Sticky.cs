@@ -1,9 +1,11 @@
+using System;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 
 namespace Reese.Utility
 {
+    [Serializable]
     public struct Sticky : IComponentData
     {
         /// <summary>The collision filter to use.</summary>
