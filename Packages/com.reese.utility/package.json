@@ -1,6 +1,6 @@
 {
 	"name": "com.reese.utility",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"displayName": "Reese's Utility Code",
 	"description": "General utility code for Unity, mainly DOTS-oriented.",
 	"dependencies": {
