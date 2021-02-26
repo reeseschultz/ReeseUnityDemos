@@ -10,6 +10,8 @@ using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 namespace Reese.Nav
 {
     /// <summary>Manages destinations for agents.</summary>
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavSurfaceSystem))]
     public class NavDestinationSystem : SystemBase
     {
@@ -24,8 +26,6 @@ namespace Reese.Nav
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var settings = navSystem.Settings;
-
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
                 .WithNone<NavProblem>()
@@ -102,6 +102,7 @@ namespace Reese.Nav
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
+            buildPhysicsWorld.AddInputDependency(Dependency);
         }
     }
 }

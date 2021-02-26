@@ -18,6 +18,8 @@ namespace Reese.Nav
     /// falling are accomplished with artificial gravity and projectile motion
     /// math.
     /// </summary>
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavDestinationSystem))]
     public class NavLerpSystem : SystemBase
     {
@@ -66,8 +68,6 @@ namespace Reese.Nav
             var settings = navSystem.Settings;
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
-
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
                 .WithNone<NavProblem, NavPlanning>()
@@ -120,6 +120,7 @@ namespace Reese.Nav
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
+            buildPhysicsWorld.AddInputDependency(Dependency);
 
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var fallingFromEntity = GetComponentDataFromEntity<NavFalling>();
