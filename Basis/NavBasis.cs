@@ -1,9 +1,11 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 
 namespace Reese.Nav
 {
     /// <summary>A NavBasis is a glorified parent transform for NavSurfaces.
     /// </summary>
+    [Serializable]
     public struct NavBasis : IComponentData
     {
         /// <summary>This is intended only to be set during authoring. If you

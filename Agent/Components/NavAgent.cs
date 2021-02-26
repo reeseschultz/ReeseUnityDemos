@@ -1,10 +1,12 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Reese.Nav
 {
     ///<summary>The NavAgent which is used for path and jump planning and
     /// interpolation.</summary>
+    [Serializable]
     public struct NavAgent : IComponentData
     {
         /// <summary>This is the *point* in time when the agent's last

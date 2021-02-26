@@ -1,8 +1,10 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 
 namespace Reese.Nav
 {
     /// <summary>This is a traversible surface for NavAgents.</summary>
+    [Serializable]
     public struct NavSurface : IComponentData
     {
         /// <summary>This is intended only to be set during authoring. If you

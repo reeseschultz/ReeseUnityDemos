@@ -1,9 +1,11 @@
+using System;
 using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Reese.Nav
 {
     /// <summary>Exists if the agent needs a destination.</summary>
+    [Serializable]
     public struct NavDestination : IComponentData
     {
         /// <summary>The 3D world destination coordinate.</summary>
