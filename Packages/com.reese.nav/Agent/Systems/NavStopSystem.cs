@@ -1,8 +1,11 @@
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Physics.Systems;
 
 namespace Reese.Nav
 {
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavLerpSystem))]
     public class NavStopSystem : SystemBase
     {

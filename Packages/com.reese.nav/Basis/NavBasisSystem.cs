@@ -8,7 +8,8 @@ namespace Reese.Nav
     /// <summary>Pretty much only exists to create a default basis and ensure
     /// that parent-child relationships are maintained in lieu of
     /// Unity.Physics' efforts to destroy them.</summary>
-    [UpdateAfter(typeof(TransformSystemGroup))]
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateBefore(typeof(BuildPhysicsWorld))]
     public class NavBasisSystem : SystemBase
     {
         /// <summary>The default basis that all other bases and basis-lacking
@@ -24,7 +25,6 @@ namespace Reese.Nav
             World.EntityManager.AddComponent(DefaultBasis, typeof(LocalToWorld));
             World.EntityManager.AddComponent(DefaultBasis, typeof(Translation));
             World.EntityManager.AddComponent(DefaultBasis, typeof(Rotation));
-            // entityManager.SetName(defaultBasis, "DefaultBasis"); // Used to make builds fail. Not sure if it still does.
         }
 
         protected override void OnUpdate()

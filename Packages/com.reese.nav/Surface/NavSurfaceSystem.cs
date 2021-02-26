@@ -13,6 +13,8 @@ namespace Reese.Nav
     /// <summary>The primary responsibility of this system is to track the
     /// surface (or lack thereof) underneath a given NavAgent. It also maintains
     /// parent-child relationships.</summary>
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavBasisSystem))]
     public class NavSurfaceSystem : SystemBase
     {
@@ -109,8 +111,6 @@ namespace Reese.Nav
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
 
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
-
             Entities
                 .WithNone<NavProblem, NavFalling, NavJumping>()
                 .WithAll<NavNeedsSurface, LocalToParent>()
@@ -166,13 +166,9 @@ namespace Reese.Nav
                 .WithName("NavSurfaceTrackingJob")
                 .ScheduleParallel();
 
-            var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
+            buildPhysicsWorld.AddInputDependency(Dependency);
 
-            ////////////////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////////////////
-            // TODO : Move following jobs and related code into transform extensions package. //
-            ////////////////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////////////////
+            var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
             // Corrects the translation of children with a parent not at the origin:
             Entities

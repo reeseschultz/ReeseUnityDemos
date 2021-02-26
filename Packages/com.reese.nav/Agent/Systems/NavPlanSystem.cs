@@ -3,6 +3,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.Physics.Systems;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,7 +15,6 @@ namespace Reese.Nav
     /// UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery by
     /// thread index. NavMeshQuery orchestration here appears to be exemplary
     /// usage. Note that it depends on the third-party PathUtils.</summary>
-    [UpdateBefore(typeof(NavDestinationSystem))]
     unsafe public class NavPlanSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();

@@ -9,7 +9,9 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
-    class NavTerrainDestinationSystem : SystemBase
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateBefore(typeof(BuildPhysicsWorld))]
+    public class NavTerrainDestinationSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
@@ -29,8 +31,6 @@ namespace Reese.Demo
             var jumpableBufferFromEntity = GetBufferFromEntity<NavJumpableBufferElement>(true);
             var renderBoundsFromEntity = GetComponentDataFromEntity<RenderBounds>(true);
             var randomArray = World.GetExistingSystem<RandomSystem>().RandomArray;
-
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
                 .WithNone<NavProblem, NavDestination, NavPlanning>()
@@ -75,6 +75,7 @@ namespace Reese.Demo
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
+            buildPhysicsWorld.AddInputDependency(Dependency);
         }
     }   
 }

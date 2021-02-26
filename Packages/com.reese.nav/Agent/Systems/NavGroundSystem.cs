@@ -7,6 +7,8 @@ using Unity.Transforms;
 
 namespace Reese.Nav
 {
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavLerpSystem))]
     public class NavGroundSystem : SystemBase
     {
@@ -19,9 +21,6 @@ namespace Reese.Nav
         {
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var settings = navSystem.Settings;
-
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
-
             var isDebugging = IsDebugging;
 
             Entities
@@ -61,6 +60,8 @@ namespace Reese.Nav
                })
                .WithName("NavGroundingJob")
                .ScheduleParallel();
+
+            buildPhysicsWorld.AddInputDependency(Dependency);
         }
     }
 }
