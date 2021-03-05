@@ -60,7 +60,7 @@ namespace Reese.Demo.Stranded
                             Duration = 1
                         });
 
-                        Debug.Log($"{entryBuffer[i].Value} is making me purr! Purrrrrrrr!");
+                        Debug.Log($"Entity {entryBuffer[i].Value.Activator.Index} is making me purr! Purrrrrrrr!");
                     }
                 })
                 .WithoutBurst()
@@ -74,7 +74,7 @@ namespace Reese.Demo.Stranded
                 {
                     for (var i = exitBuffer.Length - 1; i >= 0; --i) // Traversing from the end of the buffer for performance reasons.
                     {
-                        Debug.Log($"{exitBuffer[i].Value} is making me meow for attention! MEEEOWWWWWWW!");
+                        Debug.Log($"Entity {exitBuffer[i].Value.Activator.Index} is making me meow for attention! MEEEOWWWWWWW!");
                     }
                 })
                 .WithName("CatExitJob")

@@ -1,10 +1,10 @@
-﻿using Unity.Collections;
+﻿using System;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Reese.Spatial
 {
@@ -77,20 +77,28 @@ namespace Reese.Spatial
                     if (collider.Value == BlobAssetReference<Unity.Physics.Collider>.Null) return;
 
                     for (var i = 0; i < entries.Length; ++i)
-                        if (entries[i].Value == Entity.Null)
+                        if (entries[i].Value.Activator == Entity.Null)
                             entries.RemoveAt(i);
 
                     for (var i = 0; i < exits.Length; ++i)
-                        if (exits[i].Value == Entity.Null)
+                        if (exits[i].Value.Activator == Entity.Null)
                             exits.RemoveAt(i);
 
-                    for (var i = 0; i < overlaps.Length; ++i)
-                        if (overlaps[i].Value == Entity.Null)
-                            overlaps.RemoveAt(i);
-
                     var tags = tagsFromEntity[entity];
+                    var tagSet = new NativeHashSet<FixedString128>(1, Allocator.Temp);
+                    for (var i = 0; i < tags.Length; ++i) tagSet.Add(tags[i]);
 
-                    if (tags.Length <= 0) return;
+                    for (var i = 0; i < overlaps.Length; ++i)
+                        if (
+                            overlaps[i].Value.Activator == Entity.Null ||
+                            !tagSet.Contains(overlaps[i].Value.Tag) // In case a tag is removed at runtime, must remove its associated overlap.
+                        ) overlaps.RemoveAt(i);
+
+                    if (tags.Length <= 0)
+                    {
+                        tagSet.Dispose();
+                        return;
+                    }
 
                     var possibleOverlaps = new NativeList<int>(Allocator.Temp);
 
@@ -108,6 +116,7 @@ namespace Reese.Spatial
                     ))
                     {
                         possibleOverlaps.Dispose();
+                        tagSet.Dispose();
                         return;
                     }
 
@@ -126,15 +135,19 @@ namespace Reese.Spatial
 
                     for (var i = 0; i < overlaps.Length; ++i)
                     {
-                        var overlapEntity = overlaps[i].Value;
+                        var overlapEntity = overlaps[i].Value.Activator;
 
                         if (overlappingActivatorEntitySet.Contains(overlapEntity)) continue;
 
-                        exits.Add(overlapEntity);
+                        exits.Add(new SpatialEvent
+                        {
+                            Activator = overlapEntity,
+                            Tag = overlaps[i].Value.Tag
+                        });
 
                         for (var j = 0; j < overlaps.Length; ++j)
                         {
-                            if (overlaps[j].Value != overlapEntity) continue;
+                            if (overlaps[j].Value.Activator != overlapEntity) continue;
                             overlaps.RemoveAt(j);
                             break;
                         }
@@ -144,11 +157,8 @@ namespace Reese.Spatial
 
                     overlappingActivatorEntitySet.Dispose();
 
-                    var tagSet = new NativeHashSet<FixedString128>(1, Allocator.Temp);
-                    for (var i = 0; i < tags.Length; ++i) tagSet.Add(tags[i]);
-
                     var overlapSet = new NativeHashSet<Entity>(1, Allocator.Temp);
-                    for (var i = 0; i < overlaps.Length; ++i) overlapSet.Add(overlaps[i]);
+                    for (var i = 0; i < overlaps.Length; ++i) overlapSet.Add(overlaps[i].Value.Activator);
 
                     for (var i = 0; i < overlappingActivators.Length; ++i)
                     {
@@ -165,19 +175,27 @@ namespace Reese.Spatial
                         var overlappingTags = tagsFromEntity[overlappingEntity];
 
                         var sharesTag = false;
+                        FixedString128 tag = default;
 
                         for (var j = 0; j < overlappingTags.Length; ++j)
                         {
                             if (!tagSet.Contains(overlappingTags[j])) continue;
 
                             sharesTag = true;
+                            tag = overlappingTags[j];
                             break;
                         }
 
                         if (!sharesTag) continue;
 
-                        entries.Add(overlappingEntity);
-                        overlaps.Add(overlappingEntity);
+                        var evt = new SpatialEvent
+                        {
+                            Activator = overlappingEntity,
+                            Tag = tag
+                        };
+
+                        entries.Add(evt);
+                        overlaps.Add(evt);
                     }
 
                     overlapSet.Dispose();
