@@ -1,13 +1,13 @@
 {
 	"name": "com.reese.random",
-	"version": "0.5.18",
+	"version": "0.5.19",
 	"displayName": "Reese's DOTS Randomization",
 	"description": "Unity.Mathematics.Random number generators for jobs, including Burst-capable ones.",
 	"dependencies": {
 		"com.unity.entities": "0.17.0-preview.41"
 	},
 	"unity": "2020.2",
-	"unityRelease": "3f1",
+	"unityRelease": "7f1",
 	"author": {
 		"name": "Reese Schultz",
 		"email": "reeseschultz@gmail.com",
