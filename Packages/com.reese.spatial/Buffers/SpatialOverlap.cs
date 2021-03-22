@@ -2,7 +2,7 @@
 
 namespace Reese.Spatial
 {
-    [InternalBufferCapacity(10)]
+    [InternalBufferCapacity(SpatialConstants.SPATIAL_OVERLAP_BUFFER_CAPACITY)]
     public struct SpatialOverlap : IBufferElementData
     {
         public static implicit operator SpatialEvent(SpatialOverlap e) { return e.Value; }

@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace Reese.Spatial
 {
-    [InternalBufferCapacity(10)]
+    [InternalBufferCapacity(SpatialConstants.SPATIAL_TAG_BUFFER_CAPACITY)]
     public struct SpatialTag : IBufferElementData
     {
         public static implicit operator FixedString128(SpatialTag e) { return e.Value; }

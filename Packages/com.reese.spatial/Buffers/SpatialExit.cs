@@ -2,7 +2,7 @@
 
 namespace Reese.Spatial
 {
-    [InternalBufferCapacity(10)]
+    [InternalBufferCapacity(SpatialConstants.SPATIAL_EXIT_BUFFER_CAPACITY)]
     public struct SpatialExit : IBufferElementData
     {
         public static implicit operator SpatialEvent(SpatialExit e) { return e.Value; }
