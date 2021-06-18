@@ -12,7 +12,7 @@ namespace Reese.Path
         public static implicit operator float3(PathBufferElement e) { return e.Value; }
         public static implicit operator PathBufferElement(float3 e) { return new PathBufferElement { Value = e }; }
 
-        /// <summary>A waypoint along the path calculated by the NavPlanSystem.
+        /// <summary>A waypoint along the path calculated by the PathPlanSystem.
         /// </summary>
         public float3 Value;
     }
