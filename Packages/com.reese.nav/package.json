@@ -2,7 +2,7 @@
 	"name": "com.reese.nav",
 	"version": "0.20.5",
 	"displayName": "Reese's DOTS Navigation",
-	"description": "DOTS navigation with auto-jumping agents and movable surfaces.",
+	"description": "DOTS navigation with auto-jumping agents and dynamic surfaces.",
 	"dependencies": {
 		"com.unity.entities": "0.17.0-preview.42",
 		"com.unity.physics": "0.6.0-preview.3",

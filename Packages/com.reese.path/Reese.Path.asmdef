@@ -1,11 +1,6 @@
 {
-    "name": "Reese.Demo",
+    "name": "Reese.Path",
     "references": [
-        "Reese.Nav",
-        "Reese.Path",
-        "Reese.Random",
-        "Reese.Spatial",
-        "Reese.Utility",
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Entities",
@@ -13,9 +8,6 @@
         "Unity.Jobs",
         "Unity.Mathematics",
         "Unity.Mathematics.Extensions",
-        "Unity.Physics",
-        "Unity.Physics.Hybrid",
-        "Unity.Rendering.Hybrid",
         "Unity.Transforms",
         "Unity.Transforms.Hybrid"
     ],
