@@ -23,7 +23,7 @@ namespace Reese.Path
     /// which includes unsafe code lacking [NativeDisableUnsafePtrRestriction],
     /// meaning that's a no-go inside a job. So, long story short, this system
     /// hacks the queries into a public NativeArray via pointers to them. The
-    /// NavPlanSystem can then access them via the UnsafeUtility. It would be
+    /// Path PlanSystem can then access them via the UnsafeUtility. It would be
     /// overkill to include a pointer in each NavAgent, since the number of
     /// threads is limited at any given time anyway, so the solution here is
     /// similar to what you'll find in Reese.Random.RandomSystem, which was
