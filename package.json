@@ -1,0 +1,16 @@
+{
+	"name": "com.reese.path",
+	"version": "0.0.1",
+	"displayName": "Reese's DOTS Pathing",
+	"description": "DOTS pathing without any bells and whistles.",
+	"dependencies": {
+		"com.unity.entities": "0.17.0-preview.42"
+	},
+	"unity": "2020.3",
+	"unityRelease": "12f1",
+	"author": {
+		"name": "Reese Schultz",
+		"email": "reeseschultz@gmail.com",
+		"url": "https://reeseschultz.com"
+	}
+}
