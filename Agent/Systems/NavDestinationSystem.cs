@@ -102,7 +102,7 @@ namespace Reese.Nav
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
-            buildPhysicsWorld.AddInputDependency(Dependency);
+            buildPhysicsWorld.AddInputDependencyToComplete(Dependency);
         }
     }
 }
