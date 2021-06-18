@@ -75,7 +75,7 @@ namespace Reese.Demo
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
-            buildPhysicsWorld.AddInputDependency(Dependency);
+            buildPhysicsWorld.AddInputDependencyToComplete(Dependency);
         }
     }   
 }

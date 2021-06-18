@@ -61,7 +61,7 @@ namespace Reese.Nav
                .WithName("NavGroundingJob")
                .ScheduleParallel();
 
-            buildPhysicsWorld.AddInputDependency(Dependency);
+            buildPhysicsWorld.AddInputDependencyToComplete(Dependency);
         }
     }
 }

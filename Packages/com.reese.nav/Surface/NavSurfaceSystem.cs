@@ -166,7 +166,7 @@ namespace Reese.Nav
                 .WithName("NavSurfaceTrackingJob")
                 .ScheduleParallel();
 
-            buildPhysicsWorld.AddInputDependency(Dependency);
+            buildPhysicsWorld.AddInputDependencyToComplete(Dependency);
 
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
