@@ -2,8 +2,6 @@
 
 [![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
 
-![Video of agents spawning and avoiding obstacles.](https://raw.githubusercontent.com/reeseschultz/ReeseUnityDemos/master/preview.gif)
-
 General utility code for Unity, mainly DOTS-oriented.
 
 ## Import
