@@ -25,11 +25,10 @@ namespace Reese.Nav
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
-            var settings = navSystem.Settings;
-            var translationFromEntity = GetComponentDataFromEntity<Translation>(true);
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
             var navMeshQueryPointerArray = World.GetExistingSystem<NavMeshQuerySystem>().PointerArray;
+            var settings = navSystem.Settings;
 
             Entities
                 .WithNone<NavProblem>()
