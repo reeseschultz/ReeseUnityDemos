@@ -10,10 +10,10 @@ using UnityEngine.Experimental.AI;
 
 namespace Reese.Path
 {
-    /// <summary>Plans paths and "jumpable" positions using
-    /// UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery by
-    /// thread index. NavMeshQuery orchestration here appears to be exemplary
-    /// usage. Note that it depends on the third-party PathUtils.</summary>
+    /// <summary>Plans paths using UnityEngine.Experimental.AI. Each entity
+    /// gets its own NavMeshQuery by thread index. NavMeshQuery orchestration
+    /// here appears to be exemplary usage. Note that it depends on the
+    /// third-party PathUtils.</summary>
     unsafe public class PathPlanSystem : SystemBase
     {
         PathSystem pathSystem => World.GetOrCreateSystem<PathSystem>();
