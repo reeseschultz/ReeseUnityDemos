@@ -3,7 +3,6 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Physics.Systems;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.AI;
@@ -86,7 +85,7 @@ namespace Reese.Nav
 
                         commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity);
 
-                        commandBuffer.AddComponent<NavProblem>(entityInQueryIndex, entity, new NavProblem
+                        commandBuffer.AddComponent(entityInQueryIndex, entity, new NavProblem
                         {
                             Value = status
                         });
@@ -135,7 +134,7 @@ namespace Reese.Nav
                         jumpBuffer.Add(
                             NavUtil.MultiplyPoint3x4(
                                 math.inverse(localToWorldFromEntity[agent.DestinationSurface].Value),
-                                (float3)lastValidPoint + agent.Offset
+                                lastValidPoint + agent.Offset
                             )
                         );
 
