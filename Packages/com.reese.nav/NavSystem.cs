@@ -23,6 +23,18 @@ namespace Reese.Nav
             PathSearchMax = 1000,
             SurfaceRaycastMax = 100
         };
+        
+        public NavFlockingSettings FlockingSettings = new NavFlockingSettings
+        {
+            SeparationWeight = 2.0f,
+            AlignmentWeight = 1.5f,
+            CohesionWeight = 0.1f,
+            WaypointWeight = 2.0f,
+            FollowWeight = 2.5f,
+            CollisionAvoidanceStrength = 0.5f,
+            QuadrantCellSize = 5,
+            QuadrantZMultiplier = 1000
+        };
 
         /// <summary>Includes settings used by the navigation systems.</summary>
         public struct NavSettings
@@ -68,6 +80,19 @@ namespace Reese.Nav
 
             /// <summary>Upper limit on the number of raycasts to attempt in searching for a surface below the NavAgent. Exceeding this implies that there is no surface below the agent, its then determined to be falling which means that no more raycasts will be performed.</summary>
             public int SurfaceRaycastMax;
+        }
+
+        /// <summary>Includes settings used by the navigation/ flocking systems.</summary>
+        public struct NavFlockingSettings
+        {
+            public float SeparationWeight;
+            public float AlignmentWeight;
+            public float CohesionWeight;
+            public float WaypointWeight;
+            public float FollowWeight;
+            public float CollisionAvoidanceStrength;
+            public int QuadrantCellSize; 
+            public int QuadrantZMultiplier; 
         }
 
         protected override void OnUpdate() { }

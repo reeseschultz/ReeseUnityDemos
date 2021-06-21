@@ -60,6 +60,26 @@ namespace Reese.Nav
         /// reasonable value to try.</summary>
         public float RotationSpeed;
 
+        /// <summary>
+        ///  
+        /// </summary>
+        public float CohesionPerceptionRadius;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public float AlignmentPerceptionRadius;
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public float SeparationPerceptionRadius;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public float ObstacleAversionDistance;
+
         /// <summary>You should *probably* write to this when spawning an
         /// agent. If you don't get this right, then raycasts below the agent
         /// may entirely overshoot the surface, which will eventually mean that
