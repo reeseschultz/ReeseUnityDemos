@@ -5,7 +5,7 @@
 
 ## Introduction
 
-This is a multi-threaded navigation package using [Unity DOTS](https://unity.com/dots). It supports obstacle avoidance, terrain, agents automatically jumping between surfaces with artificial gravity, parenting of agents and surfaces for preserving local transformations, and even backward compatibility with GameObjects. It's maintained by me, [Reese](https://github.com/reeseschultz/).
+This is a multi-threaded navigation package using [Unity DOTS](https://unity.com/dots). It supports obstacle avoidance, terrain, agents automatically jumping between surfaces with artificial gravity, parenting of agents and surfaces for preserving local transformations, flocking behaviours (cohesion, alignment & separation) and even backward compatibility with GameObjects. It's maintained by me, [Reese](https://github.com/reeseschultz/).
 
 If you don't want all the extra bells and whistles, such as surface management and jumping, please see the [pathing package](https://github.com/reeseschultz/ReeseUnityDemos/tree/path#reeses-dots-pathing) instead.
 
@@ -127,6 +127,10 @@ To retain navigating agents *as* GameObjects, rather than converting them into e
 | **`RotationSpeed`**        | `float`  | The agent's rotation speed.                                                                                                                                                                                    | `0.3f`                             |
 | **`TypeID`**               | `int`    | This is the type of agent in terms of the NavMesh system. See examples of use in the demo spawners. There is also a helper method for setting the type from a `string` in the `NavUtil` called `GetAgentType`. | `NavUtil.GetAgentType("Humanoid")` |
 | **`Offset`**               | `float3` | The agent's offset.                                                                                                                                                                                            | `(0, 0, 0)`                        |
+| **`CohesionPerceptionRadius`**  | `float` | The perception radius for the cohesion flocking behavior.                                                                                                                                                  | `1.5f or radius of agent plus some`|
+| **`AlignmentPerceptionRadius`**  | `float` | The perception radius for the alignment flocking behavior.                                                                                                                                                | `1.5f or radius of agent plus some`|
+| **`SeparationPerceptionRadius`**  | `float` | The perception radius for the separation flocking behavior.                                                                                                                                              | `1.5f or radius of agent plus some`|
+| **`ObstacleAversionDistance`**  | `float` | Distance from which agents start to steer away from each other.                                                                                                                                            | `3.0f or double/ triple the radius of the agent`|
 
 (See the [demo spawners](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/Spawner) for examples of initialization.)
 
@@ -141,6 +145,7 @@ Here are the internally-managed components (defined in `NavAgentStatus`) that ar
 | **`NavFalling`**      | Exists if the agent is falling.                                          |
 | **`NavPlanning`**     | Exists if the agent is planning.                                         |
 | **`NavNeedsSurface`** | Exists if the agent needs a surface.                                     |
+| **`NavSteering`**     | Holds the steering data for the agent.                                   |
 
 Other components you **may** add and write to:
 
@@ -150,6 +155,7 @@ Other components you **may** add and write to:
 | **`NavFollow`**           | Exists if the agent is following an entity. One important property is the `Entity` `Target`, which is self-explanatory. There's also the `float` `MaxDistance`, which is the maximum distance before this agent will stop following the target entity. If `MaxDistance` is less than or equal to zero, this agent will follow the target entity no matter how far it is away. Finally, the `float` `MinDistance` is that which the agent maintains between itself and the target entity it follows. |
 | **`NavStop`**             | Exists if the agent needs to stop moving (waits for jumping or falling to complete).                                                                                                                                                                                                                                                                                                                                                                                                                |
 | **`NavTerrainCapable`**   | Only needed if your agents must navigate on terrain. Don't use it otherwise, since it may negatively impact performance.                                                                                                                                                                                                                                                                                                                                                                            |
+| **`NavFlocking`**         | Exists if flocking behaviours should be applied to the agent.            |
 
 (See the [demo destination systems](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Nav/Destination) for examples of status component and variable usage.)
 
@@ -211,6 +217,12 @@ And then there's the rest of the settings you may want to change:
 | **`PathSearchMax`**                        | `int`   | Upper limit on the search area size during path planning.                                                                                                                                           | `1000`        |
 | **`IterationMax`**                         | `int`   | Upper limit on the iterations performed in a [NavMeshQuery](https://docs.unity3d.com/2019.3/Documentation/ScriptReference/Experimental.AI.NavMeshQuery.html) to find a path in the `NavPlanSystem`. | `1000`        |
 | **`PathNodeMax`**                          | `int`   | Upper limit on a given path buffer. Exceeding this merely results in allocation of heap memory.                                                                                                     | `1000`        |
+| **`SeparationWeight`**                     | `float` | The weight of separation in the flocking system. Pushes agents back once they get too close to another.                                                                                             | `2f`          |
+| **`AlignmentWeight`**                      | `float` | The weight of alignment in the flocking system.                                                                                                                                                     | `1f`          |
+| **`CohesionWeight`**                       | `float` | The weight of cohesion in the flocking system.                                                                                                                                                      | `1f`          |
+| **`CollisionAvoidanceStrength`**           | `float` | The strength of steering applied when agents steer away from each other.                                                                                                                            | `0.5f`        |
+
+
 
 ### Compile-Time Constants
 
@@ -229,6 +241,7 @@ In addition to settings, there are also compile-time constants. You *can* change
 * The compatible version of [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents) is *already* in [Packages/com.reese.nav/ThirdParty](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.nav/ThirdParty/)! Use that and nothing else, and I mean for your entire project. Do not try to mix and match it with other versions.
 * Upon spawning `NavAgents`, ensure you have their initial [Translation.Value](https://docs.unity3d.com/Packages/com.unity.entities@0.17/api/Unity.Transforms.Translation.html?q=translation) right, along with their `Offset`. Getting these things wrong may result in your agents being unable to raycast the surface below them, since they may be raycasting underneath it!
 * Obstacles need [NavMeshObstacle](https://docs.unity3d.com/2019.3/Documentation/Manual/class-NavMeshObstacle.html) components, colliders, and the [ConvertToEntity](https://docs.unity3d.com/Packages/com.unity.entities@0.17/api/Unity.Entities.ConvertToEntity.html?q=convert%20to%20ent) script on them. Otherwise obstacles will not be detected by raycasts.
+* If you want to use the flocking system, you need to add the `NavFlocking` component to your agents.
 
 ## Credits
 
