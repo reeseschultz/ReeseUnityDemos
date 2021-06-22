@@ -161,7 +161,11 @@ namespace Reese.Nav
                             commandBuffer.RemoveComponent<NavPlanning>(entityInQueryIndex, entity);
 
                             if (customLerp) commandBuffer.AddComponent<NavCustomLerping>(entityInQueryIndex, entity);
-                            else commandBuffer.AddComponent<NavWalking>(entityInQueryIndex, entity);
+                            else
+                            {
+                                commandBuffer.AddComponent<NavWalking>(entityInQueryIndex, entity);
+                                commandBuffer.AddComponent<NavSteering>(entityInQueryIndex, entity);
+                            }
                         }
                     }
 

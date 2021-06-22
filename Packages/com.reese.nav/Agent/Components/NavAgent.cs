@@ -60,6 +60,33 @@ namespace Reese.Nav
         /// reasonable value to try.</summary>
         public float RotationSpeed;
 
+        /// <summary>
+        /// The perception radius for the cohesion behavior. Differs from agent to agent because of body size. You should *probably* write
+        /// to this when spawning an agent and you want to use the flocking system.
+        /// Setting this to 1 or 2 is a good starting point.
+        /// </summary>
+        public float CohesionPerceptionRadius;
+
+        /// <summary>
+        /// The perception radius for the alignment behavior. Differs from agent to agent because of body size. You should *probably* write
+        /// to this when spawning an agent and you want to use the flocking system.
+        /// Setting this to 1 or 2 is a good starting point.
+        /// </summary>
+        public float AlignmentPerceptionRadius;
+        
+        /// <summary>
+        /// The perception radius for the separation behavior. Keep it relatively low, it is the distance from where agents start to push each other away.
+        /// Differs from agent to agent because of body size. You should *probably* write
+        /// to this when spawning an agent and you want to use the flocking system.
+        /// </summary>
+        public float SeparationPerceptionRadius;
+
+        /// <summary>
+        /// The distance from which agents start to steer away from each other. Differs from agent to agent because of body size.
+        /// You should *probably* write to this when spawning an agent and you want to use the flocking system.
+        /// </summary>
+        public float ObstacleAversionDistance;
+
         /// <summary>You should *probably* write to this when spawning an
         /// agent. If you don't get this right, then raycasts below the agent
         /// may entirely overshoot the surface, which will eventually mean that

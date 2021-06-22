@@ -23,6 +23,17 @@ namespace Reese.Nav
             PathSearchMax = 1000,
             SurfaceRaycastMax = 100
         };
+        
+        public NavFlockingSettings FlockingSettings = new NavFlockingSettings
+        {
+            SeparationWeight = 2.0f,
+            AlignmentWeight = 1.5f,
+            CohesionWeight = 1f,
+            FollowWeight = 2.5f,
+            CollisionAvoidanceStrength = 0.5f,
+            QuadrantCellSize = 5,
+            QuadrantZMultiplier = 1000
+        };
 
         /// <summary>Includes settings used by the navigation systems.</summary>
         public struct NavSettings
@@ -68,6 +79,33 @@ namespace Reese.Nav
 
             /// <summary>Upper limit on the number of raycasts to attempt in searching for a surface below the NavAgent. Exceeding this implies that there is no surface below the agent, its then determined to be falling which means that no more raycasts will be performed.</summary>
             public int SurfaceRaycastMax;
+        }
+
+        /// <summary>Includes settings used by the navigation/ flocking systems.</summary>
+        public struct NavFlockingSettings
+        {
+            /// <summary>
+            /// Works like collision, so that units do not share the same space
+            /// </summary>
+            public float SeparationWeight;
+            /// <summary>
+            /// How much should agents align with other agents in a flock
+            /// </summary>
+            public float AlignmentWeight;
+            /// <summary>
+            /// How strongly should agents look to join other agents (grouping behavior)
+            /// </summary>
+            public float CohesionWeight;
+            /// <summary>
+            /// To be included, maybe rewrite the NavFollow system to add weighted steering to the NavSteeringSystem?
+            /// </summary>
+            public float FollowWeight; 
+            /// <summary>
+            /// Weight of collision avoidance so agents steer away from each other
+            /// </summary>
+            public float CollisionAvoidanceStrength;
+            public int QuadrantCellSize; 
+            public int QuadrantZMultiplier; 
         }
 
         protected override void OnUpdate() { }

@@ -2,7 +2,7 @@
 
 [![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
 
-![Various demo scenes.](/preview.gif)
+![Flocking demo.](/preview.gif)
 
 Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by me, Reese.
 

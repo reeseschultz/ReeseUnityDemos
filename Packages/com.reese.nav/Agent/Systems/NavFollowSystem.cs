@@ -1,5 +1,4 @@
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 
@@ -12,7 +11,6 @@ namespace Reese.Nav
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
-
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var needsDestinationFromEntity = GetComponentDataFromEntity<NavDestination>(true);
 
