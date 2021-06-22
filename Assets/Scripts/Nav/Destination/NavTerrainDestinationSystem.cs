@@ -47,14 +47,16 @@ namespace Reese.Demo
 
                     var jumpableSurfaces = jumpableBufferFromEntity[surface.Value];
                     var random = randomArray[nativeThreadIndex];
+                    var aabb = renderBoundsFromEntity[surface.Value].Value;
 
                     if (
                         physicsWorld.GetPointOnSurfaceLayer(
                             localToWorld,
                             NavUtil.GetRandomPointInBounds(
                                 ref random,
-                                renderBoundsFromEntity[surface.Value].Value,
-                                99
+                                aabb,
+                                99,
+                                aabb.Center
                             ),
                             out var validDestination,
                             settings.ObstacleRaycastDistanceMax,
@@ -77,5 +79,5 @@ namespace Reese.Demo
             barrier.AddJobHandleForProducer(Dependency);
             buildPhysicsWorld.AddInputDependencyToComplete(Dependency);
         }
-    }   
+    }
 }

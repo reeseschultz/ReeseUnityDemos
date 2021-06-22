@@ -51,11 +51,11 @@ namespace Reese.Nav
 
         /// <summary>Checks approximate equality between two float3s.</summary>
         public static bool ApproxEquals(float3 a, float3 b, float tolerance)
-            => !ApproxEquals(a.x, b.x, tolerance) || !ApproxEquals(a.y, b.y, tolerance) || !ApproxEquals(a.z, b.z, tolerance) ? false : true;
+            => ApproxEquals(a.x, b.x, tolerance) && ApproxEquals(a.y, b.y, tolerance) && ApproxEquals(a.z, b.z, tolerance);
 
         /// <summary>Checks approximate equality between two floats.</summary>
         public static bool ApproxEquals(float a, float b, float tolerance)
-            => math.abs(a - b) > tolerance ? false : true;
+            => math.abs(a - b) <= tolerance;
 
         /// <summary>Gets a random point within the provided bounds (AABB).
         /// A scale is additionally provided to massage the output position. It
@@ -64,9 +64,9 @@ namespace Reese.Nav
         /// to ensure the state of the random number generator is updated--that
         /// way the job this is called from can ensure that state change is
         /// preserved for the next job using said generator.</summary>
-        public static float3 GetRandomPointInBounds(ref Unity.Mathematics.Random random, AABB aabb, float scale)
+        public static float3 GetRandomPointInBounds(ref Unity.Mathematics.Random random, AABB aabb, float scale, float3 offset)
         {
-            var extents = aabb.Center + aabb.Extents * scale;
+            var extents = offset + aabb.Extents * scale;
 
             var position = new float3(
                 random.NextFloat(-extents.x, extents.x),

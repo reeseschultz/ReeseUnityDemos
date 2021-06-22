@@ -2,6 +2,7 @@
 using Reese.Random;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine.SceneManagement;
@@ -44,7 +45,8 @@ namespace Reese.Demo
                         WorldPoint = NavUtil.GetRandomPointInBounds(
                             ref random,
                             renderBoundsFromEntity[surface.Value].Value,
-                            99
+                            99,
+                            float3.zero
                         )
                     });
 
