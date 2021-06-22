@@ -5,7 +5,7 @@
 
 ## Introduction
 
-This is a multi-threaded navigation package using [Unity DOTS](https://unity.com/dots). It supports obstacle avoidance, terrain, agents automatically jumping between surfaces with artificial gravity, parenting of agents and surfaces for preserving local transformations, flocking behaviours (cohesion, alignment & separation) and even backward compatibility with GameObjects. It's maintained by me, [Reese](https://github.com/reeseschultz/).
+This is a multi-threaded navigation package using [Unity DOTS](https://unity.com/dots). It supports obstacle avoidance, terrain, agents automatically jumping between surfaces with artificial gravity, parenting of agents and surfaces for preserving local transformations, flocking behaviors (cohesion, alignment & separation) and even backward compatibility with GameObjects. It's maintained by me, [Reese](https://github.com/reeseschultz/). [0x6c23](https://github.com/0x6c23), Dennis, contributed the flocking feature.
 
 If you don't want all the extra bells and whistles, such as surface management and jumping, please see the [pathing package](https://github.com/reeseschultz/ReeseUnityDemos/tree/path#reeses-dots-pathing) instead.
 
@@ -51,8 +51,9 @@ For this navigation package, whether you're using it with GameObjects or entitie
 ### Authoring Components
 
 1. `NavAgentAuthoring` - Converts GameObjects into entities with the `NavAgent` component, and other needed components.
-2. `NavSurfaceAuthoring` - Converts GameObjects into entities with the `NavSurface` component, and other needed components.
-3. `NavBasisAuthoring` - Converts GameObjects into entities with the `NavBasis` component, and other needed components.
+2. `NavFlocking` - Optional component one may add to agents to achieve flocking.
+3. `NavSurfaceAuthoring` - Converts GameObjects into entities with the `NavSurface` component, and other needed components.
+4. `NavBasisAuthoring` - Converts GameObjects into entities with the `NavBasis` component, and other needed components.
 
 ### Usage with GameObjects
 
@@ -98,6 +99,7 @@ To retain navigating agents *as* GameObjects, rather than converting them into e
 | **`IsFalling`**        | `bool`             | `true` if the agent is falling, `false` if not.                                                                                                                                                                                                            | `false`       |
 | **`IsPlanning`**       | `bool`             | `true` if the agent is planning, `false` if not.                                                                                                                                                                                                           | `false`       |
 | **`IsTerrainCapable`** | `bool`             | `true` if the agent is terrain-capable, `false` if not.                                                                                                                                                                                                    | `false`       |
+| **`ShouldFlock`**      | `bool`             | `true` if the agent should flock, `false` if not.                                                                                                                                                                                                          | `false`       |
 | **`NeedsSurface`**     | `bool`             | `true` if the agent needs a surface, `false` if not.                                                                                                                                                                                                       | `false`       |
 | **`HasProblem`**       | `PathQueryStatus?` | Has a value of [PathQueryStatus](https://docs.unity3d.com/ScriptReference/Experimental.AI.PathQueryStatus.html) if the agent has a problem, `null` if not. Problems tend to arise to due incorrect values set in `NavConstants`, which is discussed later. | `null`        |
 
