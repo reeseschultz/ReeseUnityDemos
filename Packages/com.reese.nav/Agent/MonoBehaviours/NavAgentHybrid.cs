@@ -23,6 +23,9 @@ namespace Reese.Nav
         /// <summary>True if the agent is terrain-capable, false if not.</summary>
         public bool IsTerrainCapable { get; set; } = default;
 
+        /// <summary>True if the agent should flock, false if not.</summary>
+        public bool ShouldFlock { get; set; } = default;
+
         /// <summary>Has a value of PathQueryStatus if the agent has a problem, null if not.</summary>
         public PathQueryStatus? HasProblem { get; private set; } = default;
 
@@ -92,7 +95,7 @@ namespace Reese.Nav
 
         void InitializeEntityTransform()
         {
-            entityManager.AddComponentData<LocalToWorld>(Entity, new LocalToWorld
+            entityManager.AddComponentData(Entity, new LocalToWorld
             {
                 Value = float4x4.TRS(
                     transform.position,
@@ -129,6 +132,8 @@ namespace Reese.Nav
                 TypeID = NavUtil.GetAgentType(Type),
                 Offset = Offset
             });
+
+            if (ShouldFlock) entityManager.AddComponent<NavFlocking>(Entity);
 
             InitializeEntityTransform();
         }

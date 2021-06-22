@@ -53,19 +53,17 @@ namespace Reese.Nav
                             ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos,
                             ref alignmentVec, ref separationVec, ref closestQuadrantData);
 
-                        var closestDistance = Vector3.Distance(entityLocalToWorld.Position,
-                            closestQuadrantData.LocalToWorld.Position);
+                        var closestDistance = Vector3.Distance(entityLocalToWorld.Position, closestQuadrantData.LocalToWorld.Position);
                         
                         closestDistance = math.sqrt(closestDistance);
 
-                        // Steering average
-                        if (separationNeighbors > 0)
+                        // Steering average:
+                        if (separationNeighbors > 0) 
                         {
                             separationVec /= separationNeighbors;
                             
-                            // Experimental, but it limited clumping of close agents in my case
-                            if (Vector3.SqrMagnitude(separationVec) > 0.5f)
-                                separationVec += steering.CurrentHeading; 
+                            // Experimental, but this appears to limit clumping of close agents:
+                            if (Vector3.SqrMagnitude(separationVec) > 0.5f) separationVec += steering.CurrentHeading; 
                         }
                         else separationVec = steering.CurrentHeading;
 
@@ -75,30 +73,22 @@ namespace Reese.Nav
                         if (cohesionNeighbors > 0) cohesionPos /= cohesionNeighbors;
                         else cohesionPos = entityLocalToWorld.Position;
 
-                        // Collision = obstacle avoidance for other agents
-                        var nearestCollisionDistanceFromRadius =
-                            closestDistance - agent.ObstacleAversionDistance;
+                        // Collision = obstacle avoidance for other agents:
+                        var nearestCollisionDistanceFromRadius = closestDistance - agent.ObstacleAversionDistance;
                         
-                        var collisionSteering = flockingSettings.CollisionAvoidanceStrength *
-                                                math.normalizesafe(entityLocalToWorld.Position -
-                                                                   closestQuadrantData.LocalToWorld.Position);
+                        var collisionSteering = flockingSettings.CollisionAvoidanceStrength * math.normalizesafe(entityLocalToWorld.Position - closestQuadrantData.LocalToWorld.Position);
 
                         var collisionAvoidanceSteering =
                             (nearestCollisionDistanceFromRadius < 0 && !collisionSteering.Equals(float3.zero))
                                 ? collisionSteering
                                 : steering.CurrentHeading;
 
-                        if (nearestCollisionDistanceFromRadius < 0 && isDebugging)
-                        {
-                            Debug.DrawLine(entityLocalToWorld.Position, closestQuadrantData.LocalToWorld.Position,
-                                Color.blue); 
-                        }
+                        if (nearestCollisionDistanceFromRadius < 0 && isDebugging) Debug.DrawLine(entityLocalToWorld.Position, closestQuadrantData.LocalToWorld.Position, Color.blue); 
                         
-                        // Normalizing
-                        var alignmentSteering = math.normalizesafe(alignmentVec) * flockingSettings.AlignmentWeight;
-                        var cohesionSteering  = math.normalizesafe(cohesionPos - entityLocalToWorld.Position) *
-                                                        flockingSettings.CohesionWeight;
-                        var separationSteering= math.normalizesafe(separationVec) * flockingSettings.SeparationWeight;
+                        // Normalizing:
+                        var alignmentSteering  = math.normalizesafe(alignmentVec) * flockingSettings.AlignmentWeight;
+                        var cohesionSteering   = math.normalizesafe(cohesionPos - entityLocalToWorld.Position) * flockingSettings.CohesionWeight;
+                        var separationSteering = math.normalizesafe(separationVec) * flockingSettings.SeparationWeight;
                         
                         steering.CollisionAvoidanceSteering = collisionAvoidanceSteering;
                         steering.CohesionSteering           = cohesionSteering;

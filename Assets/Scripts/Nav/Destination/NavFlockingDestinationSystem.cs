@@ -14,8 +14,7 @@ namespace Reese.Demo
 
         protected override void OnCreate()
         {
-            if (!SceneManager.GetActiveScene().name.Equals("NavFlockingDemo"))
-                Enabled = false;
+            if (!SceneManager.GetActiveScene().name.Equals("NavFlockingDemo")) Enabled = false;
         }
 
         protected override void OnUpdate()
