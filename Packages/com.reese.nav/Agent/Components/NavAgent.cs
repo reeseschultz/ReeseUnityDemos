@@ -68,7 +68,7 @@ namespace Reese.Nav
         public float CohesionPerceptionRadius;
 
         /// <summary>
-        /// The percention radius for the alignment behavior. Differs from agent to agent because of body size. You should *probably* write
+        /// The perception radius for the alignment behavior. Differs from agent to agent because of body size. You should *probably* write
         /// to this when spawning an agent and you want to use the flocking system.
         /// Setting this to 1 or 2 is a good starting point.
         /// </summary>

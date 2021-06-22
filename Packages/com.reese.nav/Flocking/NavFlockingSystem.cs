@@ -16,15 +16,13 @@ namespace Reese.Nav
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
         
-        public bool IsDebugging = true;
+        public bool IsDebugging = false;
 
         protected override void OnUpdate()
         {
             var flockingSettings = navSystem.FlockingSettings;
-            var navSettings = navSystem.Settings;
             var quadrantHashMap = NavQuadrantSystem.QuadrantHashMap;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
-            var navFollowFromEntity = GetComponentDataFromEntity<NavFollow>(true);
             var isDebugging = IsDebugging;
 
             Entities
@@ -33,7 +31,7 @@ namespace Reese.Nav
                 .WithReadOnly(quadrantHashMap)
                 .WithReadOnly(localToWorldFromEntity)
                 .ForEach(
-                    (Entity entity, ref NavSteering navSteering, in NavAgent agent, in Translation translation) =>
+                    (Entity entity, ref NavSteering steering, in NavAgent agent, in Translation translation) =>
                     {
                         if (!localToWorldFromEntity.HasComponent(entity)) return;
 
@@ -57,6 +55,7 @@ namespace Reese.Nav
 
                         var closestDistance = Vector3.Distance(entityLocalToWorld.Position,
                             closestQuadrantData.LocalToWorld.Position);
+                        
                         closestDistance = math.sqrt(closestDistance);
 
                         // Steering average
@@ -66,12 +65,12 @@ namespace Reese.Nav
                             
                             // Experimental, but it limited clumping of close agents in my case
                             if (Vector3.SqrMagnitude(separationVec) > 0.5f)
-                                 separationVec += navSteering.CurrentHeading; 
+                                separationVec += steering.CurrentHeading; 
                         }
-                        else separationVec = navSteering.CurrentHeading;
+                        else separationVec = steering.CurrentHeading;
 
                         if (alignmentNeighbors > 0) alignmentVec /= alignmentNeighbors;
-                        else alignmentVec = navSteering.CurrentHeading;
+                        else alignmentVec = steering.CurrentHeading;
 
                         if (cohesionNeighbors > 0) cohesionPos /= cohesionNeighbors;
                         else cohesionPos = entityLocalToWorld.Position;
@@ -87,12 +86,11 @@ namespace Reese.Nav
                         var collisionAvoidanceSteering =
                             (nearestCollisionDistanceFromRadius < 0 && !collisionSteering.Equals(float3.zero))
                                 ? collisionSteering
-                                : navSteering.CurrentHeading;
-                        
+                                : steering.CurrentHeading;
 
                         if (nearestCollisionDistanceFromRadius < 0 && isDebugging)
                         {
-                             Debug.DrawLine(entityLocalToWorld.Position, closestQuadrantData.LocalToWorld.Position,
+                            Debug.DrawLine(entityLocalToWorld.Position, closestQuadrantData.LocalToWorld.Position,
                                 Color.blue); 
                         }
                         
@@ -102,10 +100,10 @@ namespace Reese.Nav
                                                         flockingSettings.CohesionWeight;
                         var separationSteering= math.normalizesafe(separationVec) * flockingSettings.SeparationWeight;
                         
-                        navSteering.CollisionAvoidanceSteering = collisionAvoidanceSteering;
-                        navSteering.CohesionSteering           = cohesionSteering;
-                        navSteering.SeparationSteering         = separationSteering;
-                        navSteering.AlignmentSteering          = alignmentSteering;
+                        steering.CollisionAvoidanceSteering = collisionAvoidanceSteering;
+                        steering.CohesionSteering           = cohesionSteering;
+                        steering.SeparationSteering         = separationSteering;
+                        steering.AlignmentSteering          = alignmentSteering;
                     }
                 )
                 .WithName("NavFlockingJob")

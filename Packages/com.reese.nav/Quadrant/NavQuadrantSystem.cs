@@ -21,17 +21,15 @@ namespace Reese.Nav.Quadrant
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         public static NativeMultiHashMap<int, QuadrantData> QuadrantHashMap;
-
+        
         protected override void OnCreate()
         {
             QuadrantHashMap = new NativeMultiHashMap<int, QuadrantData>(0, Allocator.Persistent);
-            base.OnCreate();
         }
 
         protected override void OnDestroy()
         {
             QuadrantHashMap.Dispose();
-            base.OnDestroy();
         }
 
         protected override void OnUpdate()
@@ -72,12 +70,11 @@ namespace Reese.Nav.Quadrant
         }
 
         public static int HashkeyFromPosition(float3 position, NavFlockingSettings flockingSettings)
-        {
-            return (int) (math.floor(position.x / flockingSettings.QuadrantCellSize) +
+            => (int) (math.floor(position.x / flockingSettings.QuadrantCellSize) +
                           flockingSettings.QuadrantZMultiplier * math.floor(position.z / flockingSettings.QuadrantCellSize));
-        }
+        
 
-        private static void SearchQuadrantNeighbor(in NativeMultiHashMap<int, QuadrantData> quadrantHashMap, in int key,
+        static void SearchQuadrantNeighbor(in NativeMultiHashMap<int, QuadrantData> quadrantHashMap, in int key,
             in Entity entity, in NavAgent agent, in float3 pos, ref int separationNeighbors, ref int alignmentNeighbors,
             ref int cohesionNeighbors, ref float3 cohesionPos, ref float3 alignmentVec, ref float3 separationVec,
             ref QuadrantData closestQuadrantData)

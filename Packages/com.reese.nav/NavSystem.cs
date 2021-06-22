@@ -28,7 +28,7 @@ namespace Reese.Nav
         {
             SeparationWeight = 2.0f,
             AlignmentWeight = 1.5f,
-            CohesionWeight = 0.1f,
+            CohesionWeight = 1f,
             FollowWeight = 2.5f,
             CollisionAvoidanceStrength = 0.5f,
             QuadrantCellSize = 5,
