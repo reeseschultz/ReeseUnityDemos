@@ -16,13 +16,13 @@ MonoBehaviour:
   m_AdvancedMode: 0
   lift:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 0.94726217, z: 0.9796289, w: -0.014074595}
+    m_Value: {x: 0.048221588, y: 1, z: 0, w: -0.014074595}
   gamma:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 0.9578947, z: 0, w: 0.6122451}
+    m_Value: {x: 0.6567046, y: 1, z: 0.5735691, w: 0.6122451}
   gain:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 0.88306516, z: 0.8993098, w: 0.07037299}
+    m_Value: {x: 0.06046796, y: 0.50545174, z: 1, w: 0.07037299}
 --- !u!114 &-2446065616083534435
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -48,12 +48,12 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.344
+    m_Value: 0.439
     min: 0
     max: 1
   smoothness:
     m_OverrideState: 0
-    m_Value: 0.208
+    m_Value: 0.2
     min: 0.01
     max: 1
   rounded:
@@ -75,31 +75,6 @@ MonoBehaviour:
   - {fileID: -7145719876218069546}
   - {fileID: 3855944421909530874}
   - {fileID: -2446065616083534435}
-  - {fileID: 3684368436205656899}
---- !u!114 &3684368436205656899
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 221518ef91623a7438a71fef23660601, type: 3}
-  m_Name: WhiteBalance
-  m_EditorClassIdentifier: 
-  active: 1
-  m_AdvancedMode: 0
-  temperature:
-    m_OverrideState: 1
-    m_Value: -16.7
-    min: -100
-    max: 100
-  tint:
-    m_OverrideState: 1
-    m_Value: 29.4
-    min: -100
-    max: 100
 --- !u!114 &3855944421909530874
 MonoBehaviour:
   m_ObjectHideFlags: 3

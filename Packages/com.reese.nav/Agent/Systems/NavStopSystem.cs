@@ -6,7 +6,7 @@ namespace Reese.Nav
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
-    [UpdateAfter(typeof(NavLerpSystem))]
+    [UpdateAfter(typeof(NavMoveSystem))]
     public class NavStopSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();

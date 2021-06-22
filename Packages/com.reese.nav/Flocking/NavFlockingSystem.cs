@@ -15,6 +15,8 @@ namespace Reese.Nav
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
+        
+        public bool IsDebugging = true;
 
         protected override void OnUpdate()
         {
@@ -23,6 +25,7 @@ namespace Reese.Nav
             var quadrantHashMap = NavQuadrantSystem.QuadrantHashMap;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var navFollowFromEntity = GetComponentDataFromEntity<NavFollow>(true);
+            var isDebugging = IsDebugging;
 
             Entities
                 .WithAll<NavFlocking, NavWalking, LocalToParent>()
@@ -44,7 +47,6 @@ namespace Reese.Nav
                         var cohesionPos = float3.zero;
                         var alignmentVec = float3.zero;
                         var separationVec = float3.zero;
-                        var avoidanceVec = float3.zero;
 
                         QuadrantData closestQuadrantData = new QuadrantData();
 
@@ -61,9 +63,10 @@ namespace Reese.Nav
                         if (separationNeighbors > 0)
                         {
                             separationVec /= separationNeighbors;
-                            //
-                            // if (Vector3.SqrMagnitude(separationVec) > 0.5f) // So they will not clump together
-                            //     separationVec += navSteering.CurrentHeading;
+                            
+                            // Experimental, but it limited clumping of close agents in my case
+                            if (Vector3.SqrMagnitude(separationVec) > 0.5f)
+                                 separationVec += navSteering.CurrentHeading; 
                         }
                         else separationVec = navSteering.CurrentHeading;
 
@@ -86,30 +89,18 @@ namespace Reese.Nav
                                 ? collisionSteering
                                 : navSteering.CurrentHeading;
                         
-                        // Debug.Log($"Closest Distance: {closestDistance} Nearest Collision Dist From Radius: {nearestCollisionDistanceFromRadius} Closest Position: {closestQuadrantData.LocalToWorld.Position}");
 
-                        if (nearestCollisionDistanceFromRadius < 0)
+                        if (nearestCollisionDistanceFromRadius < 0 && isDebugging)
                         {
-                             // Debug.DrawLine(entityLocalToWorld.Position, collisionSteering, UnityEngine.Color.red);
                              Debug.DrawLine(entityLocalToWorld.Position, closestQuadrantData.LocalToWorld.Position,
-                                 UnityEngine.Color.blue); 
+                                Color.blue); 
                         }
-                        
-
-                        // var pursuitSteering = translation.Value;
-                        //
-                        // if (navFollowFromEntity.HasComponent(entity))
-                        // {
-                        //     var entityNavFollow = navFollowFromEntity[entity];
-                        //     entityNavFollow.Target
-                        // }
                         
                         // Normalizing
                         var alignmentSteering = math.normalizesafe(alignmentVec) * flockingSettings.AlignmentWeight;
                         var cohesionSteering  = math.normalizesafe(cohesionPos - entityLocalToWorld.Position) *
                                                         flockingSettings.CohesionWeight;
                         var separationSteering= math.normalizesafe(separationVec) * flockingSettings.SeparationWeight;
-
                         
                         navSteering.CollisionAvoidanceSteering = collisionAvoidanceSteering;
                         navSteering.CohesionSteering           = cohesionSteering;

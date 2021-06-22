@@ -11,7 +11,7 @@ namespace Reese.Nav
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
-    [UpdateAfter(typeof(NavLerpSystem))]
+    [UpdateAfter(typeof(NavMoveSystem))]
     public class NavGroundSystem : SystemBase
     {
         public bool IsDebugging = false;

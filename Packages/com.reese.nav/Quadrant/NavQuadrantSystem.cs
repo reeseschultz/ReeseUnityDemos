@@ -19,7 +19,6 @@ namespace Reese.Nav.Quadrant
     [UpdateAfter(typeof(NavDestinationSystem))]
     public class NavQuadrantSystem : SystemBase
     {
-        // NavFlockingSettings navFlockingSettings => World.GetOrCreateSystem<NavSystem>().FlockingSettings;
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         public static NativeMultiHashMap<int, QuadrantData> QuadrantHashMap;
 
@@ -69,7 +68,6 @@ namespace Reese.Nav.Quadrant
                     .WithName("HashPositionJob")
                     .ScheduleParallel(Dependency);
 
-            // Dependency = hashPositionJobHandle;
             hashPositionJobHandle.Complete();
         }
 
@@ -122,9 +120,6 @@ namespace Reese.Nav.Quadrant
             } while (quadrantHashMap.TryGetNextValue(out quadrantData, ref iterator));
         }
 
-        /// <summary>
-        ///  Method performs a search and aggregation of steering elements inside all neighboring quadrants.
-        /// </summary>
         public static void SearchQuadrantNeighbors(in NativeMultiHashMap<int, QuadrantData> quadrantHashMap,
             in int key, in Entity currentEntity, in NavAgent agent, in float3 pos, in NavFlockingSettings flockingSettings, ref int separationNeighbors,
             ref int alignmentNeighbors, ref int cohesionNeighbors, ref float3 cohesionPos, ref float3 alignmentVec,
@@ -133,7 +128,6 @@ namespace Reese.Nav.Quadrant
             SearchQuadrantNeighbor(quadrantHashMap, key, currentEntity, agent, pos, ref separationNeighbors,
                 ref alignmentNeighbors, ref cohesionNeighbors,
                 ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
-
             SearchQuadrantNeighbor(quadrantHashMap, key + 1, currentEntity, agent, pos, ref separationNeighbors,
                 ref alignmentNeighbors, ref cohesionNeighbors,
                 ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
