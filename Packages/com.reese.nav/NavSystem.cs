@@ -30,10 +30,12 @@ namespace Reese.Nav
             AlignmentWeight = 1.5f,
             CohesionWeight = 1f,
             FollowWeight = 2.5f,
-            CollisionAvoidanceStrength = 0.5f,
+            AgentCollisionAvoidanceStrength = 0.5f,
+            ObstacleCollisionAvoidanceStrength = 0.5f,
+            CollisionCastingAngle = 65f,
             QuadrantCellSize = 5,
             QuadrantZMultiplier = 1000
-        };
+        }; 
 
         /// <summary>Includes settings used by the navigation systems.</summary>
         public struct NavSettings
@@ -103,7 +105,17 @@ namespace Reese.Nav
             /// <summary>
             /// Weight of collision avoidance so agents steer away from each other
             /// </summary>
-            public float CollisionAvoidanceStrength;
+            public float AgentCollisionAvoidanceStrength;
+            /// <summary>
+            /// Weight of collision avoidance so agents steer away from obstacles
+            /// </summary>
+            public float ObstacleCollisionAvoidanceStrength;
+            /// <summary>
+            /// The (half) angle of the collision raycasting of the entity. The direction is the entities forward vector.
+            /// If you plug in 180 here, the raycasting will surround the player. (360 deg)
+            /// </summary>
+            public float CollisionCastingAngle;
+            
             public int QuadrantCellSize; 
             public int QuadrantZMultiplier; 
         }

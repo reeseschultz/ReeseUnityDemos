@@ -8,6 +8,7 @@ namespace Reese.Nav
     public struct NavSteering : IComponentData
     {
         public float3 CollisionAvoidanceSteering;
+        public float3 AgentAvoidanceSteering;
         public float3 SeparationSteering;
         public float3 CohesionSteering;
         public float3 AlignmentSteering;
