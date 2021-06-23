@@ -1,6 +1,6 @@
 {
 	"name": "com.reese.nav",
-	"version": "0.21.0",
+	"version": "0.22.0",
 	"displayName": "Reese's DOTS Navigation",
 	"description": "DOTS navigation with flocking, auto-jumping agents and dynamic surfaces.",
 	"dependencies": {
