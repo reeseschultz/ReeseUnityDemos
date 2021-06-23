@@ -24,7 +24,7 @@ namespace Reese.Nav
         const float NUM_RAYS = 17;
             
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
-        BuildPhysicsWorld buildPhysicsWormdld => World.GetExistingSystem<BuildPhysicsWorld>();
+        BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         
         protected override void OnUpdate()
         {
