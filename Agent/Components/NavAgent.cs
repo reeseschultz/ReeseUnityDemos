@@ -82,7 +82,13 @@ namespace Reese.Nav
         public float SeparationPerceptionRadius;
 
         /// <summary>
-        /// The distance from which agents start to steer away from each other. Differs from agent to agent because of body size.
+        /// The distance from which agents start to steer away from each other when using the flocking system. Differs from agent to agent because of body size.
+        /// You should *probably* write to this when spawning an agent and you want to use the flocking system.
+        /// </summary>
+        public float AgentAversionDistance;
+        
+        /// <summary>
+        /// The distance from which agents start to steer away from obstacles when using the flocking system. Differs from agent to agent because of body size.
         /// You should *probably* write to this when spawning an agent and you want to use the flocking system.
         /// </summary>
         public float ObstacleAversionDistance;

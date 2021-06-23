@@ -18,7 +18,7 @@ namespace Reese.Nav
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
-    [UpdateAfter(typeof(NavFlockingSystem))]
+    [UpdateAfter(typeof(NavCollisionSystem))]
     public class NavSteeringSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
@@ -70,10 +70,12 @@ namespace Reese.Nav
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var settings = navSystem.Settings;
             var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
+            
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var fallingFromEntity = GetComponentDataFromEntity<NavFalling>(true);
             var jumpingFromEntity = GetComponentDataFromEntity<NavJumping>(true);
-
+            var flockingFromEntity = GetComponentDataFromEntity<NavFlocking>(true);
+            
             Entities
                 .WithNone<NavProblem, NavPlanning>()
                 .WithAll<NavWalking, LocalToParent>()
@@ -81,6 +83,7 @@ namespace Reese.Nav
                 .WithReadOnly(physicsWorld)
                 .WithReadOnly(jumpingFromEntity)
                 .WithReadOnly(fallingFromEntity)
+                .WithReadOnly(flockingFromEntity)
                 .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Translation translation, ref NavSteering navSteering,
                     ref Rotation rotation, in Parent surface) =>
@@ -109,16 +112,24 @@ namespace Reese.Nav
                     var heading = math.normalizesafe(pathBuffer[pathBufferIndex].Value - translation.Value);
 
                     // Just to make sure we are not applying steering behaviours while falling or jumping
-                    if (!jumpingFromEntity.HasComponent(entity) && !fallingFromEntity.HasComponent(entity))
+                    if (
+                        !jumpingFromEntity.HasComponent(entity) && 
+                        !fallingFromEntity.HasComponent(entity) &&
+                        flockingFromEntity.HasComponent(entity) )
                     {
-                        navSteering.CollisionAvoidanceSteering.y = 0; navSteering.SeparationSteering.y = 0; navSteering.AlignmentSteering.y = 0; navSteering.CohesionSteering.y = 0;
+                        navSteering.AgentAvoidanceSteering.y = 0; navSteering.SeparationSteering.y = 0; navSteering.AlignmentSteering.y = 0; navSteering.CohesionSteering.y = 0;
                         heading = math.normalizesafe(
                             heading +
-                            navSteering.CollisionAvoidanceSteering +
+                            navSteering.AgentAvoidanceSteering +
                             navSteering.SeparationSteering +
                             navSteering.AlignmentSteering +
                             navSteering.CohesionSteering
                         );
+
+                        if (!navSteering.CollisionAvoidanceSteering.Equals(float3.zero))
+                        {
+                            heading = math.normalizesafe(heading + navSteering.CollisionAvoidanceSteering);
+                        }
                     }
                     
                     navSteering.CurrentHeading = heading;
