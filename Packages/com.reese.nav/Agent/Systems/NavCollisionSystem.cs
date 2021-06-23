@@ -18,9 +18,14 @@ namespace Reese.Nav
     [UpdateAfter(typeof(NavFlockingSystem))]
     public class NavCollisionSystem : SystemBase
     {
-        public bool IsDebugging = true;
+        public bool IsDebugging = false;
+        
+        // Cast 17 rays in a (flockingSettings.CollisionCastingAngle * 2) deg angle with the entities forward direction
+        const float NUM_RAYS = 17;
+            
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
-        BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
+        BuildPhysicsWorld buildPhysicsWormdld => World.GetExistingSystem<BuildPhysicsWorld>();
+        
         protected override void OnUpdate()
         {
             var physicsWorld     = buildPhysicsWorld.PhysicsWorld;
@@ -38,12 +43,11 @@ namespace Reese.Nav
                 {
                     var averageHitDirection = float3.zero;
                     var clostestHitDistance = agent.ObstacleAversionDistance;
-                    int hits = 0;
+                    var hits = 0;
                     
-                    // Cast 17 rays in a (flockingSettings.CollisionCastingAngle * 2) deg angle with the entities forward direction
-                    for (int i = 0; i < 17; ++i)
+                    for (int i = 0; i < NUM_RAYS; ++i)
                     {
-                        var rayModifier = Quaternion.AngleAxis((i / ((float)17 - 1)) * flockingSettings.CollisionCastingAngle * 2 - flockingSettings.CollisionCastingAngle, localToWorld.Up);
+                        var rayModifier = Quaternion.AngleAxis((i / (NUM_RAYS - 1)) * flockingSettings.CollisionCastingAngle * 2 - flockingSettings.CollisionCastingAngle, localToWorld.Up);
                         var rayDirection = rotation.Value * rayModifier * Vector3.forward;
                         
                         if(isDebugging) 
@@ -69,19 +73,18 @@ namespace Reese.Nav
                             
                             hits++;
                             
-                            if(isDebugging) 
+                            if (isDebugging) 
                                 Debug.DrawLine(localToWorld.Position, hit.Position, Color.red);
-
                         }
                     }
 
                     averageHitDirection /= hits;
                     
-                    var scaler = 1 - (clostestHitDistance / agent.ObstacleAversionDistance);
+                    var scalar = 1 - (clostestHitDistance / agent.ObstacleAversionDistance);
                     
                     // Steer away from the average hit direction
                     // We also scale our steering vector by the closest rayhit distance. Otherwise, the entity just bounces off walls and spins out of control.
-                    steering.CollisionAvoidanceSteering = (flockingSettings.ObstacleCollisionAvoidanceStrength *  math.normalizesafe(averageHitDirection)) * scaler; 
+                    steering.CollisionAvoidanceSteering = flockingSettings.ObstacleCollisionAvoidanceStrength *  math.normalizesafe(averageHitDirection) * scalar; 
                 })
                 .WithName("NavClipAvoidanceJob")
                 .ScheduleParallel();
