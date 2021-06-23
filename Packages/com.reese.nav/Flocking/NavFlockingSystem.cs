@@ -14,7 +14,7 @@ namespace Reese.Nav
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
-        public bool IsDebugging = true;
+        public bool IsDebugging = false;
 
         protected override void OnUpdate()
         {
