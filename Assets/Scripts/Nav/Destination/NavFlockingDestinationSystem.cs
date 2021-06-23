@@ -37,7 +37,6 @@ namespace Reese.Demo
                         !jumpableBufferFromEntity.HasComponent(surface.Value)
                     ) return;
 
-                    var jumpableSurfaces = jumpableBufferFromEntity[surface.Value];
                     var random = randomArray[nativeThreadIndex];
 
                     commandBuffer.AddComponent(entityInQueryIndex, entity, new NavDestination

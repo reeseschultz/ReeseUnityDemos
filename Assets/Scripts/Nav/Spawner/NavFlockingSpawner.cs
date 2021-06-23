@@ -85,7 +85,8 @@ namespace Reese.Demo
                 entityManager.AddComponentData(outputEntities[i], new NavAgent
                 {
                     TranslationSpeed = 20,
-                    ObstacleAversionDistance = currentPrefab.Equals(cylinderPrefab) ? 3f : 6f,
+                    ObstacleAversionDistance = 4f,
+                    AgentAversionDistance = 3f,
                     SeparationPerceptionRadius = 1f,
                     AlignmentPerceptionRadius = currentPrefab.Equals(cylinderPrefab) ? 1f : 3f,
                     CohesionPerceptionRadius = currentPrefab.Equals(cylinderPrefab) ? 1f : 3f,
