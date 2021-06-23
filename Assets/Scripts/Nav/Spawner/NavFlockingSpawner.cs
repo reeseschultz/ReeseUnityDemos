@@ -108,6 +108,7 @@ namespace Reese.Demo
                 entityManager.AddComponent<LocalToParent>(outputEntities[i]);
                 entityManager.AddComponent<NavNeedsSurface>(outputEntities[i]);
                 entityManager.AddComponent<NavFlocking>(outputEntities[i]);
+                entityManager.AddComponent<NavObstacleSteering>(outputEntities[i]);
             }
 
             outputEntities.Dispose();
