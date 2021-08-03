@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
-    ///<summary>This is an EXAMPLE of how to interpolate agents with the pathing package.</summary>
+    ///<summary>This is an EXAMPLE of how to translate and rotate agents with the pathing package.</summary>
     [UpdateAfter(typeof(PathPlanSystem))]
     public class PathMoveSystem : SystemBase
     {
