@@ -9,7 +9,7 @@ namespace Reese.Demo
 {
     ///<summary>This is an EXAMPLE of how to interpolate agents with the pathing package.</summary>
     [UpdateAfter(typeof(PathPlanSystem))]
-    public class PathLerpSystem : SystemBase
+    public class PathMoveSystem : SystemBase
     {
         public static readonly float STOPPING_DISTANCE = 1;
         public static readonly float TRANSLATION_SPEED = 20;
@@ -69,7 +69,7 @@ namespace Reese.Demo
 
                     Rotate(deltaSeconds, pathBuffer, translation, ref rotation);
                 })
-                .WithName("PathLerpJob")
+                .WithName("PathMoveJob")
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
