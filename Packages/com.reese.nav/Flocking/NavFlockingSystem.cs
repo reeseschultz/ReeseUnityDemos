@@ -20,21 +20,15 @@ namespace Reese.Nav
         {
             var flockingSettings = navSystem.FlockingSettings;
             var quadrantHashMap = NavQuadrantSystem.QuadrantHashMap;
-            var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
             var isDebugging = IsDebugging;
 
             Entities
                 .WithAll<NavFlocking, NavWalking, LocalToParent>()
                 .WithNone<NavProblem, NavFalling, NavJumping>()
                 .WithReadOnly(quadrantHashMap)
-                .WithReadOnly(localToWorldFromEntity)
-                .ForEach(
-                    (Entity entity, ref NavSteering steering, in NavAgent agent, in Translation translation) =>
+                .ForEach((Entity entity, ref NavSteering steering, in NavAgent agent, in Translation translation, in LocalToWorld localToWorld) =>
                     {
-                        if (!localToWorldFromEntity.HasComponent(entity)) return;
-
-                        var entityLocalToWorld = localToWorldFromEntity[entity];
-                        var entityHashMapKey = NavQuadrantSystem.HashPosition(entityLocalToWorld.Position, flockingSettings);
+                        var entityHashMapKey = NavQuadrantSystem.HashPosition(localToWorld.Position, flockingSettings);
 
                         var separationNeighbors = 0;
                         var alignmentNeighbors = 0;
@@ -47,19 +41,17 @@ namespace Reese.Nav
                         var closestQuadrantData = new QuadrantData();
 
                         NavQuadrantSystem.SearchQuadrantNeighbors(
-                            in quadrantHashMap, entityHashMapKey, entity, agent, entityLocalToWorld.Position, flockingSettings,
+                            in quadrantHashMap, entityHashMapKey, entity, agent, localToWorld.Position, flockingSettings,
                             ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos,
                             ref alignmentVec, ref separationVec, ref closestQuadrantData);
 
-                        var closestDistance = Vector3.Distance(entityLocalToWorld.Position, closestQuadrantData.LocalToWorld.Position);
-
-                        closestDistance = math.sqrt(closestDistance);
+                        var closestDistance = math.distancesq(localToWorld.Position, closestQuadrantData.LocalToWorld.Position);
 
                         if (separationNeighbors > 0)
                         {
                             separationVec /= separationNeighbors;
 
-                            if (Vector3.SqrMagnitude(separationVec) > 0.5f) separationVec += steering.CurrentHeading; // Limit clumping of close agents.
+                            if (math.lengthsq(separationVec) > 0.5f) separationVec += steering.CurrentHeading; // Limit clumping of close agents.
                         }
                         else separationVec = steering.CurrentHeading;
 
@@ -67,10 +59,10 @@ namespace Reese.Nav
                         else alignmentVec = steering.CurrentHeading;
 
                         if (cohesionNeighbors > 0) cohesionPos /= cohesionNeighbors;
-                        else cohesionPos = entityLocalToWorld.Position;
+                        else cohesionPos = localToWorld.Position;
 
                         var nearestAgentCollisionDistanceFromRadius = closestDistance - agent.AgentAversionDistance;
-                        var nearestAgentDirection = math.normalizesafe(entityLocalToWorld.Position - closestQuadrantData.LocalToWorld.Position);
+                        var nearestAgentDirection = math.normalizesafe(localToWorld.Position - closestQuadrantData.LocalToWorld.Position);
                         var agentAvoidanceSteering = flockingSettings.AgentCollisionAvoidanceStrength * nearestAgentDirection;
 
                         agentAvoidanceSteering =
@@ -78,10 +70,10 @@ namespace Reese.Nav
                                 ? agentAvoidanceSteering
                                 : steering.CurrentHeading;
 
-                        if (nearestAgentCollisionDistanceFromRadius < 0 && isDebugging) Debug.DrawRay(entityLocalToWorld.Position, -nearestAgentDirection * 2f, Color.blue);
+                        if (nearestAgentCollisionDistanceFromRadius < 0 && isDebugging) Debug.DrawRay(localToWorld.Position, -nearestAgentDirection * 2f, Color.blue);
 
                         var alignmentSteering = math.normalizesafe(alignmentVec) * flockingSettings.AlignmentWeight;
-                        var cohesionSteering = math.normalizesafe(cohesionPos - entityLocalToWorld.Position) * flockingSettings.CohesionWeight;
+                        var cohesionSteering = math.normalizesafe(cohesionPos - localToWorld.Position) * flockingSettings.CohesionWeight;
                         var separationSteering = math.normalizesafe(separationVec) * flockingSettings.SeparationWeight;
 
                         steering.AgentAvoidanceSteering = agentAvoidanceSteering;

@@ -41,8 +41,7 @@ namespace Reese.Nav.Quadrant
 
             Entities
                 .WithAll<NavAgent>()
-                .ForEach(
-                    (Entity entity, in LocalToWorld localToWorld) =>
+                .ForEach((Entity entity, in LocalToWorld localToWorld) =>
                     {
                         parallelHashMap.Add(
                             HashPosition(localToWorld.Position, navFlockingSettings),

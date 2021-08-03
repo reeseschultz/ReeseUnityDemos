@@ -63,7 +63,7 @@ namespace Reese.Nav
 
                         if (physicsWorld.CastRay(ray, out RaycastHit hit))
                         {
-                            var distance = Vector3.Distance(localToWorld.Position, hit.Position);
+                            var distance = math.distance(localToWorld.Position, hit.Position);
 
                             clostestHitDistance = math.select(clostestHitDistance, distance, distance < clostestHitDistance);
                             averageHitDirection += localToWorld.Position - hit.Position;
