@@ -6,21 +6,39 @@ using UnityEngine;
 
 namespace Reese.Nav
 {
-    /// <summary>
-    /// Takes the current heading from the NavSteeringSystem and moves the entity based on that.
-    /// Also calculates and applies an appropriate rotation for the entity, so it always faces the direction of movement,
-    /// even when other steering behaviors affect it.
-    /// </summary>
+    /// <summary>Translates and rotates agents based on their current heading.</summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavSteeringSystem))]
     public class NavMoveSystem : SystemBase
     {
-        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
+        static void Translate(float deltaSeconds, NavSteering steering, NavAgent agent, ref Translation translation)
+            => translation.Value += steering.CurrentHeading * agent.TranslationSpeed * deltaSeconds;
+
+        static void Rotate(float deltaSeconds, float4x4 destinationSurfaceLocalToWorld, float4x4 surfaceLocalToWorld, NavSteering steering, NavAgent agent, Translation translation, ref Rotation rotation)
+        {
+            var lookAt = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
+                destinationSurfaceLocalToWorld,
+                translation.Value + steering.CurrentHeading
+            );
+
+            lookAt = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).
+                math.inverse(surfaceLocalToWorld),
+                lookAt
+            );
+
+            lookAt.y = translation.Value.y;
+
+            var lookRotation = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
+
+            if (math.length(agent.SurfacePointNormal) > 0.01f) lookRotation *= Quaternion.FromToRotation(math.up(), agent.SurfacePointNormal);
+
+            rotation.Value = math.slerp(rotation.Value, lookRotation, deltaSeconds / agent.RotationSpeed);
+        }
 
         protected override void OnUpdate()
         {
-            var deltaTime = Time.DeltaTime;
+            var deltaSeconds = Time.DeltaTime;
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
 
             Entities
@@ -28,39 +46,20 @@ namespace Reese.Nav
                 .WithAll<NavWalking, LocalToParent>()
                 .WithReadOnly(localToWorldFromEntity)
                 .ForEach(
-                    (Entity entity, ref Translation translation, ref Rotation rotation, in NavAgent agent,
-                        in NavSteering navSteering, in Parent surface) =>
+                    (Entity entity, ref Translation translation, ref Rotation rotation, in NavAgent agent, in NavSteering steering, in Parent surface) =>
                     {
                         if (agent.DestinationSurface.Equals(Entity.Null)) return;
 
-                        translation.Value += navSteering.CurrentHeading * agent.TranslationSpeed * deltaTime;
+                        Translate(deltaSeconds, steering, agent, ref translation);
 
-                        // Add rotation with flocking behavior steering included
-                        var lookAt = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
-                            localToWorldFromEntity[agent.DestinationSurface].Value,
-                            translation.Value + navSteering.CurrentHeading
-                        );
+                        var destinationSurfaceLocalToWorld = localToWorldFromEntity[agent.DestinationSurface].Value;
+                        var surfaceLocalToWorld = localToWorldFromEntity[surface.Value].Value;
 
-                        lookAt = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).
-                            math.inverse(localToWorldFromEntity[surface.Value].Value),
-                            lookAt
-                        );
-
-                        lookAt.y = translation.Value.y;
-
-                        var lookRotation = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
-
-                        if (math.length(agent.SurfacePointNormal) > 0.01f)
-                            lookRotation = Quaternion.FromToRotation(math.up(), agent.SurfacePointNormal) *
-                                           lookRotation;
-
-                        rotation.Value = math.slerp(rotation.Value, lookRotation, deltaTime / agent.RotationSpeed);
+                        Rotate(deltaSeconds, destinationSurfaceLocalToWorld, surfaceLocalToWorld, steering, agent, translation, ref rotation);
                     }
                 )
                 .WithName("NavMoveJob")
                 .ScheduleParallel();
-
-            barrier.AddJobHandleForProducer(Dependency);
         }
     }
 }
