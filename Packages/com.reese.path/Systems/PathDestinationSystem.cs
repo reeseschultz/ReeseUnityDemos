@@ -6,6 +6,7 @@ using Unity.Transforms;
 namespace Reese.Path
 {
     /// <summary>Manages destinations for agents.</summary>
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public class PathDestinationSystem : SystemBase
     {
         PathSystem pathSystem => World.GetOrCreateSystem<PathSystem>();
