@@ -1,6 +1,6 @@
 {
 	"name": "com.reese.random",
-	"version": "0.5.21",
+	"version": "0.5.22",
 	"displayName": "Reese's DOTS Randomization",
 	"description": "Unity.Mathematics.Random number generators for jobs, including Burst-capable ones.",
 	"dependencies": {
