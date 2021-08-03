@@ -6,9 +6,7 @@ using UnityEngine;
 
 namespace Reese.Nav
 {
-    /// <summary>
-    /// Translates and rotates agents based on their current heading.
-    /// </summary>
+    /// <summary>Translates and rotates agents based on their current heading.</summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavSteeringSystem))]
