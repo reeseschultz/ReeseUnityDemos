@@ -1,6 +1,6 @@
 {
 	"name": "com.reese.path",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"displayName": "Reese's DOTS Pathing",
 	"description": "DOTS pathing without any bells and whistles.",
 	"dependencies": {
