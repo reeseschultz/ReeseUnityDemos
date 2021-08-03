@@ -3,7 +3,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
-using UnityEngine;
 using static Reese.Nav.NavSystem;
 
 namespace Reese.Nav.Quadrant
@@ -19,8 +18,9 @@ namespace Reese.Nav.Quadrant
     [UpdateAfter(typeof(NavDestinationSystem))]
     public class NavQuadrantSystem : SystemBase
     {
-        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         public static NativeMultiHashMap<int, QuadrantData> QuadrantHashMap;
+
+        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
 
         protected override void OnCreate()
             => QuadrantHashMap = new NativeMultiHashMap<int, QuadrantData>(0, Allocator.Persistent);
@@ -33,24 +33,19 @@ namespace Reese.Nav.Quadrant
             QuadrantHashMap.Clear();
 
             var navFlockingSettings = navSystem.FlockingSettings;
+            var entityCount = GetEntityQuery(typeof(NavAgent)).CalculateEntityCount();
 
-            EntityQuery entityQuery = GetEntityQuery(typeof(NavAgent));
-
-            var entityCount = entityQuery.CalculateEntityCount();
             if (entityCount > QuadrantHashMap.Capacity) QuadrantHashMap.Capacity = entityCount;
 
             var parallelHashMap = QuadrantHashMap.AsParallelWriter();
 
-            var hashPositionJobHandle = Entities
+            Entities
                 .WithAll<NavAgent>()
                 .ForEach(
                     (Entity entity, in LocalToWorld localToWorld) =>
                     {
-                        var hashKey = HashkeyFromPosition(localToWorld.Position, navFlockingSettings);
-                        // Debug.Log($"Position {localToWorld.Position} HashKey: {hashKey}");
-
                         parallelHashMap.Add(
-                            hashKey,
+                            HashPosition(localToWorld.Position, navFlockingSettings),
                             new QuadrantData
                             {
                                 LocalToWorld = localToWorld
@@ -59,12 +54,10 @@ namespace Reese.Nav.Quadrant
                     }
                 )
                 .WithName("NavHashPositionJob")
-                .ScheduleParallel(Dependency);
-
-            hashPositionJobHandle.Complete();
+                .ScheduleParallel();
         }
 
-        public static int HashkeyFromPosition(float3 position, NavFlockingSettings flockingSettings)
+        public static int HashPosition(float3 position, NavFlockingSettings flockingSettings)
             => (int)(math.floor(position.x / flockingSettings.QuadrantCellSize) + flockingSettings.QuadrantZMultiplier * math.floor(position.z / flockingSettings.QuadrantCellSize));
 
         static void SearchQuadrantNeighbor(in NativeMultiHashMap<int, QuadrantData> quadrantHashMap, in int key,
@@ -72,17 +65,17 @@ namespace Reese.Nav.Quadrant
             ref int cohesionNeighbors, ref float3 cohesionPos, ref float3 alignmentVec, ref float3 separationVec,
             ref QuadrantData closestQuadrantData)
         {
-            if (!quadrantHashMap.TryGetFirstValue(key, out var quadrantData, out var iterator)) return; // Nothing in quadrant.
+            if (!quadrantHashMap.TryGetFirstValue(key, out var quadrantData, out var iterator)) return;
 
             closestQuadrantData = quadrantData;
 
-            var closestDistance = Vector3.Distance(pos, quadrantData.LocalToWorld.Position);
+            var closestDistance = math.distance(pos, quadrantData.LocalToWorld.Position);
 
-            do // Loop through entities in quadrant.
+            do
             {
                 if (entity == quadrantData.Entity || quadrantData.LocalToWorld.Position.Equals(pos)) continue;
 
-                var distance = Vector3.Distance(pos, quadrantData.LocalToWorld.Position);
+                var distance = math.distance(pos, quadrantData.LocalToWorld.Position);
                 var nearest = distance < closestDistance;
 
                 closestDistance = math.select(closestDistance, distance, nearest);

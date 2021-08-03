@@ -35,7 +35,6 @@ namespace Reese.Nav
 
                         translation.Value += navSteering.CurrentHeading * agent.TranslationSpeed * deltaTime;
 
-                        // Add rotation with flocking behavior steering included
                         var lookAt = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
                             localToWorldFromEntity[agent.DestinationSurface].Value,
                             translation.Value + navSteering.CurrentHeading
@@ -50,9 +49,7 @@ namespace Reese.Nav
 
                         var lookRotation = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
 
-                        if (math.length(agent.SurfacePointNormal) > 0.01f)
-                            lookRotation = Quaternion.FromToRotation(math.up(), agent.SurfacePointNormal) *
-                                           lookRotation;
+                        if (math.length(agent.SurfacePointNormal) > 0.01f) lookRotation *= Quaternion.FromToRotation(math.up(), agent.SurfacePointNormal);
 
                         rotation.Value = math.slerp(rotation.Value, lookRotation, deltaTime / agent.RotationSpeed);
                     }
