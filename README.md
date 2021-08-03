@@ -21,7 +21,9 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 
 ## Usage at a Glance
 
-For this pathing package, there's only one concept you need to be familiar with: the **agent** (technically the `PathAgent` component), which is an actor or character who is in need of path planning.
+For a working example of how to use this package, see these [demo scripts](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Path).
+
+In this package, there's only one concept you need to be familiar with: the **agent** (technically the `PathAgent` component), which is an actor or character who is in need of path planning.
 
 There is also an associated authoring component you may want to use: `PathAgentAuthoring`.
 
@@ -115,6 +117,6 @@ This package uses [PathUtils](https://github.com/reeseschultz/ReeseUnityDemos/tr
 
 ## Contributing
 
-Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever. All that said, [GitHub Issues](https://github.com/reeseschultz/ReeseUnityDemos/issues/new/choose) is fine for constructive discussion.
+Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer, Reese, offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever, [unless you reach an agreement with him about support...](https://reese.codes)
 
 By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
