@@ -5,6 +5,10 @@
 
 Exposes `Unity.Mathematics.Random` number generators compatible with Burst-compiled jobs.
 
+## Support
+
+Need support or software customization? [Read more about consulting with the maintainer, Reese, and other services he provides...](https://reese.codes)
+
 ## Import
 
 There are two ways to import this package, one being with [OpenUPM](https://openupm.com/), the preferred method, and the other via Git URL:
@@ -67,6 +71,6 @@ Note that, to ensure the state of a given generator updates upon each call to `E
 
 ## Contributing
 
-Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever. All that said, [GitHub Issues](https://github.com/reeseschultz/ReeseUnityDemos/issues/new/choose) is fine for constructive discussion.
+Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer, Reese, offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever, [unless you reach an agreement with him about support...](https://reese.codes)
 
 By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
