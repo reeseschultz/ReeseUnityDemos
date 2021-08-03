@@ -34,7 +34,7 @@ namespace Reese.Nav
                         if (!localToWorldFromEntity.HasComponent(entity)) return;
 
                         var entityLocalToWorld = localToWorldFromEntity[entity];
-                        var entityHashMapKey = NavQuadrantSystem.HashkeyFromPosition(entityLocalToWorld.Position, flockingSettings);
+                        var entityHashMapKey = NavQuadrantSystem.HashPosition(entityLocalToWorld.Position, flockingSettings);
 
                         var separationNeighbors = 0;
                         var alignmentNeighbors = 0;
@@ -55,13 +55,11 @@ namespace Reese.Nav
 
                         closestDistance = math.sqrt(closestDistance);
 
-                        // Steering average:
                         if (separationNeighbors > 0)
                         {
                             separationVec /= separationNeighbors;
 
-                            // Experimental, but this appears to limit clumping of close agents:
-                            if (Vector3.SqrMagnitude(separationVec) > 0.5f) separationVec += steering.CurrentHeading;
+                            if (Vector3.SqrMagnitude(separationVec) > 0.5f) separationVec += steering.CurrentHeading; // Limit clumping of close agents.
                         }
                         else separationVec = steering.CurrentHeading;
 
@@ -71,11 +69,8 @@ namespace Reese.Nav
                         if (cohesionNeighbors > 0) cohesionPos /= cohesionNeighbors;
                         else cohesionPos = entityLocalToWorld.Position;
 
-                        // Collision implies obstacle avoidance for other agents:
                         var nearestAgentCollisionDistanceFromRadius = closestDistance - agent.AgentAversionDistance;
-
                         var nearestAgentDirection = math.normalizesafe(entityLocalToWorld.Position - closestQuadrantData.LocalToWorld.Position);
-
                         var agentAvoidanceSteering = flockingSettings.AgentCollisionAvoidanceStrength * nearestAgentDirection;
 
                         agentAvoidanceSteering =
@@ -85,7 +80,6 @@ namespace Reese.Nav
 
                         if (nearestAgentCollisionDistanceFromRadius < 0 && isDebugging) Debug.DrawRay(entityLocalToWorld.Position, -nearestAgentDirection * 2f, Color.blue);
 
-                        // Normalizing:
                         var alignmentSteering = math.normalizesafe(alignmentVec) * flockingSettings.AlignmentWeight;
                         var cohesionSteering = math.normalizesafe(cohesionPos - entityLocalToWorld.Position) * flockingSettings.CohesionWeight;
                         var separationSteering = math.normalizesafe(separationVec) * flockingSettings.SeparationWeight;
