@@ -34,7 +34,7 @@ namespace Reese.Demo
             var lookAt = pathBuffer[0].Value;
             lookAt.y = translation.Value.y;
 
-            var lookRotation = quaternion.LookRotationSafe(translation.Value, math.up());
+            var lookRotation = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
 
             rotation.Value = math.slerp(rotation.Value, lookRotation, deltaSeconds / ROTATION_SPEED);
         }
