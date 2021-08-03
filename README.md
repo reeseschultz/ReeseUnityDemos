@@ -21,7 +21,9 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 
 ## Usage at a Glance
 
-For this pathing package, there's only one concept you need to be familiar with: the **agent** (technically the `PathAgent` component), which is an actor or character who is in need of path planning.
+For a working example of how to use this package, see these [demo scripts](https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Assets/Scripts/Path).
+
+In this package, there's only one concept you need to be familiar with: the **agent** (technically the `PathAgent` component), which is an actor or character who is in need of path planning.
 
 There is also an associated authoring component you may want to use: `PathAgentAuthoring`.
 
