@@ -97,6 +97,17 @@ namespace Reese.Demo
                         1
                     )
                 });
+
+                entityManager.AddComponentData(entities[i], new PathFlocking
+                {
+                    ObstacleAversionDistance = 4f,
+                    AgentAversionDistance = 3f,
+                    SeparationPerceptionRadius = 1f,
+                    AlignmentPerceptionRadius = currentPrefab.Equals(cylinderPrefab) ? 1f : 3f,
+                    CohesionPerceptionRadius = currentPrefab.Equals(cylinderPrefab) ? 1f : 3f,
+                });
+
+                entityManager.AddComponent<PathSteering>(entities[i]);
             }
 
             entities.Dispose();

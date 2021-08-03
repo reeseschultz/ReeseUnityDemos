@@ -7,11 +7,10 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
-    ///<summary>This is an EXAMPLE of how to translate and rotate agents with the pathing package.</summary>
-    [UpdateAfter(typeof(PathPlanSystem))]
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateAfter(typeof(PathSteeringSystem))]
     public class PathMoveSystem : SystemBase
     {
-        public static readonly float STOPPING_DISTANCE = 1;
         public static readonly float TRANSLATION_SPEED = 20;
         public static readonly float ROTATION_SPEED = 0.3f;
 
@@ -21,17 +20,12 @@ namespace Reese.Demo
         {
             if (!SceneManager.GetActiveScene().name.Equals("PathDemo")) Enabled = false;
         }
+        static void Translate(float deltaSeconds, PathSteering steering, ref Translation translation)
+            => translation.Value += steering.CurrentHeading * TRANSLATION_SPEED * deltaSeconds;
 
-        static void Translate(float deltaSeconds, DynamicBuffer<PathBufferElement> pathBuffer, ref Translation translation)
+        static void Rotate(float deltaSeconds, PathSteering steering, Translation translation, ref Rotation rotation)
         {
-            var heading = math.normalizesafe(pathBuffer[pathBuffer.Length - 1] - translation.Value);
-
-            translation.Value += heading * TRANSLATION_SPEED * deltaSeconds;
-        }
-
-        static void Rotate(float deltaSeconds, DynamicBuffer<PathBufferElement> pathBuffer, Translation translation, ref Rotation rotation)
-        {
-            var lookAt = pathBuffer[0].Value;
+            var lookAt = steering.CurrentHeading;
             lookAt.y = translation.Value.y;
 
             var lookRotation = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
@@ -42,32 +36,14 @@ namespace Reese.Demo
         protected override void OnUpdate()
         {
             var commandBuffer = barrier.CreateCommandBuffer().AsParallelWriter();
-
             var deltaSeconds = Time.DeltaTime;
 
             Entities
                 .WithNone<PathProblem, PathDestination, PathPlanning>()
-                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, ref Rotation rotation, ref DynamicBuffer<PathBufferElement> pathBuffer, in PathAgent agent) =>
+                .ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, ref Rotation rotation, in PathSteering steering) =>
                 {
-                    if (pathBuffer.Length == 0)
-                    {
-                        commandBuffer.RemoveComponent<PathBufferElement>(entityInQueryIndex, entity);
-
-                        return;
-                    }
-
-                    var currentWaypoint = pathBuffer.Length - 1;
-
-                    if (math.distance(translation.Value, pathBuffer[currentWaypoint]) < STOPPING_DISTANCE)
-                    {
-                        pathBuffer.RemoveAt(currentWaypoint);
-
-                        if (pathBuffer.Length == 0) return;
-                    }
-
-                    Translate(deltaSeconds, pathBuffer, ref translation);
-
-                    Rotate(deltaSeconds, pathBuffer, translation, ref rotation);
+                    Translate(deltaSeconds, steering, ref translation);
+                    Rotate(deltaSeconds, steering, translation, ref rotation);
                 })
                 .WithName("PathMoveJob")
                 .ScheduleParallel();

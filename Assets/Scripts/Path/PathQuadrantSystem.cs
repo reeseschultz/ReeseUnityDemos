@@ -1,11 +1,11 @@
-﻿using Unity.Collections;
+using Reese.Path;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics.Systems;
 using Unity.Transforms;
-using static Reese.Nav.NavSystem;
+using static Reese.Demo.PathFlockingSettingsSystem;
 
-namespace Reese.Nav.Quadrant
+namespace Reese.Demo
 {
     public struct QuadrantData
     {
@@ -14,13 +14,12 @@ namespace Reese.Nav.Quadrant
     }
 
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
-    [UpdateAfter(typeof(NavDestinationSystem))]
-    public class NavQuadrantSystem : SystemBase
+    [UpdateAfter(typeof(Path.PathDestinationSystem))]
+    public class PathQuadrantSystem : SystemBase
     {
         public static NativeMultiHashMap<int, QuadrantData> QuadrantHashMap;
 
-        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
+        PathFlockingSettingsSystem flockingSettingsSystem => World.GetOrCreateSystem<PathFlockingSettingsSystem>();
 
         protected override void OnCreate()
             => QuadrantHashMap = new NativeMultiHashMap<int, QuadrantData>(0, Allocator.Persistent);
@@ -32,19 +31,19 @@ namespace Reese.Nav.Quadrant
         {
             QuadrantHashMap.Clear();
 
-            var navFlockingSettings = navSystem.FlockingSettings;
-            var entityCount = GetEntityQuery(typeof(NavAgent)).CalculateEntityCount();
+            var flockingSettings = flockingSettingsSystem.FlockingSettings;
+            var entityCount = GetEntityQuery(typeof(PathAgent)).CalculateEntityCount();
 
             if (entityCount > QuadrantHashMap.Capacity) QuadrantHashMap.Capacity = entityCount;
 
             var parallelHashMap = QuadrantHashMap.AsParallelWriter();
 
             Entities
-                .WithAll<NavAgent>()
+                .WithAll<PathAgent>()
                 .ForEach((Entity entity, in LocalToWorld localToWorld) =>
                     {
                         parallelHashMap.Add(
-                            HashPosition(localToWorld.Position, navFlockingSettings),
+                            HashPosition(localToWorld.Position, flockingSettings),
                             new QuadrantData
                             {
                                 LocalToWorld = localToWorld
@@ -52,15 +51,15 @@ namespace Reese.Nav.Quadrant
                         );
                     }
                 )
-                .WithName("NavHashPositionJob")
+                .WithName("PathHashPositionJob")
                 .ScheduleParallel();
         }
 
-        public static int HashPosition(float3 position, NavFlockingSettings flockingSettings)
+        public static int HashPosition(float3 position, PathFlockingSettings flockingSettings)
             => (int)(math.floor(position.x / flockingSettings.QuadrantCellSize) + flockingSettings.QuadrantZMultiplier * math.floor(position.z / flockingSettings.QuadrantCellSize));
 
         static void SearchQuadrantNeighbor(in NativeMultiHashMap<int, QuadrantData> quadrantHashMap, in int key,
-            in Entity entity, in NavAgent agent, in float3 pos, ref int separationNeighbors, ref int alignmentNeighbors,
+            in Entity entity, in PathFlocking flocking, in float3 pos, ref int separationNeighbors, ref int alignmentNeighbors,
             ref int cohesionNeighbors, ref float3 cohesionPos, ref float3 alignmentVec, ref float3 separationVec,
             ref QuadrantData closestQuadrantData)
         {
@@ -81,19 +80,19 @@ namespace Reese.Nav.Quadrant
 
                 if (nearest) closestQuadrantData = quadrantData;
 
-                if (distance < agent.SeparationPerceptionRadius)
+                if (distance < flocking.SeparationPerceptionRadius)
                 {
                     separationNeighbors++;
                     separationVec += (pos - quadrantData.LocalToWorld.Position) / distance;
                 }
 
-                if (distance < agent.AlignmentPerceptionRadius)
+                if (distance < flocking.AlignmentPerceptionRadius)
                 {
                     alignmentNeighbors++;
                     alignmentVec += quadrantData.LocalToWorld.Up;
                 }
 
-                if (distance < agent.CohesionPerceptionRadius)
+                if (distance < flocking.CohesionPerceptionRadius)
                 {
                     cohesionNeighbors++;
                     cohesionPos += quadrantData.LocalToWorld.Position;
@@ -102,15 +101,15 @@ namespace Reese.Nav.Quadrant
         }
 
         public static void SearchQuadrantNeighbors(in NativeMultiHashMap<int, QuadrantData> quadrantHashMap,
-            in int key, in Entity currentEntity, in NavAgent agent, in float3 pos, in NavFlockingSettings flockingSettings, ref int separationNeighbors,
+            in int key, in Entity currentEntity, in PathFlocking flocking, in float3 pos, in PathFlockingSettings flockingSettings, ref int separationNeighbors,
             ref int alignmentNeighbors, ref int cohesionNeighbors, ref float3 cohesionPos, ref float3 alignmentVec,
             ref float3 separationVec, ref QuadrantData closestQuadrantData)
         {
-            SearchQuadrantNeighbor(quadrantHashMap, key, currentEntity, agent, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
-            SearchQuadrantNeighbor(quadrantHashMap, key + 1, currentEntity, agent, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
-            SearchQuadrantNeighbor(quadrantHashMap, key - 1, currentEntity, agent, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
-            SearchQuadrantNeighbor(quadrantHashMap, key + flockingSettings.QuadrantZMultiplier, currentEntity, agent, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
-            SearchQuadrantNeighbor(quadrantHashMap, key - flockingSettings.QuadrantZMultiplier, currentEntity, agent, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
+            SearchQuadrantNeighbor(quadrantHashMap, key, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
+            SearchQuadrantNeighbor(quadrantHashMap, key + 1, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
+            SearchQuadrantNeighbor(quadrantHashMap, key - 1, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
+            SearchQuadrantNeighbor(quadrantHashMap, key + flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
+            SearchQuadrantNeighbor(quadrantHashMap, key - flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
         }
     }
 }

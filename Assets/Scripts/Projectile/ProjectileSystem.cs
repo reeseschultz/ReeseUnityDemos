@@ -53,7 +53,7 @@ namespace Reese.Demo
                 {
                     if (!projectile.HasTarget) return;
 
-                    var velocity = Vector3.Distance(translation.Value, projectile.Target) / (math.sin(2 * math.radians(projectile.AngleInDegrees)) / projectile.Gravity);
+                    var velocity = math.distance(translation.Value, projectile.Target) / (math.sin(2 * math.radians(projectile.AngleInDegrees)) / projectile.Gravity);
                     var xVelocity = math.sqrt(velocity) * math.cos(math.radians(projectile.AngleInDegrees));
                     var yVelocity = math.sqrt(velocity) * math.sin(math.radians(projectile.AngleInDegrees));
 

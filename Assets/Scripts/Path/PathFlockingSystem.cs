@@ -1,34 +1,32 @@
-﻿using Reese.Nav.Quadrant;
+using Reese.Demo;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics.Systems;
 using Unity.Transforms;
 using UnityEngine;
 
-namespace Reese.Nav
+namespace Reese.Path
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
-    [UpdateAfter(typeof(NavQuadrantSystem))]
-    public class NavFlockingSystem : SystemBase
+    [UpdateAfter(typeof(PathQuadrantSystem))]
+    public class PathFlockingSystem : SystemBase
     {
-        NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
-        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
         public bool IsDebugging = false;
+
+        PathFlockingSettingsSystem flockingSettingsSystem => World.GetOrCreateSystem<PathFlockingSettingsSystem>();
+        EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
         protected override void OnUpdate()
         {
-            var flockingSettings = navSystem.FlockingSettings;
-            var quadrantHashMap = NavQuadrantSystem.QuadrantHashMap;
+            var flockingSettings = flockingSettingsSystem.FlockingSettings;
+            var quadrantHashMap = PathQuadrantSystem.QuadrantHashMap;
             var isDebugging = IsDebugging;
 
             Entities
-                .WithAll<NavFlocking, NavWalking, LocalToParent>()
-                .WithNone<NavProblem, NavFalling, NavJumping>()
+                .WithNone<PathProblem>()
                 .WithReadOnly(quadrantHashMap)
-                .ForEach((Entity entity, ref NavSteering steering, in NavAgent agent, in Translation translation, in LocalToWorld localToWorld) =>
+                .ForEach((Entity entity, ref PathSteering steering, in PathFlocking flocking, in PathAgent agent, in LocalToWorld localToWorld) =>
                     {
-                        var entityHashMapKey = NavQuadrantSystem.HashPosition(localToWorld.Position, flockingSettings);
+                        var entityHashMapKey = PathQuadrantSystem.HashPosition(localToWorld.Position, flockingSettings);
 
                         var separationNeighbors = 0;
                         var alignmentNeighbors = 0;
@@ -40,8 +38,8 @@ namespace Reese.Nav
 
                         var closestQuadrantData = new QuadrantData();
 
-                        NavQuadrantSystem.SearchQuadrantNeighbors(
-                            in quadrantHashMap, entityHashMapKey, entity, agent, localToWorld.Position, flockingSettings,
+                        PathQuadrantSystem.SearchQuadrantNeighbors(
+                            in quadrantHashMap, entityHashMapKey, entity, flocking, localToWorld.Position, flockingSettings,
                             ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos,
                             ref alignmentVec, ref separationVec, ref closestQuadrantData);
 
@@ -61,7 +59,7 @@ namespace Reese.Nav
                         if (cohesionNeighbors > 0) cohesionPos /= cohesionNeighbors;
                         else cohesionPos = localToWorld.Position;
 
-                        var nearestAgentCollisionDistanceFromRadius = closestDistance - agent.AgentAversionDistance;
+                        var nearestAgentCollisionDistanceFromRadius = closestDistance - flocking.AgentAversionDistance;
                         var nearestAgentDirection = math.normalizesafe(localToWorld.Position - closestQuadrantData.LocalToWorld.Position);
                         var agentAvoidanceSteering = flockingSettings.AgentCollisionAvoidanceStrength * nearestAgentDirection;
 
@@ -82,10 +80,12 @@ namespace Reese.Nav
                         steering.AlignmentSteering = alignmentSteering;
                     }
                 )
-                .WithName("NavFlockingJob")
+                .WithName("PathFlockingJob")
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);
+
+            Dependency.Complete();
         }
     }
 }
