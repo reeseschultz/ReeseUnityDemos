@@ -4,7 +4,11 @@
 
 ![Flocking demo.](/preview.gif)
 
-Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by me, Reese, and others!
+Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by me, [Reese](https://github.com/reeseschultz), and others!
+
+## Support
+
+Need support or software customization? [Read more about consulting with the maintainer, Reese, and other services he provides...](https://reese.codes)
 
 ## Packages
 
@@ -56,6 +60,6 @@ sudo apt install clang
 
 ## Contributing
 
-Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever. All that said, [GitHub Issues](https://github.com/reeseschultz/ReeseUnityDemos/issues/new/choose) is fine for constructive discussion.
+Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer, Reese, offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever, [unless you reach an agreement with him about support...](https://reese.codes)
 
 By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
