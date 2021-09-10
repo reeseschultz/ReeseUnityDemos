@@ -1,6 +1,7 @@
 {
     "name": "Reese.Demo",
     "references": [
+        "Reese.Math",
         "Reese.Nav",
         "Reese.Path",
         "Reese.Random",

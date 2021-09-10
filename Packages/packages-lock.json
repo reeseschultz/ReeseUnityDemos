@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.reese.math": {
+      "version": "file:com.reese.math",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.mathematics": "1.2.1",
+        "com.unity.entities": "0.17.0-preview.42"
+      }
+    },
     "com.reese.nav": {
       "version": "file:com.reese.nav",
       "depth": 0,

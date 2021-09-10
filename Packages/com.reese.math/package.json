@@ -1,0 +1,17 @@
+{
+	"name": "com.reese.math",
+	"version": "0.1.0",
+	"displayName": "Reese's DOTS Math Extensions",
+	"description": "Includes math functions missing from DOTS.",
+	"dependencies": {
+		"com.unity.mathematics": "1.2.1",
+		"com.unity.entities": "0.17.0-preview.42"
+	},
+	"unity": "2020.3",
+	"unityRelease": "12f1",
+	"author": {
+		"name": "Reese Schultz",
+		"email": "contact@reese.codes",
+		"url": "https://reese.codes"
+	}
+}

@@ -6,49 +6,20 @@
 
 Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by me, [Reese](https://github.com/reeseschultz), and others!
 
-## Support
-
-Need support or software customization? [Read more about consulting with the maintainer, Reese, and other services he provides...](https://reese.codes)
-
 ## Packages
 
 This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package [monorepo](https://en.wikipedia.org/wiki/Monorepo) that supports the included demos, featuring:
 
-1. [Navigation](https://github.com/reeseschultz/ReeseUnityDemos/tree/nav#reeses-dots-navigation) - DOTS navigation with flocking, auto-jumping agents and dynamic surfaces; released as a package on the `nav` branch.
-2. [Pathing](https://github.com/reeseschultz/ReeseUnityDemos/tree/path#reeses-dots-pathing) - DOTS pathing without any bells and whistles; released as a package on the `path` branch.
-3. [Randomization](https://github.com/reeseschultz/ReeseUnityDemos/tree/random#reeses-dots-randomization) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones; released as a package on the `random` branch.
-4. [Spatial Events](https://github.com/reeseschultz/ReeseUnityDemos/tree/spatial#reeses-dots-spatial-events) - Reactive entry and exit events in Burst-capable jobs; released as a package on the `spatial` branch.
-5. [Utility Code](https://github.com/reeseschultz/ReeseUnityDemos/tree/utility#reeses-utility-code) - General utility code for Unity, mainly DOTS-oriented; released as a package on the `utility` branch.
+1. [Navigation](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/README.md#reeses-dots-navigation) - DOTS navigation with flocking, auto-jumping agents and dynamic surfaces; released as a package on the `nav` branch.
+2. [Pathing](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.path/README.md#reeses-dots-pathing) - DOTS pathing without any bells and whistles; released as a package on the `path` branch.
+3. [Math Extensions](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.math/README.md#reeses-dots-math-extensions) - Includes math functions missing from DOTS; released as a package on the `math` branch.
+4. [Randomization](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.random/README.md#reeses-dots-randomization) - `Unity.Mathematics.Random` number generators in jobs, including Burst-capable ones; released as a package on the `random` branch.
+5. [Spatial Events](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.spatial/README.md#reeses-dots-spatial-events) - Reactive entry and exit events in Burst-capable jobs; released as a package on the `spatial` branch.
+6. [Utility Code](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.utility/README.md#reeses-utility-code) - General utility code for Unity, mainly DOTS-oriented; released as a package on the `utility` branch.
 
 ## Demos
 
 There are various demo scenes included in `Assets/Scenes`. Take a look!
-
-## Linux & You
-
-Linux users may need to do some extra work to get the project and/or packages up and running.
-
-### Mono Setup
-
-Install Mono by following [these directions](https://www.mono-project.com/download/stable/).
-
-### Burst Prerequisite Setup
-
-Avoid sandboxing Unity Hub and Unity with Flatpak or Snap, otherwise `libdl.so` may be inaccessible to the editor.
-
-Also, on Ubuntu, you may need to manually install `gcc-multilib` and `libncurses5` with:
-
-```sh
-sudo apt install gcc-multilib libncurses5
-```
-
-### IL2CPP Setup
-
-Note that you may need to install `clang` on Ubuntu via:
-
-```sh
-sudo apt install clang
-```
 
 ## Credits
 
@@ -60,6 +31,6 @@ sudo apt install clang
 
 ## Contributing
 
-Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer, Reese, offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever, [unless you reach an agreement with him about support...](https://reese.codes)
+Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer, Reese, offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever, [unless you reach an agreement with him about support.](https://reese.codes)
 
 By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
