@@ -1,15 +1,16 @@
+using Reese.Math;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
+using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 using Collider = Unity.Physics.Collider;
 using SphereCollider = Unity.Physics.SphereCollider;
-using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 
 namespace Reese.Nav
 {
-    /// <summary>Manages destinations for agents.</summary>
+    /// <summary>Manages destinations for agents, rate-limiting their path searches.</summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavSurfaceSystem))]
@@ -67,12 +68,9 @@ namespace Reese.Nav
                             return;
                         }
 
-                        var destinationPoint = NavUtil.MultiplyPoint3x4(
-                            math.inverse(localToWorldFromEntity[hit.Entity].Value),
-                            destination.WorldPoint
-                        ) + agent.Offset;
+                        var localDestination = destination.WorldPoint.ToLocal(localToWorldFromEntity[hit.Entity]) + agent.Offset;
 
-                        if (NavUtil.ApproxEquals(destinationPoint, agent.LocalDestination, destination.Tolerance)) return;
+                        if (NavUtil.ApproxEquals(localDestination, agent.LocalDestination, destination.Tolerance)) return;
 
                         if (destination.Teleport)
                         {
@@ -83,7 +81,7 @@ namespace Reese.Nav
 
                             commandBuffer.SetComponent<Translation>(entityInQueryIndex, entity, new Translation
                             {
-                                Value = destinationPoint
+                                Value = localDestination
                             });
 
                             commandBuffer.RemoveComponent<NavDestination>(entityInQueryIndex, entity);
@@ -92,7 +90,7 @@ namespace Reese.Nav
                         }
 
                         agent.DestinationSurface = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-                        agent.LocalDestination = destinationPoint;
+                        agent.LocalDestination = localDestination;
                         agent.DestinationSeconds = elapsedSeconds;
 
                         commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);

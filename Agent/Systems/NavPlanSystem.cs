@@ -1,19 +1,16 @@
-﻿using Unity.Collections;
+﻿using Reese.Math;
+using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Experimental.AI;
 
 namespace Reese.Nav
 {
-    /// <summary>Plans paths and "jumpable" positions using
-    /// UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery by
-    /// thread index. NavMeshQuery orchestration here appears to be exemplary
-    /// usage. Note that it depends on the third-party PathUtils.</summary>
+    /// <summary>Plans paths and "jumpable" positions using UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery by thread index. This depends on the third-party PathUtils.</summary>
     unsafe public class NavPlanSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
@@ -49,10 +46,7 @@ namespace Reese.Nav
 
                     var agentPosition = localToWorldFromEntity[entity].Position;
                     var worldPosition = agentPosition;
-                    var worldDestination = NavUtil.MultiplyPoint3x4(
-                        localToWorldFromEntity[agent.DestinationSurface].Value,
-                        agent.LocalDestination
-                    );
+                    var worldDestination = agent.LocalDestination.ToWorld(localToWorldFromEntity[agent.DestinationSurface]);
 
                     var jumping = jumpingFromEntity.HasComponent(entity);
 
@@ -65,9 +59,11 @@ namespace Reese.Nav
                     var navMeshQueryPointer = navMeshQueryPointerArray[nativeThreadIndex];
                     UnsafeUtility.CopyPtrToStructure(navMeshQueryPointer.Value, out NavMeshQuery navMeshQuery);
 
+                    var one = new float3(1);
+
                     var status = navMeshQuery.BeginFindPath(
-                        navMeshQuery.MapLocation(worldPosition, Vector3.one * settings.PathSearchMax, agent.TypeID),
-                        navMeshQuery.MapLocation(worldDestination, Vector3.one * settings.PathSearchMax, agent.TypeID),
+                        navMeshQuery.MapLocation(worldPosition, one * settings.PathSearchMax, agent.TypeID),
+                        navMeshQuery.MapLocation(worldDestination, one * settings.PathSearchMax, agent.TypeID),
                         NavMesh.AllAreas
                     );
 
@@ -130,12 +126,7 @@ namespace Reese.Nav
                             if (navMeshQuery.IsValid(straightPath[i].polygon)) lastValidPoint = straightPath[i].position;
                             else break;
 
-                        jumpBuffer.Add(
-                            NavUtil.MultiplyPoint3x4(
-                                math.inverse(localToWorldFromEntity[agent.DestinationSurface].Value),
-                                lastValidPoint + agent.Offset
-                            )
-                        );
+                        jumpBuffer.Add((lastValidPoint + agent.Offset).ToLocal(localToWorldFromEntity[agent.DestinationSurface]));
 
                         if (jumpBuffer.Length > 0)
                         {
@@ -150,10 +141,7 @@ namespace Reese.Nav
                         if (pathBuffer.Length > 0) pathBuffer.RemoveAt(pathBuffer.Length - 1);
 
                         for (var i = straightPathCount - 1; i > 0; --i) pathBuffer.Add(
-                            NavUtil.MultiplyPoint3x4(
-                                math.inverse(localToWorldFromEntity[surface.Value].Value),
-                                (float3)straightPath[i].position + agent.Offset
-                            )
+                            ((float3)straightPath[i].position + agent.Offset).ToLocal(localToWorldFromEntity[surface.Value])
                         );
 
                         if (pathBuffer.Length > 0)

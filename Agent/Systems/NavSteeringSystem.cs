@@ -1,21 +1,15 @@
-﻿using Unity.Entities;
+﻿using Reese.Math;
+using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
-using RaycastHit = Unity.Physics.RaycastHit;
-using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
-using UnityEngine;
 using static Reese.Nav.NavSystem;
+using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 
 namespace Reese.Nav
 {
-    /// <summary>Calculates the current heading via the
-    /// buffers attached to a given NavAgent. Said buffers are determined by
-    /// the NavPlanSystem, although *this* system is responsible for clearing
-    /// the jump buffer. Other steering behaviors from the flocking system are also applied to those buffers.
-    /// Jumping and falling are accomplished with artificial gravity and projectile motion math.
-    /// </summary>
+    /// <summary>Calculates the current heading.</summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavCollisionSystem))]
@@ -25,10 +19,7 @@ namespace Reese.Nav
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
-        static void HandleCompletePath(ComponentDataFromEntity<LocalToWorld> localToWorldFromEntity, Entity entity,
-            Rotation rotation, ref NavAgent agent, Parent surface,
-            Translation translation, PhysicsWorld physicsWorld, float elapsedSeconds,
-            EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex, NavSettings settings)
+        static void HandleCompletePath(ComponentDataFromEntity<LocalToWorld> localToWorldFromEntity, Entity entity, Rotation rotation, ref NavAgent agent, Parent surface, Translation translation, PhysicsWorld physicsWorld, float elapsedSeconds, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex, NavSettings settings)
         {
             var rayInput = new RaycastInput
             {
@@ -151,33 +142,24 @@ namespace Reese.Nav
 
                     if (!jumpBufferFromEntity.HasComponent(entity)) return;
                     var jumpBuffer = jumpBufferFromEntity[entity];
-
                     if (jumpBuffer.Length == 0 && !fallingFromEntity.HasComponent(entity)) return;
 
-                    var destination = NavUtil.MultiplyPoint3x4(
-                        localToWorldFromEntity[agent.DestinationSurface].Value,
-                        agent.LocalDestination
-                    );
-
-                    var velocity = math.distance(translation.Value, destination) / (math.sin(2 * math.radians(agent.JumpDegrees)) / agent.JumpGravity);
+                    var destinationSurfaceLocalToWorld = localToWorldFromEntity[agent.DestinationSurface];
+                    var worldDestination = agent.LocalDestination.ToWorld(destinationSurfaceLocalToWorld);
+                    var velocity = math.distance(translation.Value, worldDestination) / (math.sin(2 * math.radians(agent.JumpDegrees)) / agent.JumpGravity);
                     var yVelocity = math.sqrt(velocity) * math.sin(math.radians(agent.JumpDegrees));
                     var waypoint = translation.Value + math.up() * float.NegativeInfinity;
 
                     if (!fallingFromEntity.HasComponent(entity))
                     {
                         var xVelocity = math.sqrt(velocity) * math.cos(math.radians(agent.JumpDegrees)) * agent.JumpSpeedMultiplierX;
+                        var surfaceLocalToWorld = localToWorldFromEntity[surface.Value];
 
-                        waypoint = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
-                            localToWorldFromEntity[agent.DestinationSurface].Value,
-                            jumpBuffer[0].Value
-                        );
+                        waypoint = jumpBuffer[0].Value
+                            .ToWorld(destinationSurfaceLocalToWorld)
+                            .ToLocal(surfaceLocalToWorld);
 
-                        waypoint = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).
-                            math.inverse(localToWorldFromEntity[surface.Value].Value),
-                            waypoint
-                        );
-
-                        translation.Value = Vector3.MoveTowards(translation.Value, waypoint, xVelocity * deltaSeconds);
+                        translation.Value.MoveTowards(waypoint, xVelocity * deltaSeconds);
                     }
 
                     translation.Value.y += (yVelocity - (elapsedSeconds - agent.JumpSeconds) * agent.JumpGravity) * deltaSeconds * agent.JumpSpeedMultiplierY;
@@ -193,7 +175,7 @@ namespace Reese.Nav
                     commandBuffer.AddComponent<NavNeedsSurface>(entityInQueryIndex, entity);
                     commandBuffer.RemoveComponent<NavJumping>(entityInQueryIndex, entity);
                 })
-                .WithName("NavGravJob")
+                .WithName("NavGravityJob")
                 .ScheduleParallel();
 
             barrier.AddJobHandleForProducer(Dependency);

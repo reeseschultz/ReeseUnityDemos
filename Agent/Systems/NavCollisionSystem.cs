@@ -9,8 +9,7 @@ using RaycastHit = Unity.Physics.RaycastHit;
 namespace Reese.Nav
 {
     /// <summary>
-    /// Projects raycasts in front of any entity which is flocking and walking, and adds a new steering force
-    /// whenever those raycasts hit an obstacle. It is supposed to 'gently' steer away from obstacles, it does not guarantee anti-clipping.
+    /// Projects raycasts in front of any entity which is flocking and walking, and adds a new steering force whenever those raycasts hit an obstacle. It is supposed to 'gently' steer away from obstacles; clipping is still possible.
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
@@ -19,7 +18,7 @@ namespace Reese.Nav
     {
         public bool IsDebugging = false;
 
-        const float NUM_RAYS = 17; // For casting 17 rays in a (flockingSettings.CollisionCastingAngle * 2) deg angle along an entity's forward direction.
+        const float NUM_RAYS = 17; // For casting 17 rays in a (flockingSettings.CollisionCastingAngle * 2) degree angle along an entity's forward direction.
 
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
@@ -43,17 +42,17 @@ namespace Reese.Nav
                     var clostestHitDistance = agent.ObstacleAversionDistance;
                     var hits = 0;
 
-                    for (int i = 0; i < NUM_RAYS; ++i)
+                    for (var i = 0; i < NUM_RAYS; ++i)
                     {
-                        var rayModifier = Quaternion.AngleAxis(i / (NUM_RAYS - 1) * flockingSettings.CollisionCastingAngle * 2 - flockingSettings.CollisionCastingAngle, localToWorld.Up);
-                        var rayDirection = rotation.Value * rayModifier * Vector3.forward;
+                        var rayModifier = quaternion.AxisAngle(localToWorld.Up, i / (NUM_RAYS - 1) * math.radians(flockingSettings.CollisionCastingAngle * 2 - flockingSettings.CollisionCastingAngle));
+                        var rayDirection = math.mul(math.mul(rotation.Value, rayModifier), math.forward());
 
                         if (isDebugging) Debug.DrawRay(localToWorld.Position, rayDirection * agent.ObstacleAversionDistance, Color.cyan);
 
                         var ray = new RaycastInput
                         {
                             Start = localToWorld.Position,
-                            End = localToWorld.Position + (float3)rayDirection * agent.ObstacleAversionDistance,
+                            End = localToWorld.Position + rayDirection * agent.ObstacleAversionDistance,
                             Filter = new CollisionFilter()
                             {
                                 BelongsTo = NavUtil.ToBitMask(settings.ColliderLayer),
@@ -68,7 +67,7 @@ namespace Reese.Nav
                             clostestHitDistance = math.select(clostestHitDistance, distance, distance < clostestHitDistance);
                             averageHitDirection += localToWorld.Position - hit.Position;
 
-                            hits++;
+                            ++hits;
 
                             if (isDebugging) Debug.DrawLine(localToWorld.Position, hit.Position, Color.red);
                         }
@@ -78,8 +77,7 @@ namespace Reese.Nav
 
                     var scalar = 1 - (clostestHitDistance / agent.ObstacleAversionDistance);
 
-                    // Steer away from the average hit direction
-                    // We also scale our steering vector by the closest hit distance. Otherwise, the entity just bounces off walls and spins out of control.
+                    // Steer away from the average hit direction; addiontally, scale the steering vector by the closest hit distance. Otherwise, the entity just bounces off walls and spins out of control.
                     steering.CollisionAvoidanceSteering = flockingSettings.ObstacleCollisionAvoidanceStrength * math.normalizesafe(averageHitDirection) * scalar;
                 })
                 .WithName("NavClipAvoidanceJob")

@@ -1,10 +1,10 @@
-﻿using Unity.Mathematics;
-using UnityEngine.AI;
-using Unity.Transforms;
+﻿using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Physics;
-using UnityEngine.Experimental.AI;
+using Unity.Transforms;
 using UnityEngine;
-using Unity.Entities;
+using UnityEngine.AI;
+using UnityEngine.Experimental.AI;
 
 namespace Reese.Nav
 {
@@ -104,11 +104,6 @@ namespace Reese.Nav
 
             return false;
         }
-
-        /// <summary>Transforms a point, reimplementing the old
-        /// Matrix4x4.MultiplyPoint3x4 using Unity.Mathematics.</summary>
-        public static float3 MultiplyPoint3x4(float4x4 transform, float3 point)
-            => math.mul(transform, new float4(point, 1)).xyz;
 
         /// <summary>Gets the agent type from the string name.</summary>
         public static int GetAgentType(string agentName)
