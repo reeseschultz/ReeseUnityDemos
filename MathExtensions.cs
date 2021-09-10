@@ -27,13 +27,17 @@ namespace Reese.Math
         public static float3 ToWorld(this float3 point, LocalToWorld localToWorld)
             => point.MultiplyPoint3x4(localToWorld.Value);
 
-        /// <summary>Gets the rotation to the target in world space.</summary>
-        public static quaternion GetWorldRotationToTarget(this float3 worldTargetPosition, LocalToWorld localToWorld, float3 planarAxis = default)
-        {
-            var lookAt = math.normalizesafe(worldTargetPosition - localToWorld.Position);
+        /// <summary>Projects a float3 vector onto a planar normal.</summary>
+        public static float3 ProjectOnPlane(this float3 vector, float3 normal)
+            => vector - math.dot(vector, normal);
 
-            return quaternion.LookRotationSafe(lookAt.ProjectOnPlane(planarAxis), math.up());
-        }
+        /// <summary>Component-wise replacement along the provided axes.</summary>
+        public static float3 AxialReplacement(this float3 vector, float3 replacingVector, float3 axis)
+            => axis.InvertToUnsignedAxis() * vector + axis * replacingVector;
+
+        /// <summary>Inverts to an unsigned axis. For example, (-1, 0, 1) becomes (0, 1, 0).<summary>
+        public static float3 InvertToUnsignedAxis(this float3 axis)
+            => new int3(math.sign(math.abs(axis))) ^ 1;
 
         /// <summary>Returns the angle between two float3s in radians.</summary>
         public static float AngleRadians(this float3 from, float3 to)
@@ -66,17 +70,13 @@ namespace Reese.Math
             return right.AngleDegrees(to) > 90 ? 360 - angle : angle;
         }
 
-        /// <summary>Projects a float3 vector onto a planar normal.</summary>
-        public static float3 ProjectOnPlane(this float3 vector, float3 normal)
-            => vector - math.dot(vector, normal);
+        /// <summary>Gets the rotation to the target in world space.</summary>
+        public static quaternion GetWorldRotationToTarget(this float3 worldTargetPosition, LocalToWorld localToWorld, float3 planarAxis = default)
+        {
+            var lookAt = math.normalizesafe(worldTargetPosition - localToWorld.Position);
 
-        /// <summary>Component-wise replacement along the provided axes.</summary>
-        public static float3 AxialReplacement(this float3 vector, float3 replacingVector, float3 axis)
-            => axis.InvertToUnsignedAxis() * vector + axis * replacingVector;
-
-        /// <summary>Inverts to an unsigned axis. For example, (-1, 0, 1) becomes (0, 1, 0).<summary>
-        public static float3 InvertToUnsignedAxis(this float3 axis)
-            => new int3(math.sign(math.abs(axis))) ^ 1;
+            return quaternion.LookRotationSafe(lookAt.ProjectOnPlane(planarAxis), math.up());
+        }
 
         #endregion
 

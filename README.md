@@ -26,15 +26,15 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 | `MultiplyPoint3x4(float4x4 transform)`                                                         | `float3`                                               | Changes the basis of a point to the given transform.                          |
 | `ToLocal(LocalToWorld localToWorld)`                                                           | `float3`                                               | Transforms a point from world to local space.                                 |
 | `ToWorld(LocalToWorld localToWorld)`                                                           | `float3`                                               | Transforms a point from local to world space.                                 |
-| `GetWorldRotationToTarget(LocalToWorld localToWorld, float3 planarAxis = default)`             | `quaternion`                                           | Gets the rotation to the target in world space.                               |
+| `ProjectOnPlane(float3 normal)`                                                                | `float3`                                               | Projects a float3 vector onto a planar normal.                                |
+| `AxialReplacement(float3 replacingVector, float3 axis)`                                        | `float3`                                               | Component-wise replacement along the provided axes.                           |
+| `InvertToUnsignedAxis()`                                                                       | `float3`                                               | Inverts to an unsigned axis. For example, (-1, 0, 1) becomes (0, 1, 0).       |
 | `AngleRadians(float3 to)`                                                                      | `float`                                                | Returns the angle between two float3s in radians.                             |
 | `AngleDegrees(float3 to)`                                                                      | `float`                                                | Returns the angle between two float3s in degrees.                             |
 | `SignedAngleRadians(float3 to, float3 axis)`                                                   | `float`                                                | Returns the signed angle between two float3s in radians about the given axis. |
 | `SignedAngleDegrees(float3 to, float3 axis)`                                                   | `float`                                                | Returns the signed angle between two float3s in degrees about the given axis. |
 | `Angle360(float3 to, float3 right)`                                                            | `float`                                                | Returns the angle between two float3s ranging between 0 and 360 degrees.      |
-| `ProjectOnPlane(float3 normal)`                                                                | `float`                                                | Projects a float3 vector onto a planar normal.                                |
-| `AxialReplacement(float3 replacingVector, float3 axis)`                                        | `float3`                                               | Component-wise replacement along the provided axes.                           |
-| `InvertToUnsignedAxis()`                                                                       | `float3`                                               | Inverts to an unsigned axis. For example, (-1, 0, 1) becomes (0, 1, 0).       |
+| `GetWorldRotationToTarget(LocalToWorld localToWorld, float3 planarAxis = default)`             | `quaternion`                                           | Gets the rotation to the target in world space.                               |
 
 ## `quaternion` Extensions
 
