@@ -1,11 +1,10 @@
 ﻿using Reese.Random;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 using UnityEngine.SceneManagement;
+using Reese.Math;
 
 namespace Reese.Demo
 {
@@ -58,7 +57,7 @@ namespace Reese.Demo
                     var yVelocity = math.sqrt(velocity) * math.sin(math.radians(projectile.AngleInDegrees));
 
                     translation.Value.y += (yVelocity - projectile.FlightDurationInSeconds * projectile.Gravity) * deltaSeconds;
-                    translation.Value = Vector3.MoveTowards(translation.Value, projectile.Target, xVelocity * deltaSeconds);
+                    translation.Value.MoveTowards(projectile.Target, xVelocity * deltaSeconds);
 
                     projectile.FlightDurationInSeconds += deltaSeconds;
 

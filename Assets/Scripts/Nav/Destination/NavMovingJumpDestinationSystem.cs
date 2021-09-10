@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine.SceneManagement;
+using Reese.Math;
 
 namespace Reese.Demo
 {
@@ -52,14 +53,9 @@ namespace Reese.Demo
                         float3.zero
                     );
 
-                    var worldPoint = NavUtil.MultiplyPoint3x4(
-                        localToWorldFromEntity[destinationSurface.Value].Value,
-                        localPoint
-                    );
-
                     commandBuffer.AddComponent(entityInQueryIndex, entity, new NavDestination
                     {
-                        WorldPoint = worldPoint
+                        WorldPoint = localPoint.ToWorld(localToWorldFromEntity[destinationSurface.Value])
                     });
 
                     randomArray[nativeThreadIndex] = random;

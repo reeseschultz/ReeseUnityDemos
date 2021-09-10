@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Reese.Demo
 {
@@ -12,11 +12,11 @@ namespace Reese.Demo
 
             Entities
                 .ForEach((ref Rotation rotation, in Rotator rotator) =>
-                    rotation.Value = Quaternion.Lerp(
-                         Quaternion.Euler(rotator.FromRelativeAngles),
-                         Quaternion.Euler(rotator.ToRelativeAngles),
-                         (Mathf.Sin(Mathf.PI * rotator.Frequency * elapsedSeconds) + 1) * 0.5f
-                     )
+                    rotation.Value = math.slerp(
+                        quaternion.Euler(rotator.FromRelativeAngles),
+                        quaternion.Euler(rotator.ToRelativeAngles),
+                        (math.sin(math.PI * rotator.Frequency * elapsedSeconds) + 1) * 0.5f
+                    )
                 )
                 .WithName("DemoRotatorJob")
                 .ScheduleParallel();

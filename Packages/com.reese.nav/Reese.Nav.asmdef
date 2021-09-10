@@ -1,6 +1,7 @@
 {
     "name": "Reese.Nav",
     "references": [
+        "Reese.Math",
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Entities",

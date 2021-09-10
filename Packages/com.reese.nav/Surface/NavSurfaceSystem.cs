@@ -1,18 +1,17 @@
-﻿using Unity.Entities;
+﻿using System.Collections.Generic;
+using Reese.Math;
+using Unity.Entities;
 using Unity.Jobs;
+using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
-using RaycastHit = Unity.Physics.RaycastHit;
-using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
-using System.Collections.Generic;
 using UnityEngine;
-using Unity.Mathematics;
+using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
+using RaycastHit = Unity.Physics.RaycastHit;
 
 namespace Reese.Nav
 {
-    /// <summary>The primary responsibility of this system is to track the
-    /// surface (or lack thereof) underneath a given NavAgent. It also maintains
-    /// parent-child relationships.</summary>
+    /// <summary>This system tracks the surface (or lack thereof) underneath a given agent. It also maintains parent-child relationships.</summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavBasisSystem))]
@@ -187,10 +186,7 @@ namespace Reese.Nav
                         return;
                     }
 
-                    translation.Value = NavUtil.MultiplyPoint3x4(
-                        math.inverse(parentTransform.Value),
-                        translation.Value
-                    );
+                    translation.Value = translation.Value.ToLocal(parentTransform);
 
                     commandBuffer.RemoveComponent<NavFixTranslation>(entityInQueryIndex, entity);
                 })

@@ -4,7 +4,6 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Experimental.AI;
 
@@ -40,9 +39,11 @@ namespace Reese.Path
                     var navMeshQueryPointer = navMeshQueryPointerArray[nativeThreadIndex];
                     UnsafeUtility.CopyPtrToStructure(navMeshQueryPointer.Value, out NavMeshQuery navMeshQuery);
 
+                    var one = new float3(1);
+
                     var status = navMeshQuery.BeginFindPath(
-                        navMeshQuery.MapLocation(worldPosition, Vector3.one * settings.PathSearchMax, agent.TypeID),
-                        navMeshQuery.MapLocation(worldDestination, Vector3.one * settings.PathSearchMax, agent.TypeID),
+                        navMeshQuery.MapLocation(worldPosition, one * settings.PathSearchMax, agent.TypeID),
+                        navMeshQuery.MapLocation(worldDestination, one * settings.PathSearchMax, agent.TypeID),
                         NavMesh.AllAreas
                     );
 
@@ -104,7 +105,6 @@ namespace Reese.Path
                         if (pathBuffer.Length > 0)
                         {
                             commandBuffer.RemoveComponent<PathPlanning>(entityInQueryIndex, entity);
-
                             commandBuffer.RemoveComponent<PathDestination>(entityInQueryIndex, entity);
                         }
                     }

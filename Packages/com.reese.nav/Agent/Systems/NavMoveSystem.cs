@@ -1,8 +1,8 @@
-﻿using Unity.Entities;
+﻿using Reese.Math;
+using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Reese.Nav
 {
@@ -15,23 +15,17 @@ namespace Reese.Nav
         static void Translate(float deltaSeconds, NavSteering steering, NavAgent agent, ref Translation translation)
             => translation.Value += steering.CurrentHeading * agent.TranslationSpeed * deltaSeconds;
 
-        static void Rotate(float deltaSeconds, float4x4 destinationSurfaceLocalToWorld, float4x4 surfaceLocalToWorld, NavSteering steering, NavAgent agent, Translation translation, ref Rotation rotation)
+        static void Rotate(float deltaSeconds, LocalToWorld destinationSurfaceLocalToWorld, LocalToWorld surfaceLocalToWorld, NavSteering steering, NavAgent agent, Translation translation, ref Rotation rotation)
         {
-            var lookAt = NavUtil.MultiplyPoint3x4( // To world (from local in terms of destination surface).
-                destinationSurfaceLocalToWorld,
-                translation.Value + steering.CurrentHeading
-            );
-
-            lookAt = NavUtil.MultiplyPoint3x4( // To local (in terms of agent's current surface).
-                math.inverse(surfaceLocalToWorld),
-                lookAt
-            );
+            var lookAt = (translation.Value + steering.CurrentHeading)
+                .ToWorld(destinationSurfaceLocalToWorld)
+                .ToLocal(surfaceLocalToWorld);
 
             lookAt.y = translation.Value.y;
 
             var lookRotation = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
 
-            if (math.length(agent.SurfacePointNormal) > 0.01f) lookRotation *= Quaternion.FromToRotation(math.up(), agent.SurfacePointNormal);
+            if (math.length(agent.SurfacePointNormal) > 0.01f) lookRotation = math.mul(lookRotation, math.up().FromToRotation(agent.SurfacePointNormal));
 
             rotation.Value = math.slerp(rotation.Value, lookRotation, deltaSeconds / agent.RotationSpeed);
         }
@@ -52,8 +46,8 @@ namespace Reese.Nav
 
                         Translate(deltaSeconds, steering, agent, ref translation);
 
-                        var destinationSurfaceLocalToWorld = localToWorldFromEntity[agent.DestinationSurface].Value;
-                        var surfaceLocalToWorld = localToWorldFromEntity[surface.Value].Value;
+                        var destinationSurfaceLocalToWorld = localToWorldFromEntity[agent.DestinationSurface];
+                        var surfaceLocalToWorld = localToWorldFromEntity[surface.Value];
 
                         Rotate(deltaSeconds, destinationSurfaceLocalToWorld, surfaceLocalToWorld, steering, agent, translation, ref rotation);
                     }

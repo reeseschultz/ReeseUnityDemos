@@ -14,6 +14,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
+        "com.reese.math": "0.1.0",
         "com.unity.entities": "0.17.0-preview.42",
         "com.unity.physics": "0.6.0-preview.3",
         "com.unity.rendering.hybrid": "0.11.0-preview.44"
