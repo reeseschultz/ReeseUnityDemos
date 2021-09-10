@@ -15,6 +15,22 @@ namespace Reese.Math
 
         #region float3 Extensions
 
+        /// <summary>Moves from a point to another point by the max delta (moves less than the max delta if target is closer than the max delta).</summary>
+        public static float3 MoveTowards(this ref float3 from, float3 to, float maxDelta)
+        {
+            var moveTo = to - from;
+            var length = math.length(moveTo);
+
+            if (length == 0f || length <= maxDelta)
+            {
+                from = to;
+                return from;
+            }
+
+            from = moveTo / length * maxDelta + from;
+            return from;
+        }
+
         /// <summary>Changes the basis of a point to the given transform.</summary>
         public static float3 MultiplyPoint3x4(this float3 point, float4x4 transform)
             => math.mul(transform, new float4(point, 1)).xyz;
@@ -69,6 +85,13 @@ namespace Reese.Math
 
             return right.AngleDegrees(to) > 90 ? 360 - angle : angle;
         }
+
+        /// <summary>Rotates from one rotation to another.</summary>
+        public static quaternion FromToRotation(this float3 from, float3 to)
+            => quaternion.AxisAngle(
+                math.normalizesafe(math.cross(from, to)),
+                math.acos(math.clamp(math.dot(math.normalizesafe(from), math.normalizesafe(to)), -1f, 1f))
+            );
 
         /// <summary>Gets the rotation to the target in world space.</summary>
         public static quaternion GetWorldRotationToTarget(this float3 worldTargetPosition, LocalToWorld localToWorld, float3 planarAxis = default)
