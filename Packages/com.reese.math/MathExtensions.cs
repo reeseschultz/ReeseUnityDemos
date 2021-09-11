@@ -7,7 +7,7 @@ namespace Reese.Math
     {
         #region float4x4 Extensions
 
-        /// <summary>Changes the basis of a point to the given transform.</summary>
+        /// <summary>Changes the basis of a point with the given transform.</summary>
         public static float3 MultiplyPoint3x4(this float4x4 transform, float3 point)
             => math.mul(transform, new float4(point, 1)).xyz;
 
@@ -31,7 +31,7 @@ namespace Reese.Math
             return from;
         }
 
-        /// <summary>Changes the basis of a point to the given transform.</summary>
+        /// <summary>Changes the basis of a point with the given transform.</summary>
         public static float3 MultiplyPoint3x4(this float3 point, float4x4 transform)
             => math.mul(transform, new float4(point, 1)).xyz;
 
