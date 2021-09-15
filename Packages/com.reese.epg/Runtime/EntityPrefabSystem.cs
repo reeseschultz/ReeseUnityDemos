@@ -7,17 +7,17 @@ namespace Reese.EntityPrefabGroups
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     public class EntityPrefabSystem : SystemBase
     {
-        NativeHashMap<FixedString512, Entity> prefabNameToPrefabMap = default;
-        NativeMultiHashMap<FixedString512, Entity> groupNameToPrefabsMap = default;
+        NativeHashMap<FixedString128, Entity> prefabNameToPrefabMap = default;
+        NativeMultiHashMap<FixedString128, Entity> groupNameToPrefabsMap = default;
 
         internal bool Initialized { get; private set; } = false;
 
         /// <summary>Gets a single entity prefab using the provided prefab name. Returns false if the prefab cannot be found.</summary>
-        public bool TryGet(FixedString512 prefabName, out Entity prefab)
+        public bool TryGet(FixedString128 prefabName, out Entity prefab)
             => prefabNameToPrefabMap.TryGetValue(prefabName, out prefab);
 
         /// <summary>Gets a native list of entity prefabs using the provided group name. Returns false if the group cannot be found. Remember to dispose the list whether the group is found or not!</summary>
-        public bool TryGet(FixedString512 groupName, out NativeList<Entity> prefabs, Allocator allocator)
+        public bool TryGet(FixedString128 groupName, out NativeList<Entity> prefabs, Allocator allocator)
         {
             prefabs = new NativeList<Entity>(allocator);
 
@@ -31,7 +31,7 @@ namespace Reese.EntityPrefabGroups
             return true;
         }
 
-        internal bool TryAdd(FixedString512 prefabName, FixedString512 groupName, Entity prefab)
+        internal bool TryAdd(FixedString128 prefabName, FixedString128 groupName, Entity prefab)
         {
             groupNameToPrefabsMap.Add(groupName, prefab);
             return prefabNameToPrefabMap.TryAdd(prefabName, prefab);
@@ -39,8 +39,8 @@ namespace Reese.EntityPrefabGroups
 
         internal void Initialize(int size)
         {
-            prefabNameToPrefabMap = new NativeHashMap<FixedString512, Entity>(size, Allocator.Persistent);
-            groupNameToPrefabsMap = new NativeMultiHashMap<FixedString512, Entity>(1, Allocator.Persistent);
+            prefabNameToPrefabMap = new NativeHashMap<FixedString128, Entity>(size, Allocator.Persistent);
+            groupNameToPrefabsMap = new NativeMultiHashMap<FixedString128, Entity>(1, Allocator.Persistent);
             Initialized = true;
         }
 

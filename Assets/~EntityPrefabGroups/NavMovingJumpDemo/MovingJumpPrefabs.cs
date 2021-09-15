@@ -6,6 +6,6 @@ namespace NavMovingJumpDemo
 {
 	public static class MovingJumpPrefabs
 	{
-		public static readonly FixedString512 DinosaurPrefab = "DinosaurPrefab";
+		public static readonly FixedString128 DinosaurPrefab = "DinosaurPrefab";
 	}
 }

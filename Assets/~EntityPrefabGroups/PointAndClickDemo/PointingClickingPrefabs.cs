@@ -6,6 +6,6 @@ namespace PointAndClickDemo
 {
 	public static class PointingClickingPrefabs
 	{
-		public static readonly FixedString512 PersonPrefab = "PersonPrefab";
+		public static readonly FixedString128 PersonPrefab = "PersonPrefab";
 	}
 }

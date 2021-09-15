@@ -6,6 +6,6 @@ namespace ProjectileDemo
 {
 	public static class ProjectilePrefabs
 	{
-		public static readonly FixedString512 PersonPrefab = "PersonPrefab";
+		public static readonly FixedString128 PersonPrefab = "PersonPrefab";
 	}
 }

@@ -123,7 +123,7 @@ namespace Reese.EntityPrefabGroups
 
                 streamWriter.WriteLine("\t{");
 
-                for (var i = 0; i < cleanPrefabNames.Count; ++i) streamWriter.WriteLine($"\t\tpublic static readonly FixedString512 {cleanPrefabNames[i]} = \"{cleanPrefabNames[i]}\";");
+                for (var i = 0; i < cleanPrefabNames.Count; ++i) streamWriter.WriteLine($"\t\tpublic static readonly FixedString128 {cleanPrefabNames[i]} = \"{cleanPrefabNames[i]}\";");
 
                 streamWriter.WriteLine("\t}");
 
