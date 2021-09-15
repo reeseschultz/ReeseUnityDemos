@@ -513,7 +513,7 @@ GameObject:
   - component: {fileID: 44891648}
   - component: {fileID: 44891647}
   m_Layer: 0
-  m_Name: Prefabs
+  m_Name: Performance Prefabs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

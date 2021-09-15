@@ -14,7 +14,7 @@ namespace Reese.Demo
 
         void Start()
         {
-            if (!prefabSystem.TryGet(Prefabs.PersonPrefab, out var prefab)) return;
+            if (!prefabSystem.TryGet(ProjectilePrefabs.PersonPrefab, out var prefab)) return;
 
             var entities = new NativeArray<Entity>(3, Allocator.Temp);
             entityManager.Instantiate(prefab, entities);

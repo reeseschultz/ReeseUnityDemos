@@ -35,7 +35,7 @@ namespace Reese.Demo
             Button.onClick.AddListener(Spawn);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            prefabSystem.TryGet(Prefabs.PersonPrefab, out prefab);
+            prefabSystem.TryGet(SpawnPrefabs.PersonPrefab, out prefab);
         }
 
         void UpdateSpawnCount(float count)

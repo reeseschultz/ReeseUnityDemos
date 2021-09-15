@@ -2,9 +2,9 @@
 
 using Unity.Collections;
 
-namespace NavPerformanceDemo
+namespace NavTerrainDemo
 {
-	public static class Prefabs
+	public static class TerrainPrefabs
 	{
 		public static readonly FixedString512 DinosaurPrefab = "DinosaurPrefab";
 		public static readonly FixedString512 CylinderPrefab = "CylinderPrefab";

@@ -289,7 +289,7 @@ GameObject:
   - component: {fileID: 828282285}
   - component: {fileID: 828282284}
   m_Layer: 0
-  m_Name: Prefabs
+  m_Name: Pointing Clicking Prefabs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

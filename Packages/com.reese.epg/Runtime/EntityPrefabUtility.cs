@@ -76,8 +76,6 @@ namespace Reese.EntityPrefabGroups
             }
         }
 
-        public static FixedString512 asdf = "asdf";
-
         internal static void GenerateClass(string groupName, List<string> prefabNames)
         {
             var cleanSceneName = EntityPrefabUtility.Clean(SceneManager.GetActiveScene().name);

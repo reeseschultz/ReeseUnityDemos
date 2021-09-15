@@ -17,7 +17,7 @@ namespace Reese.Demo
         void Start()
         {
             var entities = new NativeArray<Entity>(50, Allocator.Temp);
-            if (!prefabSystem.TryGet(Prefabs.DinosaurPrefab, out var prefab)) return;
+            if (!prefabSystem.TryGet(MovingJumpPrefabs.DinosaurPrefab, out var prefab)) return;
 
             entityManager.Instantiate(prefab, entities);
 

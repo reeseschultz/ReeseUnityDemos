@@ -48,8 +48,8 @@ namespace Reese.Demo
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateEnqueueCount);
 
-            prefabSystem.TryGet(Prefabs.CylinderPrefab, out cylinderPrefab);
-            prefabSystem.TryGet(Prefabs.DinosaurPrefab, out dinosaurPrefab);
+            prefabSystem.TryGet(TerrainPrefabs.CylinderPrefab, out cylinderPrefab);
+            prefabSystem.TryGet(TerrainPrefabs.DinosaurPrefab, out dinosaurPrefab);
             currentPrefab = cylinderPrefab;
         }
 

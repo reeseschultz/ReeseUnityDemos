@@ -2,9 +2,9 @@
 
 using Unity.Collections;
 
-namespace SpawnDemo
+namespace PointAndClickDemo
 {
-	public static class Prefabs
+	public static class PointingClickingPrefabs
 	{
 		public static readonly FixedString512 PersonPrefab = "PersonPrefab";
 	}

@@ -7566,7 +7566,7 @@ GameObject:
   - component: {fileID: 1165827997}
   - component: {fileID: 1165827996}
   m_Layer: 0
-  m_Name: Prefabs
+  m_Name: Terrain Prefabs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

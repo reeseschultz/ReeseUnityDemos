@@ -2,9 +2,9 @@
 
 using Unity.Collections;
 
-namespace PointAndClickDemo
+namespace ProjectileDemo
 {
-	public static class Prefabs
+	public static class ProjectilePrefabs
 	{
 		public static readonly FixedString512 PersonPrefab = "PersonPrefab";
 	}

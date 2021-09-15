@@ -986,7 +986,7 @@ GameObject:
   - component: {fileID: 713669339}
   - component: {fileID: 713669338}
   m_Layer: 0
-  m_Name: Prefabs
+  m_Name: Moving Jump Prefabs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
