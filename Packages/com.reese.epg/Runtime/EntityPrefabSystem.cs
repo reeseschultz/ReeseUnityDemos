@@ -1,0 +1,57 @@
+using Unity.Collections;
+using Unity.Entities;
+
+namespace Reese.EntityPrefabGroups
+{
+    /// <summary>References entities initialized via entity prefab groups.</summary>
+    [UpdateInGroup(typeof(InitializationSystemGroup))]
+    public class EntityPrefabSystem : SystemBase
+    {
+        NativeHashMap<FixedString512, Entity> prefabNameToPrefabMap = default;
+        NativeMultiHashMap<FixedString512, Entity> groupNameToPrefabsMap = default;
+
+        internal bool Initialized { get; private set; } = false;
+
+        /// <summary>Gets a single entity prefab using the provided prefab name. Returns false if the prefab cannot be found.</summary>
+        public bool TryGet(FixedString512 prefabName, out Entity prefab)
+            => prefabNameToPrefabMap.TryGetValue(prefabName, out prefab);
+
+        /// <summary>Gets a native list of entity prefabs using the provided group name. Returns false if the group cannot be found. Remember to dispose the list whether the group is found or not!</summary>
+        public bool TryGet(FixedString512 groupName, out NativeList<Entity> prefabs, Allocator allocator)
+        {
+            prefabs = new NativeList<Entity>(allocator);
+
+            if (!groupNameToPrefabsMap.TryGetFirstValue(groupName, out var prefab, out var iterator)) return false;
+
+            do
+            {
+                prefabs.Add(prefab);
+            } while (groupNameToPrefabsMap.TryGetNextValue(out prefab, ref iterator));
+
+            return true;
+        }
+
+        internal bool TryAdd(FixedString512 prefabName, FixedString512 groupName, Entity prefab)
+        {
+            groupNameToPrefabsMap.Add(groupName, prefab);
+            return prefabNameToPrefabMap.TryAdd(prefabName, prefab);
+        }
+
+        internal void Initialize(int size)
+        {
+            prefabNameToPrefabMap = new NativeHashMap<FixedString512, Entity>(size, Allocator.Persistent);
+            groupNameToPrefabsMap = new NativeMultiHashMap<FixedString512, Entity>(1, Allocator.Persistent);
+            Initialized = true;
+        }
+
+        protected override void OnDestroy()
+        {
+            if (!Initialized) return;
+
+            prefabNameToPrefabMap.Dispose();
+            groupNameToPrefabsMap.Dispose();
+        }
+
+        protected override void OnUpdate() { }
+    }
+}

@@ -5,25 +5,27 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Entities;
 using Unity.Collections;
+using Reese.EntityPrefabGroups;
+using NavTerrainDemo;
 
 namespace Reese.Demo
 {
     class NavTerrainSpawner : MonoBehaviour
     {
         [SerializeField]
-        Button SpawnButton = null;
+        Button SpawnButton = default;
 
         [SerializeField]
-        Button PrefabButton = null;
+        Button PrefabButton = default;
 
         [SerializeField]
-        Text SpawnText = null;
+        Text SpawnText = default;
 
         [SerializeField]
-        Text PrefabText = null;
+        Text PrefabText = default;
 
         [SerializeField]
-        Slider Slider = null;
+        Slider Slider = default;
 
         [SerializeField]
         float3 SpawnOffset = new float3(0, 1, 0);
@@ -32,9 +34,11 @@ namespace Reese.Demo
 
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        Entity cylinderPrefab;
-        Entity dinosaurPrefab;
-        Entity currentPrefab;
+        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
+
+        Entity cylinderPrefab = default;
+        Entity dinosaurPrefab = default;
+        Entity currentPrefab = default;
 
         void Start()
         {
@@ -44,8 +48,9 @@ namespace Reese.Demo
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateEnqueueCount);
 
-            currentPrefab = cylinderPrefab = entityManager.CreateEntityQuery(typeof(CylinderPrefab)).GetSingleton<CylinderPrefab>().Value;
-            dinosaurPrefab = entityManager.CreateEntityQuery(typeof(DinosaurPrefab)).GetSingleton<DinosaurPrefab>().Value;
+            prefabSystem.TryGet(Prefabs.CylinderPrefab, out cylinderPrefab);
+            prefabSystem.TryGet(Prefabs.DinosaurPrefab, out dinosaurPrefab);
+            currentPrefab = cylinderPrefab;
         }
 
         void UpdateEnqueueCount(float count)
@@ -72,13 +77,13 @@ namespace Reese.Demo
 
         void Enqueue()
         {
-            var outputEntities = new NativeArray<Entity>(enqueueCount, Allocator.Temp);
+            var entities = new NativeArray<Entity>(enqueueCount, Allocator.Temp);
 
-            entityManager.Instantiate(currentPrefab, outputEntities);
+            entityManager.Instantiate(currentPrefab, entities);
 
-            for (var i = 0; i < outputEntities.Length; ++i)
+            for (var i = 0; i < entities.Length; ++i)
             {
-                entityManager.AddComponentData(outputEntities[i], new NavAgent
+                entityManager.AddComponentData(entities[i], new NavAgent
                 {
                     TranslationSpeed = 20,
                     RotationSpeed = 0.3f,
@@ -86,19 +91,19 @@ namespace Reese.Demo
                     Offset = new float3(0, 1, 0)
                 });
 
-                entityManager.AddComponentData(outputEntities[i], new Translation
+                entityManager.AddComponentData(entities[i], new Translation
                 {
                     Value = SpawnOffset
                 });
 
-                entityManager.AddComponent<LocalToWorld>(outputEntities[i]);
-                entityManager.AddComponent<Parent>(outputEntities[i]);
-                entityManager.AddComponent<LocalToParent>(outputEntities[i]);
-                entityManager.AddComponent<NavNeedsSurface>(outputEntities[i]);
-                entityManager.AddComponent<NavTerrainCapable>(outputEntities[i]);
+                entityManager.AddComponent<LocalToWorld>(entities[i]);
+                entityManager.AddComponent<Parent>(entities[i]);
+                entityManager.AddComponent<LocalToParent>(entities[i]);
+                entityManager.AddComponent<NavNeedsSurface>(entities[i]);
+                entityManager.AddComponent<NavTerrainCapable>(entities[i]);
             }
 
-            outputEntities.Dispose();
+            entities.Dispose();
         }
     }
 }

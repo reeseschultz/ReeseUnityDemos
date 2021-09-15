@@ -1,4 +1,6 @@
-﻿using Unity.Collections;
+﻿using ProjectileDemo;
+using Reese.EntityPrefabGroups;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
@@ -8,21 +10,22 @@ namespace Reese.Demo
     class ProjectileDemoSpawner : MonoBehaviour
     {
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
+        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
 
         void Start()
         {
-            var outputEntities = new NativeArray<Entity>(3, Allocator.Temp);
-            var prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
+            if (!prefabSystem.TryGet(Prefabs.PersonPrefab, out var prefab)) return;
 
-            entityManager.Instantiate(prefabEntity, outputEntities);
+            var entities = new NativeArray<Entity>(3, Allocator.Temp);
+            entityManager.Instantiate(prefab, entities);
 
-            for (var i = 0; i < outputEntities.Length; ++i)
+            for (var i = 0; i < entities.Length; ++i)
             {
-                entityManager.AddComponent<Translation>(outputEntities[i]);
-                entityManager.AddComponent<Projectile>(outputEntities[i]);
+                entityManager.AddComponent<Translation>(entities[i]);
+                entityManager.AddComponent<Projectile>(entities[i]);
             }
 
-            outputEntities.Dispose();
+            entities.Dispose();
         }
     }
 }

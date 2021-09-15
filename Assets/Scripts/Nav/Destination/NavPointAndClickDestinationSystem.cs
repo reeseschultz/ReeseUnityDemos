@@ -13,9 +13,9 @@ namespace Reese.Demo
     {
         bool teleport = false;
 
-        Entity agentEntity;
-        GameObject agentTransformGameObject;
-        Text teleportationText;
+        Entity entity = default;
+        GameObject agentTransformGameObject = default;
+        Text teleportationText = default;
 
         protected override void OnCreate()
         {
@@ -50,16 +50,16 @@ namespace Reese.Demo
 
             try
             {
-                agentEntity = GetSingletonEntity<NavAgent>();
+                entity = GetSingletonEntity<NavAgent>();
             }
             catch
             {
                 return;
             }
 
-            if (agentEntity.Equals(Entity.Null)) return;
+            if (entity.Equals(Entity.Null)) return;
 
-            var agentPosition = EntityManager.GetComponentData<LocalToWorld>(agentEntity).Position;
+            var agentPosition = EntityManager.GetComponentData<LocalToWorld>(entity).Position;
             agentTransformGameObject.transform.SetPositionAndRotation(agentPosition, Quaternion.identity);
             Camera.main.transform.LookAt(agentTransformGameObject.transform, Vector3.up);
 
@@ -71,7 +71,7 @@ namespace Reese.Demo
                 !Physics.Raycast(Camera.main.ScreenPointToRay(new Vector2(mouse.position.x.ReadValue(), mouse.position.y.ReadValue())), out RaycastHit hit)
             ) return;
 
-            EntityManager.AddComponentData(agentEntity, new NavDestination
+            EntityManager.AddComponentData(entity, new NavDestination
             {
                 WorldPoint = hit.point,
                 Teleport = teleport

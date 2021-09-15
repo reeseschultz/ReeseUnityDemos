@@ -4,23 +4,26 @@ using Reese.Nav;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Collections;
+using Reese.EntityPrefabGroups;
+using NavMovingJumpDemo;
 
 namespace Reese.Demo
 {
     class NavMovingJumpSpawner : MonoBehaviour
     {
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
+        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
 
         void Start()
         {
-            var outputEntities = new NativeArray<Entity>(50, Allocator.Temp);
-            var prefabEntity = entityManager.CreateEntityQuery(typeof(DinosaurPrefab)).GetSingleton<DinosaurPrefab>().Value;
+            var entities = new NativeArray<Entity>(50, Allocator.Temp);
+            if (!prefabSystem.TryGet(Prefabs.DinosaurPrefab, out var prefab)) return;
 
-            entityManager.Instantiate(prefabEntity, outputEntities);
+            entityManager.Instantiate(prefab, entities);
 
-            for (var i = 0; i < outputEntities.Length; ++i)
+            for (var i = 0; i < entities.Length; ++i)
             {
-                entityManager.AddComponentData(outputEntities[i], new NavAgent
+                entityManager.AddComponentData(entities[i], new NavAgent
                 {
                     JumpDegrees = 45,
                     JumpGravity = 100,
@@ -32,7 +35,7 @@ namespace Reese.Demo
                     Offset = new float3(0, 1, 0)
                 });
 
-                entityManager.AddComponentData<LocalToWorld>(outputEntities[i], new LocalToWorld
+                entityManager.AddComponentData<LocalToWorld>(entities[i], new LocalToWorld
                 {
                     Value = float4x4.TRS(
                         new float3(0, 1, 0),
@@ -41,12 +44,12 @@ namespace Reese.Demo
                     )
                 });
 
-                entityManager.AddComponent<Parent>(outputEntities[i]);
-                entityManager.AddComponent<LocalToParent>(outputEntities[i]);
-                entityManager.AddComponent<NavNeedsSurface>(outputEntities[i]);
+                entityManager.AddComponent<Parent>(entities[i]);
+                entityManager.AddComponent<LocalToParent>(entities[i]);
+                entityManager.AddComponent<NavNeedsSurface>(entities[i]);
             }
 
-            outputEntities.Dispose();
+            entities.Dispose();
         }
     }
 }

@@ -1,0 +1,16 @@
+{
+	"name": "com.reese.epg",
+	"version": "0.1.0",
+	"displayName": "Reese's Entity Prefab Groups",
+	"description": "Create and reference groups of entity prefabs with ease.",
+	"dependencies": {
+		"com.unity.entities": "0.17.0-preview.42"
+	},
+	"unity": "2020.3",
+	"unityRelease": "12f1",
+	"author": {
+		"name": "Reese Schultz",
+		"email": "contact@reese.codes",
+		"url": "https://reese.codes"
+	}
+}

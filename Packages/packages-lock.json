@@ -1,5 +1,20 @@
 {
   "dependencies": {
+    "com.malee.reorderablelist": {
+      "version": "https://github.com/cfoulston/Unity-Reorderable-List.git#ac1f508240fb752b1f9d7c222c231d7f2a33df87",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ac1f508240fb752b1f9d7c222c231d7f2a33df87"
+    },
+    "com.reese.epg": {
+      "version": "file:com.reese.epg",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.entities": "0.17.0-preview.42"
+      }
+    },
     "com.reese.math": {
       "version": "file:com.reese.math",
       "depth": 0,
