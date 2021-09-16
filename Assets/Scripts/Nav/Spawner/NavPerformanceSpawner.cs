@@ -31,8 +31,6 @@ namespace Reese.Demo
 
         int spawnCount = 1;
 
-        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
-
         EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
 
         Entity cylinderPrefab = default;
@@ -47,8 +45,10 @@ namespace Reese.Demo
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            currentPrefab = cylinderPrefab = entityManager.CreateEntityQuery(typeof(Cylinder), typeof(Prefab)).GetSingletonEntity();
-            dinosaurPrefab = entityManager.CreateEntityQuery(typeof(Dinosaur), typeof(Prefab)).GetSingletonEntity();
+            cylinderPrefab = prefabSystem.GetPrefab(typeof(Cylinder));
+            dinosaurPrefab = prefabSystem.GetPrefab(typeof(Dinosaur));
+
+            currentPrefab = cylinderPrefab;
         }
 
         void UpdateSpawnCount(float count)
@@ -81,11 +81,11 @@ namespace Reese.Demo
         {
             var entities = new NativeArray<Entity>(spawnCount, Allocator.Temp);
 
-            entityManager.Instantiate(currentPrefab, entities);
+            prefabSystem.EntityManager.Instantiate(currentPrefab, entities);
 
             for (var i = 0; i < entities.Length; ++i)
             {
-                entityManager.AddComponentData(entities[i], new NavAgent
+                prefabSystem.EntityManager.AddComponentData(entities[i], new NavAgent
                 {
                     TranslationSpeed = 20,
                     RotationSpeed = 0.3f,
@@ -93,7 +93,7 @@ namespace Reese.Demo
                     Offset = new float3(0, 1, 0)
                 });
 
-                entityManager.AddComponentData<LocalToWorld>(entities[i], new LocalToWorld
+                prefabSystem.EntityManager.AddComponentData<LocalToWorld>(entities[i], new LocalToWorld
                 {
                     Value = float4x4.TRS(
                         new float3(0, 1, 0),
@@ -102,9 +102,9 @@ namespace Reese.Demo
                     )
                 });
 
-                entityManager.AddComponent<Parent>(entities[i]);
-                entityManager.AddComponent<LocalToParent>(entities[i]);
-                entityManager.AddComponent<NavNeedsSurface>(entities[i]);
+                prefabSystem.EntityManager.AddComponent<Parent>(entities[i]);
+                prefabSystem.EntityManager.AddComponent<LocalToParent>(entities[i]);
+                prefabSystem.EntityManager.AddComponent<NavNeedsSurface>(entities[i]);
             }
 
             entities.Dispose();

@@ -986,7 +986,7 @@ GameObject:
   - component: {fileID: 713669339}
   - component: {fileID: 713669338}
   m_Layer: 0
-  m_Name: Moving Jump Prefabs
+  m_Name: Prefabs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1004,7 +1004,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e1a279748d00f620aa531fe5ec06654, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefabs:
+  prefabs:
   - {fileID: 1426869842622536228, guid: 45de70a7690e9d330b054e82664190d8, type: 3}
 --- !u!114 &713669339
 MonoBehaviour:

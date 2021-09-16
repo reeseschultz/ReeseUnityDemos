@@ -6,6 +6,7 @@ using Unity.Transforms;
 using Unity.Entities;
 using Unity.Collections;
 using Reese.Path;
+using Reese.EntityPrefabGroups;
 
 namespace Reese.Demo
 {
@@ -31,7 +32,7 @@ namespace Reese.Demo
 
         int spawnCount = 1;
 
-        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
+        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
 
         Entity cylinderPrefab = default;
         Entity dinosaurPrefab = default;
@@ -45,8 +46,10 @@ namespace Reese.Demo
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            currentPrefab = cylinderPrefab = entityManager.CreateEntityQuery(typeof(Cylinder), typeof(Prefab)).GetSingletonEntity();
-            dinosaurPrefab = entityManager.CreateEntityQuery(typeof(Dinosaur), typeof(Prefab)).GetSingletonEntity();
+            cylinderPrefab = prefabSystem.GetPrefab(typeof(Cylinder));
+            dinosaurPrefab = prefabSystem.GetPrefab(typeof(Dinosaur));
+
+            currentPrefab = cylinderPrefab;
         }
 
         void UpdateSpawnCount(float count)
@@ -79,17 +82,17 @@ namespace Reese.Demo
         {
             var entities = new NativeArray<Entity>(spawnCount, Allocator.Temp);
 
-            entityManager.Instantiate(currentPrefab, entities);
+            prefabSystem.EntityManager.Instantiate(currentPrefab, entities);
 
             for (var i = 0; i < entities.Length; ++i)
             {
-                entityManager.AddComponentData(entities[i], new PathAgent
+                prefabSystem.EntityManager.AddComponentData(entities[i], new PathAgent
                 {
                     TypeID = NavUtil.GetAgentType(NavConstants.HUMANOID),
                     Offset = new float3(0, 1, 0)
                 });
 
-                entityManager.AddComponentData(entities[i], new LocalToWorld
+                prefabSystem.EntityManager.AddComponentData(entities[i], new LocalToWorld
                 {
                     Value = float4x4.TRS(
                         new float3(0, 1, 0),
@@ -98,7 +101,7 @@ namespace Reese.Demo
                     )
                 });
 
-                entityManager.AddComponentData(entities[i], new PathFlocking
+                prefabSystem.EntityManager.AddComponentData(entities[i], new PathFlocking
                 {
                     ObstacleAversionDistance = 4f,
                     AgentAversionDistance = 3f,
@@ -107,7 +110,7 @@ namespace Reese.Demo
                     CohesionPerceptionRadius = currentPrefab.Equals(cylinderPrefab) ? 1f : 3f,
                 });
 
-                entityManager.AddComponent<PathSteering>(entities[i]);
+                prefabSystem.EntityManager.AddComponent<PathSteering>(entities[i]);
             }
 
             entities.Dispose();

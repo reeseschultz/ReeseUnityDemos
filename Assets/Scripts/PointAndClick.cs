@@ -1,4 +1,5 @@
-﻿using Unity.Collections;
+﻿using Reese.EntityPrefabGroups;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
@@ -20,26 +21,26 @@ namespace Reese.Demo
 
         PhysicsWorld physicsWorld => World.DefaultGameObjectInjectionWorld.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
-        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
+        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
 
         void Start()
         {
-            var prefab = entityManager.CreateEntityQuery(typeof(Person), typeof(Prefab)).GetSingletonEntity();
+            var prefab = prefabSystem.GetPrefab(typeof(Person));
 
             var entities = new NativeArray<Entity>(3, Allocator.Temp);
-            entityManager.Instantiate(prefab, entities);
+            prefabSystem.EntityManager.Instantiate(prefab, entities);
 
-            entityManager.AddComponentData(entities[0], new Translation
+            prefabSystem.EntityManager.AddComponentData(entities[0], new Translation
             {
                 Value = new float3(0, 1, 0)
             });
 
-            entityManager.AddComponentData(entities[1], new Translation
+            prefabSystem.EntityManager.AddComponentData(entities[1], new Translation
             {
                 Value = new float3(5, 1, 0)
             });
 
-            entityManager.AddComponentData(entities[2], new Translation
+            prefabSystem.EntityManager.AddComponentData(entities[2], new Translation
             {
                 Value = new float3(-5, 1, 0)
             });
@@ -65,12 +66,12 @@ namespace Reese.Demo
             if (!physicsWorld.CastRay(rayInput, out RaycastHit hit)) return;
 
             var selectedEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-            var renderMesh = entityManager.GetSharedComponentData<RenderMesh>(selectedEntity);
+            var renderMesh = prefabSystem.EntityManager.GetSharedComponentData<RenderMesh>(selectedEntity);
             var mat = new UnityEngine.Material(renderMesh.material);
             mat.SetColor("_BaseColor", UnityEngine.Random.ColorHSV());
             renderMesh.material = mat;
 
-            entityManager.SetSharedComponentData(selectedEntity, renderMesh);
+            prefabSystem.EntityManager.SetSharedComponentData(selectedEntity, renderMesh);
         }
     }
 }

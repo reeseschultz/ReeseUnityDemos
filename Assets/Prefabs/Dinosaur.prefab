@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7098682885627214509}
   - component: {fileID: 3283384622859469984}
   m_Layer: 0
-  m_Name: DinosaurPrefab
+  m_Name: Dinosaur
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

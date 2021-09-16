@@ -698,7 +698,7 @@ GameObject:
   - component: {fileID: 976087074}
   - component: {fileID: 976087073}
   m_Layer: 0
-  m_Name: Spawn Prefabs
+  m_Name: Prefabs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -716,7 +716,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e1a279748d00f620aa531fe5ec06654, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefabs:
+  prefabs:
   - {fileID: 1388796430998725831, guid: 242305af8c6a1b4f59a09c34f22bafa5, type: 3}
 --- !u!114 &976087074
 MonoBehaviour:
