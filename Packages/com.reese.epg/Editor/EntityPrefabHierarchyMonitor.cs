@@ -12,21 +12,21 @@ namespace Reese.EntityPrefabGroups
         static EntityPrefabHierarchyMonitor()
         {
             var groups = EntityPrefabUtility.GetEntityPrefabGroups();
-            lastGroupNames = EntityPrefabUtility.GetGroupNames(groups);
+            lastGroupNames = EntityPrefabUtility.GetGroupNames(true, groups);
             EditorApplication.hierarchyChanged += OnHierarchyChanged;
         }
 
         static void OnHierarchyChanged()
         {
             var groups = EntityPrefabUtility.GetEntityPrefabGroups();
-            var currentGroupNames = EntityPrefabUtility.GetGroupNames(groups);
+            var currentGroupNames = EntityPrefabUtility.GetGroupNames(true, groups);
             var currentGroupNamesAsList = currentGroupNames.ToList();
 
             foreach (var name in lastGroupNames)
             {
                 if (!currentGroupNames.Contains(name))
                 {
-                    EntityPrefabUtility.RegenerateClasses(currentGroupNamesAsList, groups);
+                    EntityPrefabUtility.RegeneratePrefabHelperClasses(currentGroupNamesAsList, groups);
                     break;
                 }
             }

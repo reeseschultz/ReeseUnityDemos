@@ -5,8 +5,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Entities;
 using Unity.Collections;
-using Reese.EntityPrefabGroups;
-using NavFlockingDemo;
 
 namespace Reese.Demo
 {
@@ -34,8 +32,6 @@ namespace Reese.Demo
 
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
-
         Entity cylinderPrefab = default;
         Entity dinosaurPrefab = default;
         Entity currentPrefab = default;
@@ -48,9 +44,8 @@ namespace Reese.Demo
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            prefabSystem.TryGet(FlockingPrefabs.CylinderPrefab, out cylinderPrefab);
-            prefabSystem.TryGet(FlockingPrefabs.DinosaurPrefab, out dinosaurPrefab);
-            currentPrefab = cylinderPrefab;
+            currentPrefab = cylinderPrefab = entityManager.CreateEntityQuery(typeof(Cylinder), typeof(Prefab)).GetSingletonEntity();
+            dinosaurPrefab = entityManager.CreateEntityQuery(typeof(Dinosaur), typeof(Prefab)).GetSingletonEntity();
         }
 
         void UpdateSpawnCount(float count)

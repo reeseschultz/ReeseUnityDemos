@@ -70,7 +70,8 @@ namespace Reese.EntityPrefabGroups
                 ++prefabCount;
             }
 
-            if (prefabCount != lastPrefabCount) EntityPrefabUtility.GenerateClass(obj.name, names);
+            if (obj.generatePrefabHelperClasses && prefabCount != lastPrefabCount)
+                EntityPrefabUtility.GeneratePrefabHelperClass(obj.name, names);
 
             lastPrefabCount = prefabCount;
 
@@ -81,12 +82,22 @@ namespace Reese.EntityPrefabGroups
         {
             EditorGUILayout.Space();
 
+            obj.generatePrefabHelperClasses = GUILayout.Toggle(obj.generatePrefabHelperClasses, "Generate Prefab Helpers");
+
+            EditorGUILayout.Space();
+
+            obj.generateGroupHelperClasses = GUILayout.Toggle(obj.generateGroupHelperClasses, "Generate Group Helpers");
+
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+
             reorderableSettings.DoLayoutList();
 
             EditorGUILayout.LabelField("Scene, group, and prefab names must be unique.", EditorStyles.centeredGreyMiniLabel);
             EditorGUILayout.LabelField("Names cannot start with a number.", EditorStyles.centeredGreyMiniLabel);
             EditorGUILayout.LabelField("Offenders will be ignored in codegen and conversion.", EditorStyles.centeredGreyMiniLabel);
 
+            EditorGUILayout.Space();
             EditorGUILayout.Space();
 
             serializedObj.ApplyModifiedProperties();

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,7 +29,7 @@ namespace Reese.EntityPrefabGroups
             return groups;
         }
 
-        internal static HashSet<string> GetGroupNames(List<EntityPrefabGroup> groups = default)
+        internal static HashSet<string> GetGroupNames(bool cullGroupsWithoutPrefabHelpers, List<EntityPrefabGroup> groups = default)
         {
             var groupNames = new HashSet<string>();
 
@@ -48,22 +47,27 @@ namespace Reese.EntityPrefabGroups
             {
                 var group = go.GetComponent<EntityPrefabGroup>();
 
-                if (group == null) continue;
+                if (group == null || (cullGroupsWithoutPrefabHelpers && !group.generatePrefabHelperClasses)) continue;
 
-                groupNames.Add(EntityPrefabUtility.Clean(group.name));
+                var groupName = EntityPrefabUtility.Clean(group.name);
+
+                if (groupName == null || groupName.Length < 1) continue;
+
+                groupNames.Add(groupName);
             }
 
             return groupNames;
         }
 
-        internal static void RegenerateClasses(List<string> groupNames, List<EntityPrefabGroup> groups)
+        internal static void RegeneratePrefabHelperClasses(List<string> groupNames, List<EntityPrefabGroup> groups)
         {
             if (Application.isPlaying) return;
+
             EntityPrefabUtility.DeleteOrphanedFiles(groupNames);
-            EntityPrefabUtility.GenerateClasses(groups);
+            EntityPrefabUtility.GeneratePrefabHelperClasses(groups);
         }
 
-        internal static void GenerateClasses(List<EntityPrefabGroup> groups)
+        internal static void GeneratePrefabHelperClasses(List<EntityPrefabGroup> groups)
         {
             foreach (var group in groups)
             {
@@ -72,11 +76,11 @@ namespace Reese.EntityPrefabGroups
                 var prefabNames = new List<string>();
                 foreach (var prefab in group.Prefabs) prefabNames.Add(prefab.name);
 
-                GenerateClass(group.name, prefabNames);
+                GeneratePrefabHelperClass(group.name, prefabNames);
             }
         }
 
-        internal static void GenerateClass(string groupName, List<string> prefabNames)
+        internal static void GeneratePrefabHelperClass(string groupName, List<string> prefabNames)
         {
             var cleanSceneName = EntityPrefabUtility.Clean(SceneManager.GetActiveScene().name);
             if (cleanSceneName == null || cleanSceneName.Length < 1) return;

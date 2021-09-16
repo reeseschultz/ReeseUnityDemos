@@ -31,11 +31,11 @@ namespace Reese.EntityPrefabGroups
             return true;
         }
 
-        internal bool TryAdd(FixedString128 prefabName, FixedString128 groupName, Entity prefab)
-        {
-            groupNameToPrefabsMap.Add(groupName, prefab);
-            return prefabNameToPrefabMap.TryAdd(prefabName, prefab);
-        }
+        internal void AddGroup(string groupName, Entity prefab)
+            => groupNameToPrefabsMap.Add(EntityPrefabUtility.Clean(groupName), prefab);
+
+        internal void AddPrefab(string prefabName, Entity prefab)
+            => prefabNameToPrefabMap.TryAdd(EntityPrefabUtility.Clean(prefabName), prefab);
 
         internal void Initialize(int size)
         {

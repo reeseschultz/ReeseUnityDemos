@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4885578528749997423}
   - component: {fileID: 4964654070355562133}
   - component: {fileID: 1415657627882834482}
+  - component: {fileID: 8041307513613277375}
   m_Layer: 0
   m_Name: CylinderPrefab
   m_TagString: Untagged
@@ -81,3 +82,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8041307513613277375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388796430998725831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80a2f7b647302c3e8997d8cbdc3448f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Value: {fileID: 0}

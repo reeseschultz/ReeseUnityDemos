@@ -45,8 +45,8 @@ namespace Reese.Demo
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            currentPrefab = cylinderPrefab = entityManager.CreateEntityQuery(typeof(CylinderPrefab)).GetSingleton<CylinderPrefab>().Value;
-            dinosaurPrefab = entityManager.CreateEntityQuery(typeof(DinosaurPrefab)).GetSingleton<DinosaurPrefab>().Value;
+            currentPrefab = cylinderPrefab = entityManager.CreateEntityQuery(typeof(Cylinder), typeof(Prefab)).GetSingletonEntity();
+            dinosaurPrefab = entityManager.CreateEntityQuery(typeof(Dinosaur), typeof(Prefab)).GetSingletonEntity();
         }
 
         void UpdateSpawnCount(float count)

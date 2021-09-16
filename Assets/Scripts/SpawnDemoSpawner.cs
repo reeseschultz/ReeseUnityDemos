@@ -4,8 +4,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Entities;
 using Unity.Collections;
-using Reese.EntityPrefabGroups;
-using SpawnDemo;
 
 namespace Reese.Demo
 {
@@ -24,8 +22,6 @@ namespace Reese.Demo
 
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
-
         Entity prefab = default;
 
         void Start()
@@ -35,7 +31,7 @@ namespace Reese.Demo
             Button.onClick.AddListener(Spawn);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            prefabSystem.TryGet(SpawnPrefabs.PersonPrefab, out prefab);
+            var prefab = entityManager.CreateEntityQuery(typeof(Person), typeof(Prefab)).GetSingletonEntity();
         }
 
         void UpdateSpawnCount(float count)

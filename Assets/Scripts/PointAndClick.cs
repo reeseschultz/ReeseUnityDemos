@@ -1,6 +1,4 @@
-﻿using PointAndClickDemo;
-using Reese.EntityPrefabGroups;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
@@ -19,13 +17,14 @@ namespace Reese.Demo
         Camera Cam = default;
 
         const float RAYCAST_DISTANCE = 1000;
+
         PhysicsWorld physicsWorld => World.DefaultGameObjectInjectionWorld.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
-        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
+
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
         void Start()
         {
-            if (!prefabSystem.TryGet(PointingClickingPrefabs.PersonPrefab, out var prefab)) return;
+            var prefab = entityManager.CreateEntityQuery(typeof(Person), typeof(Prefab)).GetSingletonEntity();
 
             var entities = new NativeArray<Entity>(3, Allocator.Temp);
             entityManager.Instantiate(prefab, entities);

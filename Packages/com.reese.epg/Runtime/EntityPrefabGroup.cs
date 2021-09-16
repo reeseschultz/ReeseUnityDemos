@@ -17,21 +17,27 @@ namespace Reese.EntityPrefabGroups
     public class EntityPrefabGroup : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
     {
         [SerializeField]
-        public List<GameObject> Prefabs = default;
+        internal bool generatePrefabHelperClasses = default;
+
+        [SerializeField]
+        internal bool generateGroupHelperClasses = default;
+
+        [SerializeField]
+        internal List<GameObject> Prefabs = default;
 
         EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
 
 #if UNITY_EDITOR
-        [MenuItem("Reese/Entity Prefab Group/Regenerate Helper Classes for Current Scene")]
-        static void RegenerateEnumsForCurrentScene()
+        [MenuItem("Reese/Entity Prefab Group/Regenerate Prefab Helper Classes for Current Scene")]
+        static void RegeneratePrefabHelpersForCurrentScene()
         {
             var groups = EntityPrefabUtility.GetEntityPrefabGroups();
-            var groupNames = EntityPrefabUtility.GetGroupNames(groups).ToList();
-            EntityPrefabUtility.RegenerateClasses(groupNames, groups);
+            var groupNames = EntityPrefabUtility.GetGroupNames(true, groups).ToList();
+            EntityPrefabUtility.RegeneratePrefabHelperClasses(groupNames, groups);
         }
 
-        [MenuItem("Reese/Entity Prefab Group/Clear Helper Classes for All Scenes")]
-        static void ClearEnumsForAllScenes()
+        [MenuItem("Reese/Entity Prefab Group/Clear Prefab Helper Classes for All Scenes")]
+        static void ClearPrefabHelpersForAllScenes()
         {
             var path = Path.Combine(Application.dataPath, EntityPrefabUtility.PACKAGE_DIRECTORY_NAME);
 
@@ -58,7 +64,9 @@ namespace Reese.EntityPrefabGroups
 
                 if (prefabEntity == Entity.Null) continue;
 
-                prefabSystem.TryAdd(EntityPrefabUtility.Clean(prefab.name), EntityPrefabUtility.Clean(gameObject.name), prefabEntity);
+                if (generatePrefabHelperClasses) prefabSystem.AddPrefab(prefab.name, prefabEntity);
+
+                if (generateGroupHelperClasses) prefabSystem.AddGroup(gameObject.name, prefabEntity);
             }
         }
     }

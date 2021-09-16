@@ -1,23 +1,20 @@
-﻿using UnityEngine;
-using Unity.Mathematics;
-using Reese.Nav;
-using Unity.Entities;
-using Unity.Transforms;
+﻿using Reese.Nav;
 using Unity.Collections;
-using Reese.EntityPrefabGroups;
-using NavMovingJumpDemo;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
 
 namespace Reese.Demo
 {
     class NavMovingJumpSpawner : MonoBehaviour
     {
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
-        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
 
         void Start()
         {
             var entities = new NativeArray<Entity>(50, Allocator.Temp);
-            if (!prefabSystem.TryGet(MovingJumpPrefabs.DinosaurPrefab, out var prefab)) return;
+            var prefab = entityManager.CreateEntityQuery(typeof(Dinosaur), typeof(Prefab)).GetSingletonEntity();
 
             entityManager.Instantiate(prefab, entities);
 
