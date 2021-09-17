@@ -19,9 +19,13 @@ A group is great for organizational purposes. Perhaps all weapons belong in the 
 
 To get started, create an empty GameObject in a scene.
 
+![creating an empty gameobject in a scene](gifs/create-go.gif)
+
 Next, add a `PrefabEntityGroup` component to said GameObject. Doing so will automatically add the `ConvertToEntity` script to this GameObject with the *Convert And Destroy* conversion mode, which is what you want.
 
 Add prefabs to the group's prefab list. Your prefabs and their children do *not* need `ConvertToEntity` scripts on them; however, you *can* supply authoring (`IConvertGameObjectToEntity`) scripts for them. This is recommended so that they have queryable, custom components attached to their entity conversions. Unity's existing procedures will take care of references between prefab members and GameObjects that are converted into entities, making it easy to read/write multiple entities with one "controller" component in a system.
+
+![adding the entityprefabgroup component to the gameobject](gifs/add-component.gif)
 
 Anyway, after adding your prefabs to that list, you can now do something like this:
 
