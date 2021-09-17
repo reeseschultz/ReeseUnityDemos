@@ -2,8 +2,7 @@
 
 Create and reference groups of entity prefabs with ease.
 
-<details>
-<summary>Import</summary>
+## Import
 
 Copy one of the below Git URLs:
 
@@ -11,10 +10,8 @@ Copy one of the below Git URLs:
 * **SSH:** `git@github.com:reeseschultz/ReeseUnityDemos.git#epg`
 
 Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in the top-left corner, and then click on `Add package from git URL`. Paste the text you copied and finally click `Add`.
-</details>
 
-<details>
-<summary>Usage</summary>
+## Usage
 
 This package lets you create entity prefab groups—groups of prefabs converted into entities.
 
@@ -60,10 +57,8 @@ public class SomeSystem : SystemBase
     } 
 }
 ```
-</details>
 
-<details>
-<summary>Why?</summary>
+## Why?
 
 The Entity Prefab Groups package aims to improve your developer experience with improved simplicity, readability, and performance.
 
@@ -81,13 +76,10 @@ Of course, if you knew to do *that* specifically, then you would know that the `
 As for groups of prefabs, the conventional way to get them is with a query similar to the above, returning a `NativeContainer` that may be passed into a job, and disposed of afterward. Each individual prefab may have a unique component in the group, in addition to being composed with a component tag symbolizing group membership—which would be used in the query. This is reasonable, but it requires manually adding the group authoring component to each prefab, in addition to any others.
 
 This package departs from all of that aforementioned complexity.
-</details>
 
-<details>
-<summary>Behind the Scenes</summary>
+## Behind the Scenes
 
 The `EntityPrefabSystem` stores and fetches all individual prefabs with a `NativeHashMap`. The `NativeMultiHashmap`, alternatively, is used to store and fetch groups. Theoretically, no querying means increased lookup speed. Both data structures use the `ComponentType` as keys. Since the system does not know for sure which components identify prefabs and groups, it may waste an insignificant amount of memory relating components to prefabs and groups that are not uniquely-identifying—this is the only downside, which is already mitigated to some extent, because various built-in components are culled.
-</details>
 
 ## Contributing
 
