@@ -6,6 +6,7 @@ using Unity.Transforms;
 using Unity.Entities;
 using Unity.Collections;
 using Reese.Path;
+using Reese.EntityPrefabGroups;
 
 namespace Reese.Demo
 {
@@ -45,8 +46,10 @@ namespace Reese.Demo
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            currentPrefab = cylinderPrefab = entityManager.CreateEntityQuery(typeof(CylinderPrefab)).GetSingleton<CylinderPrefab>().Value;
-            dinosaurPrefab = entityManager.CreateEntityQuery(typeof(DinosaurPrefab)).GetSingleton<DinosaurPrefab>().Value;
+            cylinderPrefab = entityManager.GetPrefab<Cylinder>();
+            cylinderPrefab = entityManager.GetPrefab<Dinosaur>();
+
+            currentPrefab = cylinderPrefab;
         }
 
         void UpdateSpawnCount(float count)

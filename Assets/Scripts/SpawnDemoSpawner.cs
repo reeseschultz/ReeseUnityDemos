@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Entities;
 using Unity.Collections;
+using Reese.EntityPrefabGroups;
 
 namespace Reese.Demo
 {
@@ -21,7 +22,8 @@ namespace Reese.Demo
         int spawnCount = 1;
 
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
-        Entity prefabEntity;
+
+        Entity prefab = default;
 
         void Start()
         {
@@ -30,7 +32,7 @@ namespace Reese.Demo
             Button.onClick.AddListener(Spawn);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
+            prefab = entityManager.GetPrefab<Person>();
         }
 
         void UpdateSpawnCount(float count)
@@ -47,15 +49,17 @@ namespace Reese.Demo
 
         void Spawn()
         {
+            if (prefab == Entity.Null) return;
+
             var random = new Unity.Mathematics.Random((uint)new System.Random().Next());
 
-            var outputEntities = new NativeArray<Entity>(spawnCount, Allocator.Temp);
+            var entities = new NativeArray<Entity>(spawnCount, Allocator.Temp);
 
-            entityManager.Instantiate(prefabEntity, outputEntities);
+            entityManager.Instantiate(prefab, entities);
 
-            for (var i = 0; i < outputEntities.Length; ++i)
+            for (var i = 0; i < entities.Length; ++i)
             {
-                entityManager.AddComponentData(outputEntities[i], new Translation
+                entityManager.AddComponentData(entities[i], new Translation
                 {
                     Value = new float3(
                         random.NextInt(-25, 25),
@@ -65,7 +69,7 @@ namespace Reese.Demo
                 });
             }
 
-            outputEntities.Dispose();
+            entities.Dispose();
         }
     }
 }

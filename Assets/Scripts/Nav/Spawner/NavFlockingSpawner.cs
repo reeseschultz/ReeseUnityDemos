@@ -1,10 +1,11 @@
+using Reese.EntityPrefabGroups;
 using Reese.Nav;
-using UnityEngine;
-using UnityEngine.UI;
+using Unity.Collections;
+using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Unity.Entities;
-using Unity.Collections;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Reese.Demo
 {
@@ -32,9 +33,9 @@ namespace Reese.Demo
 
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        Entity cylinderPrefab;
-        Entity dinosaurPrefab;
-        Entity currentPrefab;
+        Entity cylinderPrefab = default;
+        Entity dinosaurPrefab = default;
+        Entity currentPrefab = default;
 
         void Start()
         {
@@ -44,8 +45,10 @@ namespace Reese.Demo
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            currentPrefab = cylinderPrefab = entityManager.CreateEntityQuery(typeof(CylinderPrefab)).GetSingleton<CylinderPrefab>().Value;
-            dinosaurPrefab = entityManager.CreateEntityQuery(typeof(DinosaurPrefab)).GetSingleton<DinosaurPrefab>().Value;
+            cylinderPrefab = entityManager.GetPrefab<Cylinder>();
+            dinosaurPrefab = entityManager.GetPrefab<Dinosaur>();
+
+            currentPrefab = cylinderPrefab;
         }
 
         void UpdateSpawnCount(float count)

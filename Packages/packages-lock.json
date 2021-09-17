@@ -1,5 +1,13 @@
 {
   "dependencies": {
+    "com.reese.epg": {
+      "version": "file:com.reese.epg",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.entities": "0.17.0-preview.42"
+      }
+    },
     "com.reese.math": {
       "version": "file:com.reese.math",
       "depth": 0,

@@ -1,13 +1,14 @@
-﻿using Unity.Physics;
-using Unity.Physics.Systems;
+﻿using Reese.EntityPrefabGroups;
+using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
-using RaycastHit = Unity.Physics.RaycastHit;
+using Unity.Mathematics;
+using Unity.Physics;
+using Unity.Physics.Systems;
 using Unity.Rendering;
 using Unity.Transforms;
-using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.InputSystem;
-using Unity.Collections;
+using RaycastHit = Unity.Physics.RaycastHit;
 
 namespace Reese.Demo
 {
@@ -17,32 +18,34 @@ namespace Reese.Demo
         Camera Cam = default;
 
         const float RAYCAST_DISTANCE = 1000;
+
         PhysicsWorld physicsWorld => World.DefaultGameObjectInjectionWorld.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
         void Start()
         {
-            var outputEntities = new NativeArray<Entity>(3, Allocator.Temp);
-            var prefabEntity = entityManager.CreateEntityQuery(typeof(PersonPrefab)).GetSingleton<PersonPrefab>().Value;
+            var prefab = entityManager.GetPrefab<Person>();
 
-            entityManager.Instantiate(prefabEntity, outputEntities);
+            var entities = new NativeArray<Entity>(3, Allocator.Temp);
+            entityManager.Instantiate(prefab, entities);
 
-            entityManager.AddComponentData(outputEntities[0], new Translation
+            entityManager.AddComponentData(entities[0], new Translation
             {
                 Value = new float3(0, 1, 0)
             });
 
-            entityManager.AddComponentData(outputEntities[1], new Translation
+            entityManager.AddComponentData(entities[1], new Translation
             {
                 Value = new float3(5, 1, 0)
             });
 
-            entityManager.AddComponentData(outputEntities[2], new Translation
+            entityManager.AddComponentData(entities[2], new Translation
             {
                 Value = new float3(-5, 1, 0)
             });
 
-            outputEntities.Dispose();
+            entities.Dispose();
         }
 
         void LateUpdate()

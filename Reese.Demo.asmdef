@@ -1,6 +1,7 @@
 {
     "name": "Reese.Demo",
     "references": [
+        "Reese.Epg",
         "Reese.Math",
         "Reese.Nav",
         "Reese.Path",
