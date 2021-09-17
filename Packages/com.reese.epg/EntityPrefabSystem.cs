@@ -120,8 +120,6 @@ namespace Reese.EntityPrefabGroups
                 }
 
                 componentTypes.Dispose();
-
-                EntityManager.DestroyEntity(group);
             }
 
             prefabs.Dispose();

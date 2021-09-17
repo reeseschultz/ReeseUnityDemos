@@ -2,44 +2,36 @@
 
 Create and reference groups of entity prefabs with ease.
 
-## Import
+<details>
+<summary>Import</summary>
 
-This package depends on Chris Foulston's [Reorderable List](https://github.com/cfoulston/Unity-Reorderable-List).
-
-First, import that dependency by copying one of the below Git URLs:
-
-* **HTTPS:** `https://github.com/cfoulston/Unity-Reorderable-List.git#ac1f508240fb752b1f9d7c222c231d7f2a33df87`
-* **SSH:** `git@github.com:cfoulston/Unity-Reorderable-List.git#ac1f508240fb752b1f9d7c222c231d7f2a33df87`
-
-Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in the top-left corner, and then click on `Add package from git URL`. Paste the text you copied and finally click `Add`.
-
-Next, do the same for one of the Git URLs corresponding to *this* package:
+Copy one of the below Git URLs:
 
 * **HTTPS:** `https://github.com/reeseschultz/ReeseUnityDemos.git#epg`
 * **SSH:** `git@github.com:reeseschultz/ReeseUnityDemos.git#epg`
 
-Would you like the import process to be simpler? The maintainer of this package certainly would. Consider asking Unity to support Git URLs in package manifests [here](https://forum.unity.com/threads/custom-package-with-git-dependencies.628390/).
+Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in the top-left corner, and then click on `Add package from git URL`. Paste the text you copied and finally click `Add`.
+</details>
 
-## Usage
+<details>
+<summary>Usage</summary>
 
-You start by creating an entity prefab group—a group of prefabs converted into entities.
+This package lets you create entity prefab groups—groups of prefabs converted into entities.
 
-First, create an empty GameObject in the current scene. That GameObject's name will be the name of your entity prefab group, so choose wisely. A group is great for variants. Perhaps all weapons belong in the `Weapons` group. Maybe you'll have a `Characters` group for your players and NPCS. This package enables you to get a `NativeList` of all prefab entities belonging a given group at runtime, even in a Burst-compiled job, so knowing that may affect your prefab organizational structure. For example, you may want to randomize selection of prefabs from a group for spawning.
+A group is great for organizational purposes. Perhaps all weapons belong in the `Weapons` group, or maybe you'll have a `Characters` group for your players and NPCS. What's more, this package enables you to get a `NativeList` of all prefab entities belonging to a given group at runtime. One good reason to use this package is if you want to select a random prefab from a group of variants.
+
+To get started, create an empty GameObject in a scene.
 
 Next, add a `PrefabEntityGroup` component to said GameObject. Doing so will automatically add the `ConvertToEntity` script to this GameObject with the *Convert And Destroy* conversion mode, which is what you want.
 
-Drag-and-drop prefabs into the group's dedicated list. Note: your prefabs and their children do *not* need `ConvertToEntity` scripts on them; however, you *can* supply authoring (`IConvertGameObjectToEntity`) scripts for them. This is recommended so that they have queryable, custom components attached to their converted entities. Unity's existing conversion will take care of references between prefab members and GameObjects that are converted into entities, making it easy to orchestrate multiple entities from one "controller" component in a system.
+Add prefabs to the group's prefab list. Your prefabs and their children do *not* need `ConvertToEntity` scripts on them; however, you *can* supply authoring (`IConvertGameObjectToEntity`) scripts for them. This is recommended so that they have queryable, custom components attached to their entity conversions. Unity's existing procedures will take care of references between prefab members and GameObjects that are converted into entities, making it easy to read/write multiple entities with one "controller" component in a system.
 
-Anyway, when you add your prefabs to that list, that's where the automagic begins...
-
-Why? Because now you can do this:
+Anyway, after adding your prefabs to that list, you can now do something like this:
 
 ```csharp
-using Unity.Mathematics;
-using Unity.Transforms;
+using Reese.EntityPrefabGroups;
 using Unity.Entities;
 using Unity.Collections;
-using Reese.EntityPrefabGroups;
 
 public class SomeSystem : SystemBase
 {
@@ -47,40 +39,55 @@ public class SomeSystem : SystemBase
 
     protected override void OnUpdate()
     {
-        // Get an entity prefab by name:
-        if (!prefabSystem.TryGet(SceneName.GroupName.PrefabName, out Entity prefab)) return;
+        // Get a single entity prefab by a (presumably) unique, per-prefab component type:
+        var donutShop = prefabSystem.GetPrefab(typeof(DonutShop));
 
-        // Get a group of entity prefabs by group name:
-        if (!prefabSystem.TryGet(nameof(SceneName.GroupName), out NativeList<Entity> prefabs))
-        {
-            prefabs.Dispose();
-            return;
-        }
-
-        // TODO: Update API to get group names as FixedString128!!!
+        // The above assumes that a DonutShop authoring script is attached to a prefab.
+        // Entity.Null is returned if no prefab is found.
 
         ...
 
-        prefabs.Dispose();
+        // Get a NativeList of entity prefabs by a (presumably) unique, per-group component type:
+        var hairStyles = prefabSystem.GetGroup(typeof(HairStyle), Allocator.TempJob);
+
+        // The above assumes that a HairStyle authoring script is attached to the group.
+        // An empty NativeList is returned if the group cannot be found.
+        // Keep in mind that the allocator is dependent on the calling context.
+
+        ...
+
+        hairStyles.Dispose(); // Don't forget to dispose the collection!
     } 
 }
 ```
+</details>
 
-## Behind the Scenes
+<details>
+<summary>Why?</summary>
 
-Whenever you add or remove prefabs from a group, or rename a group, this package will generate helper classes in `Assets/~EntityPrefabGroups`, further organized by scene and group name. You can largely ignore that directory, because this package manages it for you through editor scripts.
+The Entity Prefab Groups package aims to improve your developer experience with improved simplicity, readability, and performance.
 
-Still, if you create a group called `Buildings`, the output is `Assets/~EntityPrefabGroups/{ACTIVE_SCENE_NAME}/Buildings.cs`. In that file, a public static class will be defined called `Buildings`. If, in that group, you have a prefab called `Donut Shop` and another called `Haunted House`, there will be strings defined for the class, represented by the `FixedString128` type, of name *and* value `DonutShop` and `HauntedHouse`. (Whitespace is trimmed, among other things.)
+If you're familiar with the `Entities` package, then you know that a conventional way of getting a prefab would be like so:
 
-Why `FixedString128`? Because it's big enough to store any ridiculous prefab name you should throw at it, small enough that thousands of them amount to mere kilobytes, and it's a [blittable](https://en.wikipedia.org/wiki/Blittable_types) type that can be used in Burst-compiled jobs.
+```csharp
+var somePrefab = EntityManager.CreateEntityQuery(
+    typeof(SomeComponent),
+    typeof(Prefab)
+).GetSingleton<SomeComponent>().Value;
+```
 
-## Invariants
+Of course, if you knew to do *that* specifically, then you would know that the `Prefab` component is a special one that is added to prefabs following conversion. You might also know that `GetSingletonEntity()` doesn't work in some situations, at least not in `Entities 0.17`. This is a roundabout way of saying that the convention is not idiomatic. Adding insult to injury, it's not especially readable, and it requires a query to be defined and executed.
 
-TODO
+As for groups of prefabs, the conventional way to get them is with a query similar to the above, returning a `NativeContainer` that may be passed into a job, and disposed of afterward. Each individual prefab may have a unique component in the group, in addition to being composed with a component tag symbolizing group membership—which would be used in the query. This is reasonable, but it requires manually adding the group authoring component to each prefab, in addition to any others.
 
-## Having Problems?
+This package departs from all of that aforementioned complexity.
+</details>
 
-TODO
+<details>
+<summary>Behind the Scenes</summary>
+
+The `EntityPrefabSystem` stores and fetches all individual prefabs with a `NativeHashMap`. The `NativeMultiHashmap`, alternatively, is used to store and fetch groups. Theoretically, no querying means increased lookup speed. Both data structures use the `ComponentType` as keys. Since the system does not know for sure which components identify prefabs and groups, it may waste an insignificant amount of memory relating components to prefabs and groups that are not uniquely-identifying—this is the only downside, which is already mitigated to some extent, because various built-in components are culled.
+</details>
 
 ## Contributing
 
