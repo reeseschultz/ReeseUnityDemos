@@ -15,7 +15,7 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 
 This package lets you create entity prefab groups—groups of prefabs converted into entities.
 
-A group is great for organizational purposes. Perhaps all weapons belong in the `Weapons` group, or maybe you'll have a `Characters` group for your players and NPCS. What's more, this package enables you to get a `NativeList` of all prefab entities belonging to a given group at runtime. One good reason to use this package is if you want to select a random prefab from a group of variants.
+A group is great for organizational purposes. Perhaps all weapons belong in the `Weapons` group, or maybe you'll have a `Characters` group for your players and NPCs. What's more, this package enables you to get a `NativeList` of all prefab entities belonging to a given group at runtime. One good reason to use this package is if you want to select a random prefab from a group of variants.
 
 To get started, create an empty GameObject in a scene.
 
