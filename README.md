@@ -15,6 +15,8 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 
 This package lets you create entity prefab groups—groups of prefabs converted into entities.
 
+For a deep dive on using this package to spawn prefabs, see [this blog post](https://reese.codes/blog/post/spawning-prefabs-with-unity-dots/).
+
 A group is great for organizational purposes. Perhaps all weapons belong in the `Weapons` group, or maybe you'll have a `Characters` group for your players and NPCs. What's more, this package enables you to get a `DynamicBuffer` of all prefab entities belonging to a given group. One good reason to use this package is if you want to select a random prefab from a group of variants.
 
 To get started, create an empty GameObject in a scene.
