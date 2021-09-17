@@ -75,7 +75,7 @@ var somePrefab = EntityManager.CreateEntityQuery(
 ).GetSingleton<SomeComponent>().Value;
 ```
 
-Of course, if you knew to do *that* specifically, then you would know that the `Prefab` component is a special one that is added to prefabs following conversion. You might also know that `GetSingletonEntity()` doesn't work in some situations, at least not in `Entities 0.17`. This is a roundabout way of saying that the convention is not idiomatic. Adding insult to injury, it's not especially readable, and it requires a query to be defined and executed.
+Of course, if you knew to do *that* specifically, then you would know that the `Prefab` component is a special one that is added to prefabs following conversion. You might also know that `GetSingletonEntity()` doesn't work in some situations, at least not in `Entities 0.17`. This is a roundabout way of saying that the convention is not idiomatic. Adding insult to injury, it's not especially readable, and it requires a query to be defined and executed. When you have tens or hundreds of prefabs, this approach gets ugly. A short one-liner is clearly preferable.
 
 As for groups of prefabs, the conventional way to get them is with a query similar to the above, returning a `NativeContainer` that may be passed into a job, and disposed of afterward. Each individual prefab may have a unique component in the group, in addition to being composed with a component tag symbolizing group membership—which would be used in the query. This is reasonable, but it requires manually adding the group authoring component to each prefab, in addition to any others.
 
