@@ -21,26 +21,26 @@ namespace Reese.Demo
 
         PhysicsWorld physicsWorld => World.DefaultGameObjectInjectionWorld.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
-        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
+        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
         void Start()
         {
-            var prefab = prefabSystem.GetPrefab(typeof(Person));
+            var prefab = entityManager.GetPrefab<Person>();
 
             var entities = new NativeArray<Entity>(3, Allocator.Temp);
-            prefabSystem.EntityManager.Instantiate(prefab, entities);
+            entityManager.Instantiate(prefab, entities);
 
-            prefabSystem.EntityManager.AddComponentData(entities[0], new Translation
+            entityManager.AddComponentData(entities[0], new Translation
             {
                 Value = new float3(0, 1, 0)
             });
 
-            prefabSystem.EntityManager.AddComponentData(entities[1], new Translation
+            entityManager.AddComponentData(entities[1], new Translation
             {
                 Value = new float3(5, 1, 0)
             });
 
-            prefabSystem.EntityManager.AddComponentData(entities[2], new Translation
+            entityManager.AddComponentData(entities[2], new Translation
             {
                 Value = new float3(-5, 1, 0)
             });
@@ -66,12 +66,12 @@ namespace Reese.Demo
             if (!physicsWorld.CastRay(rayInput, out RaycastHit hit)) return;
 
             var selectedEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-            var renderMesh = prefabSystem.EntityManager.GetSharedComponentData<RenderMesh>(selectedEntity);
+            var renderMesh = entityManager.GetSharedComponentData<RenderMesh>(selectedEntity);
             var mat = new UnityEngine.Material(renderMesh.material);
             mat.SetColor("_BaseColor", UnityEngine.Random.ColorHSV());
             renderMesh.material = mat;
 
-            prefabSystem.EntityManager.SetSharedComponentData(selectedEntity, renderMesh);
+            entityManager.SetSharedComponentData(selectedEntity, renderMesh);
         }
     }
 }

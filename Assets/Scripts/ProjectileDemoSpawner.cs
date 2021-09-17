@@ -8,19 +8,19 @@ namespace Reese.Demo
 {
     class ProjectileDemoSpawner : MonoBehaviour
     {
-        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
+        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
         void Start()
         {
-            var prefab = prefabSystem.GetPrefab(typeof(Person));
+            var prefab = entityManager.GetPrefab<Person>();
 
             var entities = new NativeArray<Entity>(3, Allocator.Temp);
-            prefabSystem.EntityManager.Instantiate(prefab, entities);
+            entityManager.Instantiate(prefab, entities);
 
             for (var i = 0; i < entities.Length; ++i)
             {
-                prefabSystem.EntityManager.AddComponent<Translation>(entities[i]);
-                prefabSystem.EntityManager.AddComponent<Projectile>(entities[i]);
+                entityManager.AddComponent<Translation>(entities[i]);
+                entityManager.AddComponent<Projectile>(entities[i]);
             }
 
             entities.Dispose();

@@ -31,7 +31,7 @@ namespace Reese.Demo
 
         int spawnCount = 1;
 
-        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
+        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
         Entity cylinderPrefab = default;
         Entity dinosaurPrefab = default;
@@ -45,8 +45,8 @@ namespace Reese.Demo
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            cylinderPrefab = prefabSystem.GetPrefab(typeof(Cylinder));
-            dinosaurPrefab = prefabSystem.GetPrefab(typeof(Dinosaur));
+            cylinderPrefab = entityManager.GetPrefab<Cylinder>();
+            dinosaurPrefab = entityManager.GetPrefab<Dinosaur>();
 
             currentPrefab = cylinderPrefab;
         }
@@ -81,11 +81,11 @@ namespace Reese.Demo
         {
             var entities = new NativeArray<Entity>(spawnCount, Allocator.Temp);
 
-            prefabSystem.EntityManager.Instantiate(currentPrefab, entities);
+            entityManager.Instantiate(currentPrefab, entities);
 
             for (var i = 0; i < entities.Length; ++i)
             {
-                prefabSystem.EntityManager.AddComponentData(entities[i], new NavAgent
+                entityManager.AddComponentData(entities[i], new NavAgent
                 {
                     TranslationSpeed = 20,
                     RotationSpeed = 0.3f,
@@ -93,7 +93,7 @@ namespace Reese.Demo
                     Offset = new float3(0, 1, 0)
                 });
 
-                prefabSystem.EntityManager.AddComponentData<LocalToWorld>(entities[i], new LocalToWorld
+                entityManager.AddComponentData<LocalToWorld>(entities[i], new LocalToWorld
                 {
                     Value = float4x4.TRS(
                         new float3(0, 1, 0),
@@ -102,9 +102,9 @@ namespace Reese.Demo
                     )
                 });
 
-                prefabSystem.EntityManager.AddComponent<Parent>(entities[i]);
-                prefabSystem.EntityManager.AddComponent<LocalToParent>(entities[i]);
-                prefabSystem.EntityManager.AddComponent<NavNeedsSurface>(entities[i]);
+                entityManager.AddComponent<Parent>(entities[i]);
+                entityManager.AddComponent<LocalToParent>(entities[i]);
+                entityManager.AddComponent<NavNeedsSurface>(entities[i]);
             }
 
             entities.Dispose();

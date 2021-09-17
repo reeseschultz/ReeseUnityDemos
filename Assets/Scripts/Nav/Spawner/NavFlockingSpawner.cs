@@ -31,7 +31,7 @@ namespace Reese.Demo
 
         int spawnCount = 1;
 
-        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
+        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
         Entity cylinderPrefab = default;
         Entity dinosaurPrefab = default;
@@ -45,8 +45,8 @@ namespace Reese.Demo
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            cylinderPrefab = prefabSystem.GetPrefab(typeof(Cylinder));
-            dinosaurPrefab = prefabSystem.GetPrefab(typeof(Dinosaur));
+            cylinderPrefab = entityManager.GetPrefab<Cylinder>();
+            dinosaurPrefab = entityManager.GetPrefab<Dinosaur>();
 
             currentPrefab = cylinderPrefab;
         }
@@ -81,11 +81,11 @@ namespace Reese.Demo
         {
             var outputEntities = new NativeArray<Entity>(spawnCount, Allocator.Temp);
 
-            prefabSystem.EntityManager.Instantiate(currentPrefab, outputEntities);
+            entityManager.Instantiate(currentPrefab, outputEntities);
 
             for (var i = 0; i < outputEntities.Length; ++i)
             {
-                prefabSystem.EntityManager.AddComponentData(outputEntities[i], new NavAgent
+                entityManager.AddComponentData(outputEntities[i], new NavAgent
                 {
                     TranslationSpeed = 20,
                     ObstacleAversionDistance = 4f,
@@ -98,7 +98,7 @@ namespace Reese.Demo
                     Offset = new float3(0, 1, 0)
                 });
 
-                prefabSystem.EntityManager.AddComponentData<LocalToWorld>(outputEntities[i], new LocalToWorld
+                entityManager.AddComponentData<LocalToWorld>(outputEntities[i], new LocalToWorld
                 {
                     Value = float4x4.TRS(
                         new float3(0, 1, 0),
@@ -107,11 +107,11 @@ namespace Reese.Demo
                     )
                 });
 
-                prefabSystem.EntityManager.AddComponent<Parent>(outputEntities[i]);
-                prefabSystem.EntityManager.AddComponent<LocalToParent>(outputEntities[i]);
-                prefabSystem.EntityManager.AddComponent<NavNeedsSurface>(outputEntities[i]);
-                prefabSystem.EntityManager.AddComponent<NavFlocking>(outputEntities[i]);
-                prefabSystem.EntityManager.AddComponent<NavObstacleSteering>(outputEntities[i]);
+                entityManager.AddComponent<Parent>(outputEntities[i]);
+                entityManager.AddComponent<LocalToParent>(outputEntities[i]);
+                entityManager.AddComponent<NavNeedsSurface>(outputEntities[i]);
+                entityManager.AddComponent<NavFlocking>(outputEntities[i]);
+                entityManager.AddComponent<NavObstacleSteering>(outputEntities[i]);
             }
 
             outputEntities.Dispose();

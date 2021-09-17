@@ -10,18 +10,18 @@ namespace Reese.Demo
 {
     class NavMovingJumpSpawner : MonoBehaviour
     {
-        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
+        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
         void Start()
         {
             var entities = new NativeArray<Entity>(50, Allocator.Temp);
-            var prefab = prefabSystem.GetPrefab(typeof(Dinosaur));
+            var prefab = entityManager.GetPrefab<Dinosaur>();
 
-            prefabSystem.EntityManager.Instantiate(prefab, entities);
+            entityManager.Instantiate(prefab, entities);
 
             for (var i = 0; i < entities.Length; ++i)
             {
-                prefabSystem.EntityManager.AddComponentData(entities[i], new NavAgent
+                entityManager.AddComponentData(entities[i], new NavAgent
                 {
                     JumpDegrees = 45,
                     JumpGravity = 100,
@@ -33,7 +33,7 @@ namespace Reese.Demo
                     Offset = new float3(0, 1, 0)
                 });
 
-                prefabSystem.EntityManager.AddComponentData<LocalToWorld>(entities[i], new LocalToWorld
+                entityManager.AddComponentData<LocalToWorld>(entities[i], new LocalToWorld
                 {
                     Value = float4x4.TRS(
                         new float3(0, 1, 0),
@@ -42,9 +42,9 @@ namespace Reese.Demo
                     )
                 });
 
-                prefabSystem.EntityManager.AddComponent<Parent>(entities[i]);
-                prefabSystem.EntityManager.AddComponent<LocalToParent>(entities[i]);
-                prefabSystem.EntityManager.AddComponent<NavNeedsSurface>(entities[i]);
+                entityManager.AddComponent<Parent>(entities[i]);
+                entityManager.AddComponent<LocalToParent>(entities[i]);
+                entityManager.AddComponent<NavNeedsSurface>(entities[i]);
             }
 
             entities.Dispose();

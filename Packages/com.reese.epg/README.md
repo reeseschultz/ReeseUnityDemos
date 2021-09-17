@@ -41,7 +41,7 @@ public class SomeSystem : SystemBase
     protected override void OnUpdate()
     {
         // Get a single entity prefab by a (presumably) unique, per-prefab component type:
-        var donutShop = prefabSystem.GetPrefab(typeof(DonutShop));
+        var donutShop = entityManager.GetPrefab<>(typeof(DonutShop));
 
         // The above assumes that a DonutShop authoring script is attached to a prefab.
         // Entity.Null is returned if no prefab is found.

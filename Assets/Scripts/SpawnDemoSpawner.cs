@@ -21,7 +21,7 @@ namespace Reese.Demo
 
         int spawnCount = 1;
 
-        EntityPrefabSystem prefabSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EntityPrefabSystem>();
+        EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
         Entity prefab = default;
 
@@ -32,7 +32,7 @@ namespace Reese.Demo
             Button.onClick.AddListener(Spawn);
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
-            prefab = prefabSystem.GetPrefab(typeof(Person));
+            prefab = entityManager.GetPrefab<Person>();
         }
 
         void UpdateSpawnCount(float count)
@@ -55,11 +55,11 @@ namespace Reese.Demo
 
             var entities = new NativeArray<Entity>(spawnCount, Allocator.Temp);
 
-            prefabSystem.EntityManager.Instantiate(prefab, entities);
+            entityManager.Instantiate(prefab, entities);
 
             for (var i = 0; i < entities.Length; ++i)
             {
-                prefabSystem.EntityManager.AddComponentData(entities[i], new Translation
+                entityManager.AddComponentData(entities[i], new Translation
                 {
                     Value = new float3(
                         random.NextInt(-25, 25),
