@@ -1,6 +1,6 @@
 {
 	"name": "com.reese.epg",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"displayName": "Reese's Entity Prefab Groups",
 	"description": "Create and reference groups of entity prefabs with ease.",
 	"dependencies": {
