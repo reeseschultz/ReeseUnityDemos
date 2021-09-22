@@ -1,5 +1,7 @@
 using System.Collections.Generic;
-using Unity.Collections;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Unity.Entities;
 using UnityEngine;
 
@@ -11,6 +13,10 @@ namespace Reese.EntityPrefabGroups
     public class EntityPrefabGroup : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
     {
         [SerializeField]
+        [Tooltip("If true, collects prefabs referenced from other authoring scripts (attached to this GameObject) into the group.")]
+        bool collectOtherPrefabs = true;
+
+        [SerializeField]
         GameObject[] prefabs = default;
 
         public void DeclareReferencedPrefabs(List<GameObject> referencedPrefabs)
@@ -20,14 +26,57 @@ namespace Reese.EntityPrefabGroups
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            var prefabEntities = new NativeArray<Entity>(prefabs.Length, Allocator.TempJob);
-            for (var i = 0; i < prefabs.Length; ++i)
-                prefabEntities[i] = conversionSystem.TryGetPrimaryEntity(prefabs[i]);
+            var prefabsDeduped = new HashSet<Entity>();
+
+            foreach (var prefab in prefabs)
+            {
+                var prefabEntity = conversionSystem.GetPrimaryEntity(prefab);
+
+                if (prefabEntity == Entity.Null) continue;
+
+                prefabsDeduped.Add(prefabEntity);
+            }
+
+            if (collectOtherPrefabs)
+            {
+                var otherPrefabEntities = GetOtherAuthoringPrefabEntities(conversionSystem);
+
+                foreach (var otherPrefab in otherPrefabEntities)
+                    prefabsDeduped.Add(otherPrefab);
+            }
 
             var groupBuffer = dstManager.AddBuffer<PrefabGroup>(entity);
-            groupBuffer.AddRange(prefabEntities.Reinterpret<PrefabGroup>());
+            foreach (var prefabEntity in prefabsDeduped)
+                groupBuffer.Add(prefabEntity);
+        }
 
-            prefabEntities.Dispose();
+        List<Entity> GetOtherAuthoringPrefabEntities(GameObjectConversionSystem conversionSystem)
+        {
+            var referencedPrefabsArray = GetComponents<IDeclareReferencedPrefabs>();
+
+            var entities = new List<Entity>();
+            foreach (var referencedPrefabs in referencedPrefabsArray)
+            {
+                var fields = referencedPrefabs.GetType()
+                    .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(f => f.GetCustomAttribute<CompilerGeneratedAttribute>() == null)
+                    .ToArray();
+
+                foreach (var field in fields)
+                {
+                    var go = field.GetValue(referencedPrefabs) as GameObject;
+
+                    if (go == null) continue;
+
+                    var entity = conversionSystem.GetPrimaryEntity(go);
+
+                    if (entity == Entity.Null) continue;
+
+                    entities.Add(entity);
+                }
+            }
+
+            return entities;
         }
     }
 }
