@@ -1,5 +1,7 @@
 {
 	"name": "com.reese.spatial",
+	"documentationUrl": "https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.spatial/README.md#reeses-dots-spatial-events",
+	"changelogUrl": "https://github.com/reeseschultz/ReeseUnityDemos/commits/master/Packages/com.reese.spatial",
 	"version": "0.4.4",
 	"displayName": "Reese's DOTS Spatial Events",
 	"description": "Reactive entry, overlap and exit events in Burst-capable jobs.",
@@ -11,7 +13,7 @@
 	"unityRelease": "12f1",
 	"author": {
 		"name": "Reese Schultz",
-		"email": "reeseschultz@gmail.com",
-		"url": "https://reeseschultz.com"
+		"email": "contact@reese.codes",
+		"url": "https://reese.codes"
 	}
 }

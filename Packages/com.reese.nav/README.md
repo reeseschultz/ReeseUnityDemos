@@ -1,6 +1,5 @@
 # Reese's DOTS Navigation
 
-[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
 [![openupm](https://img.shields.io/npm/v/com.reese.nav?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.reese.nav/)
 
 ## Introduction
@@ -8,10 +7,6 @@
 This is a multi-threaded navigation package using [Unity DOTS](https://unity.com/dots), maintained by [Reese](https://github.com/reeseschultz/). It supports obstacle avoidance, terrain, agents automatically jumping between surfaces with artificial gravity, parenting of agents and surfaces for preserving local transformations, flocking behaviors (originally contributed by [Dennis](https://github.com/0x6c23)) and even backward compatibility with GameObjects. 
 
 If you don't want all the extra bells and whistles, such as surface management and jumping, please see the [pathing package](https://github.com/reeseschultz/ReeseUnityDemos/tree/path#reeses-dots-pathing) instead.
-
-## Support
-
-Need support or software customization? [Read more about consulting with the maintainer, Reese, and other services he provides...](https://reese.codes)
 
 ## Clone (Optional)
 
@@ -262,6 +257,4 @@ In addition to settings, there are also compile-time constants. You *can* change
 
 ## Contributing
 
-Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer, Reese, offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever, [unless you reach an agreement with him about support...](https://reese.codes)
-
-By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
+All contributions to this repository are licensed under [MIT](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).

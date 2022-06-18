@@ -8,8 +8,6 @@ Furthermore, because physics is ripped out entirely from this package, you may h
 
 And unlike the navigation package, which includes [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents) by default, you must install it yourself for this package to work properly.
 
-By the way, this package is maintained by me, [Reese](https://github.com/reeseschultz/).
-
 ## Import
 
 This requires Unity editor `2019.3` or greater. Copy one of the below Git URLs:
@@ -117,6 +115,4 @@ This package uses [PathUtils](https://github.com/reeseschultz/ReeseUnityDemos/tr
 
 ## Contributing
 
-Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer, Reese, offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever, [unless you reach an agreement with him about support...](https://reese.codes)
-
-By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
+All contributions to this repository are licensed under [MIT](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).

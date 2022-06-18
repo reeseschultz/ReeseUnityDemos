@@ -1,5 +1,7 @@
 {
 	"name": "com.reese.epg",
+	"documentationUrl": "https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.epg#reeses-entity-prefab-groups",
+	"changelogUrl": "https://github.com/reeseschultz/ReeseUnityDemos/commits/master/Packages/com.reese.epg",
 	"version": "0.3.0",
 	"displayName": "Reese's Entity Prefab Groups",
 	"description": "Create and reference groups of entity prefabs with ease.",

@@ -1,5 +1,7 @@
 {
 	"name": "com.reese.nav",
+	"documentationUrl": "https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/README.md#reeses-dots-navigation",
+	"changelogUrl": "https://github.com/reeseschultz/ReeseUnityDemos/commits/master/Packages/com.reese.nav",
 	"version": "0.22.2",
 	"displayName": "Reese's DOTS Navigation",
 	"description": "DOTS navigation with flocking, auto-jumping agents and dynamic surfaces.",
@@ -13,7 +15,7 @@
 	"unityRelease": "12f1",
 	"author": {
 		"name": "Reese Schultz",
-		"email": "reeseschultz@gmail.com",
-		"url": "https://reeseschultz.com"
+		"email": "contact@reese.codes",
+		"url": "https://reese.codes"
 	}
 }

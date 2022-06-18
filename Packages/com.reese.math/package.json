@@ -1,5 +1,7 @@
 {
 	"name": "com.reese.math",
+	"documentationUrl": "https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.math/README.md#reeses-dots-math-extensions",
+	"changelogUrl": "https://github.com/reeseschultz/ReeseUnityDemos/commits/master/Packages/com.reese.math/README.md",
 	"version": "0.1.0",
 	"displayName": "Reese's DOTS Math Extensions",
 	"description": "Includes math functions missing from DOTS.",

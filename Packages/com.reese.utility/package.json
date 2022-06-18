@@ -1,5 +1,7 @@
 {
 	"name": "com.reese.utility",
+	"documentationUrl": "https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.utility/README.md#reeses-utility-code",
+	"changelogUrl": "https://github.com/reeseschultz/ReeseUnityDemos/commits/master/Packages/com.reese.utility",
 	"version": "0.2.6",
 	"displayName": "Reese's Utility Code",
 	"description": "General utility code for Unity, mainly DOTS-oriented.",
@@ -11,7 +13,7 @@
 	"unityRelease": "12f1",
 	"author": {
 		"name": "Reese Schultz",
-		"email": "reeseschultz@gmail.com",
-		"url": "https://reeseschultz.com"
+		"email": "contact@reese.codes",
+		"url": "https://reese.codes"
 	}
 }

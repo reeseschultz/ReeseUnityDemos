@@ -1,5 +1,7 @@
 {
 	"name": "com.reese.path",
+	"documentationUrl": "https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.path/README.md#reeses-dots-pathing",
+	"changelogUrl": "https://github.com/reeseschultz/ReeseUnityDemos/commits/master/Packages/com.reese.path",
 	"version": "0.0.4",
 	"displayName": "Reese's DOTS Pathing",
 	"description": "DOTS pathing without any bells and whistles.",
@@ -10,7 +12,7 @@
 	"unityRelease": "12f1",
 	"author": {
 		"name": "Reese Schultz",
-		"email": "reeseschultz@gmail.com",
-		"url": "https://reeseschultz.com"
+		"email": "contact@reese.codes",
+		"url": "https://reese.codes"
 	}
 }
