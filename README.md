@@ -8,8 +8,6 @@ Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by [Re
 
 Note the [acknowledgments](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/ACKNOWLEDGMENTS.md) for credits and attributions.
 
-## Packages
-
 This project is a [UPM](https://docs.unity3d.com/Manual/Packages.html) package monorepo that supports the demos in `Assets/Scenes`; the packages include:
 
 * [Navigation](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/README.md#reeses-dots-navigation) – DOTS navigation with flocking, auto-jumping agents and dynamic surfaces; released as a package on the `nav` branch.
