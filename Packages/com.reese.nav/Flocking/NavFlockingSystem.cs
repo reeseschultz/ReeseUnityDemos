@@ -10,7 +10,7 @@ namespace Reese.Nav
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavQuadrantSystem))]
-    public class NavFlockingSystem : SystemBase
+    public partial class NavFlockingSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();

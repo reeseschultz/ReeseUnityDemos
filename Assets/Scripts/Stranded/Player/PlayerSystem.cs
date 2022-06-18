@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo.Stranded
 {
-    class PlayerSystem : SystemBase
+    partial class PlayerSystem : SystemBase
     {
         GameObject go = default;
         PlayerSoundController controller = default;

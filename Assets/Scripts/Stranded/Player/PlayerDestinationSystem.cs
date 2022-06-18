@@ -12,7 +12,7 @@ using Reese.Utility;
 namespace Reese.Demo.Stranded
 {
     [UpdateAfter(typeof(TransformSystemGroup))]
-    class PlayerDestinationSystem : SystemBase
+    partial class PlayerDestinationSystem : SystemBase
     {
         PhysicsWorld physicsWorld => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<BuildPhysicsWorld>().PhysicsWorld;
         NavSettings settings => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<NavSystem>().Settings;

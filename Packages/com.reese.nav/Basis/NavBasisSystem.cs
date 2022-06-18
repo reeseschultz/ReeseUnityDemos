@@ -10,7 +10,7 @@ namespace Reese.Nav
     /// Unity.Physics' efforts to destroy them.</summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
-    public class NavBasisSystem : SystemBase
+    public partial class NavBasisSystem : SystemBase
     {
         /// <summary>The default basis that all other bases and basis-lacking
         /// surfaces are parented to.</summary>

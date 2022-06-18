@@ -2,7 +2,7 @@ using Unity.Entities;
 
 namespace Reese.Demo
 {
-    public class PathFlockingSettingsSystem : SystemBase
+    public partial class PathFlockingSettingsSystem : SystemBase
     {
         public PathFlockingSettings FlockingSettings = new PathFlockingSettings
         {

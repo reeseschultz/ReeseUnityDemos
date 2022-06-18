@@ -10,7 +10,7 @@ namespace Reese.Spatial
         public Entity Activator;
 
         /// <summary>The tag associated with the event.</summary>
-        public FixedString128 Tag;
+        public FixedString128Bytes Tag;
 
         public int CompareTo(SpatialEvent other)
             => Activator.CompareTo(other.Activator) + Tag.CompareTo(other.Tag);

@@ -13,7 +13,7 @@ namespace Reese.Nav
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavCollisionSystem))]
-    public class NavSteeringSystem : SystemBase
+    public partial class NavSteeringSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();

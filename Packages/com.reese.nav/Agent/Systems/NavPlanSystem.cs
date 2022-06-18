@@ -11,7 +11,7 @@ using UnityEngine.Experimental.AI;
 namespace Reese.Nav
 {
     /// <summary>Plans paths and "jumpable" positions using UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery by thread index. This depends on the third-party PathUtils.</summary>
-    unsafe public class NavPlanSystem : SystemBase
+    unsafe public partial class NavPlanSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
 

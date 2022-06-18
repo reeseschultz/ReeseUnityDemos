@@ -35,7 +35,7 @@ using Reese.Spatial;
 namespace YourNamespace
 {
     [UpdateAfter(typeof(SpatialStartSystem)), UpdateBefore(typeof(SpatialEndSystem))]
-    class CatSystem : SystemBase
+    partial class CatSystem : SystemBase
     {
         protected override void OnUpdate()
         {

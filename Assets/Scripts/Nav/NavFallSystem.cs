@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Reese.Demo
 {
-    class NavFallSystem : SystemBase
+    partial class NavFallSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 

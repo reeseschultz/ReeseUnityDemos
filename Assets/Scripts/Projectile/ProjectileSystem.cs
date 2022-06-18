@@ -8,7 +8,7 @@ using Reese.Math;
 
 namespace Reese.Demo
 {
-    class ProjectileSystem : SystemBase
+    partial class ProjectileSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 

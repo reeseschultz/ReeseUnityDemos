@@ -29,7 +29,7 @@ Then go to `Window ⇒ Package Manager` in the editor. Press the `+` symbol in t
 
 ```csharp
 namespace YourNamespace {
-    class YourJobSystem : SystemBase
+    partial class YourJobSystem : SystemBase
     {
         protected override void OnUpdate()
         {

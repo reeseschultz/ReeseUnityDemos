@@ -14,7 +14,7 @@ namespace Reese.Nav
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavFlockingSystem))]
-    public class NavCollisionSystem : SystemBase
+    public partial class NavCollisionSystem : SystemBase
     {
         public bool IsDebugging = false;
 

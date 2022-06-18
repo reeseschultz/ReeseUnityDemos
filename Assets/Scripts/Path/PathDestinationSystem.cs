@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
-    class PathDestinationSystem : SystemBase
+    partial class PathDestinationSystem : SystemBase
     {
         AABB surfaceAabb = default;
 

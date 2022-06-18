@@ -15,7 +15,7 @@ namespace Reese.Nav
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavBasisSystem))]
-    public class NavSurfaceSystem : SystemBase
+    public partial class NavSurfaceSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         Dictionary<int, GameObject> gameObjectMap = new Dictionary<int, GameObject>();

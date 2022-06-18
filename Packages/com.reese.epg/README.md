@@ -38,7 +38,7 @@ using Reese.EntityPrefabGroups;
 using Unity.Entities;
 using Unity.Collections;
 
-public class SomeSystem : SystemBase
+public partial class SomeSystem : SystemBase
 {
     protected override void OnUpdate()
     {

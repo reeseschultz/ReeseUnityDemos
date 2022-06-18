@@ -9,7 +9,7 @@ namespace Reese.Demo
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateAfter(typeof(PathSteeringSystem))]
-    public class PathMoveSystem : SystemBase
+    public partial class PathMoveSystem : SystemBase
     {
         public static readonly float TRANSLATION_SPEED = 20;
         public static readonly float ROTATION_SPEED = 0.3f;

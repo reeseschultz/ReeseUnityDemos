@@ -16,14 +16,14 @@ namespace Reese.Nav.Quadrant
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavDestinationSystem))]
-    public class NavQuadrantSystem : SystemBase
+    public partial class NavQuadrantSystem : SystemBase
     {
-        public static NativeMultiHashMap<int, QuadrantData> QuadrantHashMap;
+        public static NativeParallelMultiHashMap<int, QuadrantData> QuadrantHashMap;
 
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
 
         protected override void OnCreate()
-            => QuadrantHashMap = new NativeMultiHashMap<int, QuadrantData>(0, Allocator.Persistent);
+            => QuadrantHashMap = new NativeParallelMultiHashMap<int, QuadrantData>(0, Allocator.Persistent);
 
         protected override void OnDestroy()
             => QuadrantHashMap.Dispose();
@@ -59,7 +59,7 @@ namespace Reese.Nav.Quadrant
         public static int HashPosition(float3 position, NavFlockingSettings flockingSettings)
             => (int)(math.floor(position.x / flockingSettings.QuadrantCellSize) + flockingSettings.QuadrantZMultiplier * math.floor(position.z / flockingSettings.QuadrantCellSize));
 
-        static void SearchQuadrantNeighbor(in NativeMultiHashMap<int, QuadrantData> quadrantHashMap, in int key,
+        static void SearchQuadrantNeighbor(in NativeParallelMultiHashMap<int, QuadrantData> quadrantHashMap, in int key,
             in Entity entity, in NavAgent agent, in float3 pos, ref int separationNeighbors, ref int alignmentNeighbors,
             ref int cohesionNeighbors, ref float3 cohesionPos, ref float3 alignmentVec, ref float3 separationVec,
             ref QuadrantData closestQuadrantData)
@@ -101,7 +101,7 @@ namespace Reese.Nav.Quadrant
             } while (quadrantHashMap.TryGetNextValue(out quadrantData, ref iterator));
         }
 
-        public static void SearchQuadrantNeighbors(in NativeMultiHashMap<int, QuadrantData> quadrantHashMap,
+        public static void SearchQuadrantNeighbors(in NativeParallelMultiHashMap<int, QuadrantData> quadrantHashMap,
             in int key, in Entity currentEntity, in NavAgent agent, in float3 pos, in NavFlockingSettings flockingSettings, ref int separationNeighbors,
             ref int alignmentNeighbors, ref int cohesionNeighbors, ref float3 cohesionPos, ref float3 alignmentVec,
             ref float3 separationVec, ref QuadrantData closestQuadrantData)

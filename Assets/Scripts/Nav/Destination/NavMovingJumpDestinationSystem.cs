@@ -10,7 +10,7 @@ using Reese.Math;
 
 namespace Reese.Demo
 {
-    class NavMovingJumpDestinationSystem : SystemBase
+    partial class NavMovingJumpDestinationSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 

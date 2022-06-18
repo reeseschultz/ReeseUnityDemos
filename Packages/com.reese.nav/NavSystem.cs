@@ -3,7 +3,7 @@ using Unity.Entities;
 namespace Reese.Nav
 {
     /// </summary>System serving as the single source of truth of navigation settings.</summary>
-    public class NavSystem : SystemBase
+    public partial class NavSystem : SystemBase
     {
         /// <summary>Settings that can be updated at runtime.</summary>
         public NavSettings Settings = new NavSettings

@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo.Stranded
 {
-    class PlayerDrowningSystem : SystemBase
+    partial class PlayerDrowningSystem : SystemBase
     {
         PlayerDeathSequenceController deathSequenceController = default;
 
