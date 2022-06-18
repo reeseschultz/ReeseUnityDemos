@@ -25,7 +25,7 @@ namespace Reese.Demo
 
         static void Rotate(float deltaSeconds, PathSteering steering, Translation translation, ref Rotation rotation)
         {
-            var lookAt = steering.CurrentHeading;
+            var lookAt = translation.Value + steering.CurrentHeading;
             lookAt.y = translation.Value.y;
 
             var lookRotation = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());
