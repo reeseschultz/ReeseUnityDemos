@@ -11,7 +11,7 @@ namespace Reese.Demo
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
-    public class NavTerrainDestinationSystem : SystemBase
+    public partial class NavTerrainDestinationSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();

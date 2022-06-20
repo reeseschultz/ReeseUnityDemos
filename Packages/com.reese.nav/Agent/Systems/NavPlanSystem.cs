@@ -11,7 +11,7 @@ using UnityEngine.Experimental.AI;
 namespace Reese.Nav
 {
     /// <summary>Plans paths and "jumpable" positions using UnityEngine.Experimental.AI. Each entity gets its own NavMeshQuery by thread index. This depends on the third-party PathUtils.</summary>
-    unsafe public class NavPlanSystem : SystemBase
+    unsafe public partial class NavPlanSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
 
@@ -116,8 +116,13 @@ namespace Reese.Nav
                         NavConstants.PATH_NODE_MAX
                     );
 
-                    var jumpBuffer = !jumpBufferFromEntity.HasComponent(entity) ? commandBuffer.AddBuffer<NavJumpBufferElement>(entityInQueryIndex, entity) : jumpBufferFromEntity[entity];
-                    var pathBuffer = !pathBufferFromEntity.HasComponent(entity) ? commandBuffer.AddBuffer<NavPathBufferElement>(entityInQueryIndex, entity) : pathBufferFromEntity[entity];
+                    var jumpBuffer = !jumpBufferFromEntity.HasComponent(entity) ?
+                        commandBuffer.AddBuffer<NavJumpBufferElement>(entityInQueryIndex, entity) :
+                        jumpBufferFromEntity[entity];
+
+                    var pathBuffer = !pathBufferFromEntity.HasComponent(entity) ?
+                        commandBuffer.AddBuffer<NavPathBufferElement>(entityInQueryIndex, entity) :
+                        pathBufferFromEntity[entity];
 
                     if (jumping)
                     {
@@ -138,7 +143,7 @@ namespace Reese.Nav
                     }
                     else if (status == PathQueryStatus.Success)
                     {
-                        if (pathBuffer.Length > 0) pathBuffer.RemoveAt(pathBuffer.Length - 1);
+                        pathBuffer.Clear();
 
                         for (var i = straightPathCount - 1; i > 0; --i) pathBuffer.Add(
                             ((float3)straightPath[i].position + agent.Offset).ToLocal(localToWorldFromEntity[surface.Value])

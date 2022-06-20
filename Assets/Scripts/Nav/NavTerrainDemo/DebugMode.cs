@@ -52,7 +52,7 @@ namespace Reese.Demo
         }
     }
 
-    public class DebugSystem : SystemBase
+    public partial class DebugSystem : SystemBase
     {
         public bool LogNavError = false;
         public bool DrawPath = false;

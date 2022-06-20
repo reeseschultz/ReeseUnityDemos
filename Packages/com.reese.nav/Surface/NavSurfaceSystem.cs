@@ -15,7 +15,7 @@ namespace Reese.Nav
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavBasisSystem))]
-    public class NavSurfaceSystem : SystemBase
+    public partial class NavSurfaceSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         Dictionary<int, GameObject> gameObjectMap = new Dictionary<int, GameObject>();
@@ -108,18 +108,14 @@ namespace Reese.Nav
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
             var settings = navSystem.Settings;
             var jumpBufferFromEntity = GetBufferFromEntity<NavJumpBufferElement>();
-            var pathBufferFromEntity = GetBufferFromEntity<NavPathBufferElement>();
 
             Entities
                 .WithNone<NavProblem, NavFalling, NavJumping>()
                 .WithAll<NavNeedsSurface, LocalToParent>()
                 .WithReadOnly(physicsWorld)
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
-                .WithNativeDisableParallelForRestriction(pathBufferFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation, in LocalToWorld localToWorld) =>
                 {
-                    if (!surface.Value.Equals(Entity.Null) && false) return;
-
                     var rayInput = new RaycastInput
                     {
                         Start = localToWorld.Position + agent.Offset,
@@ -157,8 +153,6 @@ namespace Reese.Nav
                     translation.Value = jumpBuffer[0].Value + agent.Offset;
 
                     jumpBuffer.Clear();
-
-                    if (pathBufferFromEntity.HasComponent(entity)) pathBufferFromEntity[entity].Clear();
 
                     commandBuffer.AddComponent<NavPlanning>(entityInQueryIndex, entity);
                 })

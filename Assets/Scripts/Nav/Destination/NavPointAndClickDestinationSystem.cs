@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 namespace Reese.Demo
 {
     [UpdateAfter(typeof(TransformSystemGroup))]
-    class NavPointAndClickDestinationSystem : SystemBase
+    partial class NavPointAndClickDestinationSystem : SystemBase
     {
         bool teleport = false;
 

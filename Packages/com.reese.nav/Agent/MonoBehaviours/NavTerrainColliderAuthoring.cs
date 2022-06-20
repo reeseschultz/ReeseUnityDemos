@@ -30,12 +30,14 @@ namespace Reese.Nav
                 return;
             }
 
-            CollisionFilter collisionFilter = new CollisionFilter
+            var collisionFilter = new CollisionFilter
             {
                 BelongsTo = belongsTo.Value,
                 CollidesWith = collidesWith.Value,
                 GroupIndex = groupIndex
             };
+
+            dstManager.AddComponent<PhysicsWorldIndex>(entity);
 
             dstManager.AddComponentData(entity, CreateTerrainCollider(terrain.terrainData, collisionFilter));
 

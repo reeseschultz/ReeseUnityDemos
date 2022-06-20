@@ -4,7 +4,7 @@ using Unity.Transforms;
 
 namespace Reese.Demo
 {
-    class RotationSystem : SystemBase
+    partial class RotationSystem : SystemBase
     {
         protected override void OnUpdate()
         {

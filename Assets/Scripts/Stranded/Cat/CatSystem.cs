@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 namespace Reese.Demo.Stranded
 {
     [UpdateAfter(typeof(SpatialStartSystem)), UpdateBefore(typeof(SpatialEndSystem))]
-    class CatSystem : SystemBase
+    partial class CatSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 

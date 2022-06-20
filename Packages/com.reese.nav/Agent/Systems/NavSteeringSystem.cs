@@ -13,13 +13,25 @@ namespace Reese.Nav
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavCollisionSystem))]
-    public class NavSteeringSystem : SystemBase
+    public partial class NavSteeringSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
-        static void HandleCompletePath(ComponentDataFromEntity<LocalToWorld> localToWorldFromEntity, Entity entity, Rotation rotation, ref NavAgent agent, Parent surface, Translation translation, PhysicsWorld physicsWorld, float elapsedSeconds, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex, NavSettings settings)
+        static void HandleCompletePath(
+            ComponentDataFromEntity<LocalToWorld> localToWorldFromEntity,
+            Entity entity,
+            Rotation rotation,
+            ref NavAgent agent,
+            Parent surface,
+            Translation translation,
+            PhysicsWorld physicsWorld,
+            float elapsedSeconds,
+            EntityCommandBuffer.ParallelWriter commandBuffer,
+            int entityInQueryIndex,
+            NavSettings settings
+        )
         {
             var rayInput = new RaycastInput
             {

@@ -9,7 +9,7 @@ namespace Reese.Demo
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateAfter(typeof(PathSteeringSystem))]
-    public class PathMoveSystem : SystemBase
+    public partial class PathMoveSystem : SystemBase
     {
         public static readonly float TRANSLATION_SPEED = 20;
         public static readonly float ROTATION_SPEED = 0.3f;
@@ -25,7 +25,7 @@ namespace Reese.Demo
 
         static void Rotate(float deltaSeconds, PathSteering steering, Translation translation, ref Rotation rotation)
         {
-            var lookAt = steering.CurrentHeading;
+            var lookAt = translation.Value + steering.CurrentHeading;
             lookAt.y = translation.Value.y;
 
             var lookRotation = quaternion.LookRotationSafe(lookAt - translation.Value, math.up());

@@ -6,7 +6,7 @@ namespace Reese.Demo
 {
     /// <summary>This is a convenience class to help users easily override the default runtime nav settings. Modify this to prevent losing settings when you update the nav package via UPM. For compile-time constants, see the NavConstants class in the nav package.</summary>
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    public class NavSettingsOverrides : SystemBase
+    public partial class NavSettingsOverrides : SystemBase
     {
         NavSystem navSystem = default;
 

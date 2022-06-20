@@ -184,7 +184,8 @@ namespace Reese.Nav
                 entityManager.AddComponentData<NavDestination>(Entity, new NavDestination
                 {
                     WorldPoint = WorldDestination,
-                    Teleport = Teleport
+                    Teleport = Teleport,
+                    Tolerance = 1
                 });
 
                 lastWorldDestination = WorldDestination;

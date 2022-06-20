@@ -1,16 +1,18 @@
 {
 	"name": "com.reese.random",
+	"documentationUrl": "https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.random/README.md#reeses-dots-randomization",
+	"changelogUrl": "https://github.com/reeseschultz/ReeseUnityDemos/commits/master/Packages/com.reese.random",
 	"version": "0.5.22",
 	"displayName": "Reese's DOTS Randomization",
 	"description": "Unity.Mathematics.Random number generators for jobs, including Burst-capable ones.",
 	"dependencies": {
-		"com.unity.entities": "0.17.0-preview.42"
+		"com.unity.entities": "0.51.0-preview.32"
 	},
 	"unity": "2020.3",
 	"unityRelease": "12f1",
 	"author": {
 		"name": "Reese Schultz",
-		"email": "reeseschultz@gmail.com",
-		"url": "https://reeseschultz.com"
+		"email": "contact@reese.codes",
+		"url": "https://reese.codes"
 	}
 }

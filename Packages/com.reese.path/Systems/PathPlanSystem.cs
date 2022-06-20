@@ -13,7 +13,7 @@ namespace Reese.Path
     /// gets its own NavMeshQuery by thread index. NavMeshQuery orchestration
     /// here appears to be exemplary usage. Note that it depends on the
     /// third-party PathUtils.</summary>
-    unsafe public class PathPlanSystem : SystemBase
+    unsafe public partial class PathPlanSystem : SystemBase
     {
         PathSystem pathSystem => World.GetOrCreateSystem<PathSystem>();
 

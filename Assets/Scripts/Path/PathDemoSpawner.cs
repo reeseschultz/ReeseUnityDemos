@@ -47,7 +47,7 @@ namespace Reese.Demo
             Slider.onValueChanged.AddListener(UpdateSpawnCount);
 
             cylinderPrefab = entityManager.GetPrefab<Cylinder>();
-            cylinderPrefab = entityManager.GetPrefab<Dinosaur>();
+            dinosaurPrefab = entityManager.GetPrefab<Dinosaur>();
 
             currentPrefab = cylinderPrefab;
         }

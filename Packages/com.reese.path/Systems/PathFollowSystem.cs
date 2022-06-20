@@ -5,7 +5,7 @@ using Unity.Transforms;
 
 namespace Reese.Path
 {
-    public class PathFollowSystem : SystemBase
+    public partial class PathFollowSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 

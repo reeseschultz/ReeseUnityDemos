@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 namespace Reese.Demo
 {
-    class NavFlockingDestinationSystem : SystemBase
+    partial class NavFlockingDestinationSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 

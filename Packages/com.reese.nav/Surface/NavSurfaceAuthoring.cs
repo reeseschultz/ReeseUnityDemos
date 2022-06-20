@@ -53,7 +53,6 @@ namespace Reese.Nav
 
             dstManager.RemoveComponent(entity, typeof(NonUniformScale));
             dstManager.RemoveComponent(entity, typeof(MeshRenderer));
-            dstManager.RemoveComponent(entity, typeof(RenderMesh));
         }
     }
 }

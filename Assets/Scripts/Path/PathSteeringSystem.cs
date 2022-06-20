@@ -9,7 +9,7 @@ namespace Reese.Demo
 {
     ///<summary>This is an EXAMPLE of how to translate and rotate agents with the pathing package.</summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    public class PathSteeringSystem : SystemBase
+    public partial class PathSteeringSystem : SystemBase
     {
         public static readonly float STOPPING_DISTANCE = 1;
 

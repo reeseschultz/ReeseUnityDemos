@@ -8,7 +8,7 @@ namespace Reese.Path
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateAfter(typeof(PathQuadrantSystem))]
-    public class PathFlockingSystem : SystemBase
+    public partial class PathFlockingSystem : SystemBase
     {
         public bool IsDebugging = false;
 

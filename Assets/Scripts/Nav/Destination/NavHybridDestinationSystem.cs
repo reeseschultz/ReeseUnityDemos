@@ -18,12 +18,18 @@ namespace Reese.Demo
         {
             var mouse = Mouse.current;
 
-            if (mouse == null) return;
+            if (mouse == null || !mouse.leftButton.isPressed) return;
 
             if (
-                mouse.leftButton.wasPressedThisFrame &&
-                Physics.Raycast(Camera.main.ScreenPointToRay(new Vector2(mouse.position.x.ReadValue(), mouse.position.y.ReadValue())), out var hit)
-            ) agent.WorldDestination = hit.point;
+                Physics.Raycast(
+                    Camera.main.ScreenPointToRay(
+                        new Vector2(
+                            mouse.position.x.ReadValue(),
+                            mouse.position.y.ReadValue()
+                        )
+                    ),
+                out var hit
+            )) agent.WorldDestination = hit.point;
 
             var keyboard = Keyboard.current;
 

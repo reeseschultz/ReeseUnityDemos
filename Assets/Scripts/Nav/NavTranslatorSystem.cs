@@ -5,7 +5,7 @@ using Unity.Transforms;
 
 namespace Reese.Demo
 {
-    class NavTranslatorSystem : SystemBase
+    partial class NavTranslatorSystem : SystemBase
     {
         protected override void OnUpdate()
         {
