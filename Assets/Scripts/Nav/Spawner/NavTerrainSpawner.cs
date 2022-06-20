@@ -1,11 +1,11 @@
-﻿using Reese.Nav;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using Reese.EntityPrefabGroups;
+using Reese.Nav;
+using Unity.Collections;
+using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Unity.Entities;
-using Unity.Collections;
-using Reese.EntityPrefabGroups;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Reese.Demo
 {
@@ -29,7 +29,7 @@ namespace Reese.Demo
         [SerializeField]
         float3 SpawnOffset = new float3(0, 1, 0);
 
-        int enqueueCount = 1;
+        int spawnCount = 1;
 
         EntityManager entityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
@@ -41,7 +41,7 @@ namespace Reese.Demo
         {
             if (SpawnButton == null || Slider == null) return;
 
-            SpawnButton.onClick.AddListener(Enqueue);
+            SpawnButton.onClick.AddListener(Spawn);
             PrefabButton.onClick.AddListener(TogglePrefab);
             Slider.onValueChanged.AddListener(UpdateEnqueueCount);
 
@@ -53,29 +53,33 @@ namespace Reese.Demo
 
         void UpdateEnqueueCount(float count)
         {
-            enqueueCount = (int)count;
+            spawnCount = (int)count;
 
             if (SpawnText == null) return;
 
-            SpawnText.text = "Spawn " + enqueueCount;
+            SpawnText.text = "Spawn " + spawnCount;
 
-            if (enqueueCount == 1) SpawnText.text += " Entity";
+            if (spawnCount == 1) SpawnText.text += " Entity";
             else SpawnText.text += " Entities";
         }
 
-        void TogglePrefab() {
-            if (currentPrefab.Equals(dinosaurPrefab)) {
+        void TogglePrefab()
+        {
+            if (currentPrefab.Equals(dinosaurPrefab))
+            {
                 currentPrefab = cylinderPrefab;
                 PrefabText.text = "Spawning Cylinders";
-            } else {
+            }
+            else
+            {
                 currentPrefab = dinosaurPrefab;
                 PrefabText.text = "Spawning Dinosaurs";
             }
         }
 
-        void Enqueue()
+        void Spawn()
         {
-            var entities = new NativeArray<Entity>(enqueueCount, Allocator.Temp);
+            var entities = new NativeArray<Entity>(spawnCount, Allocator.Temp);
 
             entityManager.Instantiate(currentPrefab, entities);
 

@@ -116,8 +116,6 @@ namespace Reese.Nav
                 .WithNativeDisableParallelForRestriction(jumpBufferFromEntity)
                 .ForEach((Entity entity, int entityInQueryIndex, ref NavAgent agent, ref Parent surface, ref Translation translation, in LocalToWorld localToWorld) =>
                 {
-                    if (!surface.Value.Equals(Entity.Null) && false) return;
-
                     var rayInput = new RaycastInput
                     {
                         Start = localToWorld.Position + agent.Offset,
