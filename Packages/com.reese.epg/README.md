@@ -1,5 +1,7 @@
 # Reese's Entity Prefab Groups
 
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+
 Create and reference groups of entity prefabs with ease.
 
 ## Import

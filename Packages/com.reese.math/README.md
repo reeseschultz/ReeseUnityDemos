@@ -1,5 +1,7 @@
 # Reese's DOTS Math Extensions
 
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+
 Includes math functions missing from DOTS.
 
 ## Import

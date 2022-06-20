@@ -1,5 +1,7 @@
 # Reese's DOTS Pathing
 
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+
 ## Introduction
 
 This was forked from the [navigation package](https://github.com/reeseschultz/ReeseUnityDemos/tree/nav#reeses-dots-navigation), and stripped of everything except what's required for setting destinations and pathing. Thus, there is **no** physics-related code (which includes surface management and obstacle avoidance), lerping, terrain support, etc. You must supply world positions and anticipate world positions as output—there is no support for local positioning, unlike the aforementioned navigation package.

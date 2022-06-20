@@ -1,10 +1,12 @@
 # Reese's DOTS Navigation
 
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+
 [![openupm](https://img.shields.io/npm/v/com.reese.nav?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.reese.nav/)
 
 ## Introduction
 
-This is a multi-threaded navigation package using [Unity DOTS](https://unity.com/dots), maintained by [Reese](https://github.com/reeseschultz/). It supports obstacle avoidance, terrain, agents automatically jumping between surfaces with artificial gravity, parenting of agents and surfaces for preserving local transformations, flocking behaviors (originally contributed by [Dennis](https://github.com/0x6c23)) and even backward compatibility with GameObjects. 
+This is a multi-threaded navigation package using [Unity DOTS](https://unity.com/dots). It supports obstacle avoidance, terrain, agents automatically jumping between surfaces with artificial gravity, parenting of agents and surfaces for preserving local transformations, flocking behaviors (originally contributed by [Dennis](https://github.com/0x6c23)) and even backward compatibility with GameObjects. 
 
 If you don't want all the extra bells and whistles, such as surface management and jumping, please see the [pathing package](https://github.com/reeseschultz/ReeseUnityDemos/tree/path#reeses-dots-pathing) instead.
 

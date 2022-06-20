@@ -1,5 +1,7 @@
 # Reese's Utility Code
 
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+
 General utility code for Unity, mainly DOTS-oriented.
 
 ## Import

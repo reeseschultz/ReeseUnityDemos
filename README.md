@@ -1,5 +1,7 @@
 # ReeseUnityDemos
 
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+
 ![Flocking demo.](/preview.gif)
 
 Unity packages and demos—emphasizing ECS, jobs and the Burst compiler—by [Reese](https://github.com/reeseschultz) and others.

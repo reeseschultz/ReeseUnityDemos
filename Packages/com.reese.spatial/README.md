@@ -1,5 +1,7 @@
 # Reese's DOTS Spatial Events
 
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+
 Reactive entry, overlap and exit events in Burst-capable jobs.
 
 ## Import
