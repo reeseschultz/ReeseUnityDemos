@@ -1,5 +1,4 @@
-﻿using System;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics;
@@ -9,9 +8,12 @@ using Unity.Transforms;
 namespace Reese.Spatial
 {
     /// <summary>Detects the entry and exit of activators to and from the bounds of triggers.</summary>
-    public class SpatialStartSystem : SystemBase
+    public partial class SpatialStartSystem : SystemBase
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetOrCreateSystem<BuildPhysicsWorld>();
+
+        protected override void OnStartRunning()
+            => this.RegisterPhysicsRuntimeSystemReadOnly();
 
         protected override void OnUpdate()
         {
@@ -65,8 +67,6 @@ namespace Reese.Spatial
 
             var collisionWorld = buildPhysicsWorld.PhysicsWorld.CollisionWorld;
 
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
-
             Entities
                 .WithAll<SpatialTag>()
                 .WithReadOnly(activatorFromEntity)
@@ -85,7 +85,7 @@ namespace Reese.Spatial
                             exits.RemoveAt(i);
 
                     var tags = tagsFromEntity[entity];
-                    var tagSet = new NativeHashSet<FixedString128>(1, Allocator.Temp);
+                    var tagSet = new NativeParallelHashSet<FixedString128Bytes>(1, Allocator.Temp);
                     for (var i = 0; i < tags.Length; ++i) tagSet.Add(tags[i]);
 
                     for (var i = 0; i < overlaps.Length; ++i)
@@ -120,7 +120,7 @@ namespace Reese.Spatial
                         return;
                     }
 
-                    var overlappingActivatorEntitySet = new NativeHashSet<Entity>(1, Allocator.Temp);
+                    var overlappingActivatorEntitySet = new NativeParallelHashSet<Entity>(1, Allocator.Temp);
 
                     for (var i = 0; i < possibleOverlaps.Length; ++i)
                     {
@@ -157,7 +157,7 @@ namespace Reese.Spatial
 
                     overlappingActivatorEntitySet.Dispose();
 
-                    var overlapSet = new NativeHashSet<Entity>(1, Allocator.Temp);
+                    var overlapSet = new NativeParallelHashSet<Entity>(1, Allocator.Temp);
                     for (var i = 0; i < overlaps.Length; ++i) overlapSet.Add(overlaps[i].Value.Activator);
 
                     for (var i = 0; i < overlappingActivators.Length; ++i)
@@ -175,7 +175,7 @@ namespace Reese.Spatial
                         var overlappingTags = tagsFromEntity[overlappingEntity];
 
                         var sharesTag = false;
-                        FixedString128 tag = default;
+                        FixedString128Bytes tag = default;
 
                         for (var j = 0; j < overlappingTags.Length; ++j)
                         {

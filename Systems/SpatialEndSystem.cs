@@ -5,7 +5,7 @@ namespace Reese.Spatial
 {
     /// <summary>Clears the entry and exit buffers.</summary>
     [UpdateAfter(typeof(SpatialStartSystem))]
-    public class SpatialEndSystem : SystemBase
+    public partial class SpatialEndSystem : SystemBase
     {
         protected override void OnUpdate()
         {
