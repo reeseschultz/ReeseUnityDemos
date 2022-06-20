@@ -6,7 +6,7 @@
 	"displayName": "Reese's DOTS Pathing",
 	"description": "DOTS pathing without any bells and whistles.",
 	"dependencies": {
-		"com.unity.entities": "0.17.0-preview.42"
+		"com.unity.entities": "0.51.0-preview.32"
 	},
 	"unity": "2020.3",
 	"unityRelease": "12f1",

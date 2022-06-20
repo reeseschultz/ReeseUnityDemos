@@ -6,7 +6,7 @@
 	"displayName": "Reese's DOTS Randomization",
 	"description": "Unity.Mathematics.Random number generators for jobs, including Burst-capable ones.",
 	"dependencies": {
-		"com.unity.entities": "0.17.0-preview.42"
+		"com.unity.entities": "0.51.0-preview.32"
 	},
 	"unity": "2020.3",
 	"unityRelease": "12f1",

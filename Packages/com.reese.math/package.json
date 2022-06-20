@@ -6,8 +6,8 @@
 	"displayName": "Reese's DOTS Math Extensions",
 	"description": "Includes math functions missing from DOTS.",
 	"dependencies": {
-		"com.unity.mathematics": "1.2.1",
-		"com.unity.entities": "0.17.0-preview.42"
+		"com.unity.mathematics": "1.2.6",
+		"com.unity.entities": "0.51.0-preview.32"
 	},
 	"unity": "2020.3",
 	"unityRelease": "18f1",

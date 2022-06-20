@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.entities": "0.17.0-preview.42"
+        "com.unity.entities": "0.51.0-preview.32"
       }
     },
     "com.reese.math": {
@@ -13,8 +13,8 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.mathematics": "1.2.1",
-        "com.unity.entities": "0.17.0-preview.42"
+        "com.unity.mathematics": "1.2.6",
+        "com.unity.entities": "0.51.0-preview.32"
       }
     },
     "com.reese.nav": {
@@ -23,9 +23,9 @@
       "source": "embedded",
       "dependencies": {
         "com.reese.math": "0.1.0",
-        "com.unity.entities": "0.17.0-preview.42",
-        "com.unity.physics": "0.6.0-preview.3",
-        "com.unity.rendering.hybrid": "0.11.0-preview.44"
+        "com.unity.entities": "0.51.0-preview.32",
+        "com.unity.physics": "0.51.0-preview.32",
+        "com.unity.rendering.hybrid": "0.51.0-preview.32"
       }
     },
     "com.reese.path": {
@@ -33,7 +33,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.entities": "0.17.0-preview.42"
+        "com.unity.entities": "0.51.0-preview.32"
       }
     },
     "com.reese.random": {
@@ -41,7 +41,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.entities": "0.17.0-preview.42"
+        "com.unity.entities": "0.51.0-preview.32"
       }
     },
     "com.reese.spatial": {
@@ -49,8 +49,8 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.entities": "0.17.0-preview.42",
-        "com.unity.physics": "0.6.0-preview.3"
+        "com.unity.entities": "0.51.0-preview.32",
+        "com.unity.physics": "0.51.0-preview.32"
       }
     },
     "com.reese.utility": {
@@ -58,8 +58,8 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.entities": "0.17.0-preview.42",
-        "com.unity.physics": "0.6.0-preview.3"
+        "com.unity.entities": "0.51.0-preview.32",
+        "com.unity.physics": "0.51.0-preview.32"
       }
     },
     "com.unity.burst": {
