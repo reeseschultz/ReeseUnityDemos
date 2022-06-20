@@ -76,11 +76,20 @@ namespace Reese.Demo
         {
             var closestDistance = float.PositiveInfinity;
 
+            // Current quadrant:
             SearchQuadrantNeighbor(quadrantHashMap, key, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
+
+            // Adjacent quadrants:
             SearchQuadrantNeighbor(quadrantHashMap, key + 1, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
             SearchQuadrantNeighbor(quadrantHashMap, key - 1, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
             SearchQuadrantNeighbor(quadrantHashMap, key + flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
             SearchQuadrantNeighbor(quadrantHashMap, key - flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
+
+            // Diagonal quadrants:
+            SearchQuadrantNeighbor(quadrantHashMap, key + 1 + flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
+            SearchQuadrantNeighbor(quadrantHashMap, key + 1 - flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
+            SearchQuadrantNeighbor(quadrantHashMap, key - 1 + flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
+            SearchQuadrantNeighbor(quadrantHashMap, key - 1 - flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
         }
 
         static void SearchQuadrantNeighbor(
@@ -114,23 +123,22 @@ namespace Reese.Demo
 
                 if (distance < flocking.SeparationPerceptionRadius)
                 {
-                    separationNeighbors++;
+                    ++separationNeighbors;
                     separationVec += (pos - quadrantData.LocalToWorld.Position) / distance;
                 }
 
                 if (distance < flocking.AlignmentPerceptionRadius)
                 {
-                    alignmentNeighbors++;
+                    ++alignmentNeighbors;
                     alignmentVec += quadrantData.LocalToWorld.Up;
                 }
 
                 if (distance < flocking.CohesionPerceptionRadius)
                 {
-                    cohesionNeighbors++;
+                    ++cohesionNeighbors;
                     cohesionPos += quadrantData.LocalToWorld.Position;
                 }
             } while (quadrantHashMap.TryGetNextValue(out quadrantData, ref iterator));
         }
-
     }
 }
