@@ -58,16 +58,48 @@ namespace Reese.Demo
         public static int HashPosition(float3 position, PathFlockingSettings flockingSettings)
             => (int)(math.floor(position.x / flockingSettings.QuadrantCellSize) + flockingSettings.QuadrantZMultiplier * math.floor(position.z / flockingSettings.QuadrantCellSize));
 
-        static void SearchQuadrantNeighbor(in NativeParallelMultiHashMap<int, QuadrantData> quadrantHashMap, in int key,
-            in Entity entity, in PathFlocking flocking, in float3 pos, ref int separationNeighbors, ref int alignmentNeighbors,
-            ref int cohesionNeighbors, ref float3 cohesionPos, ref float3 alignmentVec, ref float3 separationVec,
-            ref QuadrantData closestQuadrantData)
+        public static void SearchQuadrantNeighbors(
+            in NativeParallelMultiHashMap<int, QuadrantData> quadrantHashMap,
+            in int key,
+            in Entity currentEntity,
+            in PathFlocking flocking,
+            in float3 pos,
+            in PathFlockingSettings flockingSettings,
+            ref int separationNeighbors,
+            ref int alignmentNeighbors,
+            ref int cohesionNeighbors,
+            ref float3 cohesionPos,
+            ref float3 alignmentVec,
+            ref float3 separationVec,
+            ref QuadrantData closestQuadrantData
+        )
+        {
+            var closestDistance = float.PositiveInfinity;
+
+            SearchQuadrantNeighbor(quadrantHashMap, key, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
+            SearchQuadrantNeighbor(quadrantHashMap, key + 1, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
+            SearchQuadrantNeighbor(quadrantHashMap, key - 1, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
+            SearchQuadrantNeighbor(quadrantHashMap, key + flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
+            SearchQuadrantNeighbor(quadrantHashMap, key - flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData, ref closestDistance);
+        }
+
+        static void SearchQuadrantNeighbor(
+            in NativeParallelMultiHashMap<int, QuadrantData> quadrantHashMap,
+            in int key,
+            in Entity entity,
+            in PathFlocking flocking,
+            in float3 pos,
+            ref int separationNeighbors,
+            ref int alignmentNeighbors,
+            ref int cohesionNeighbors,
+            ref float3 cohesionPos,
+            ref float3 alignmentVec,
+            ref float3 separationVec,
+            ref QuadrantData closestQuadrantData,
+            ref float closestDistance
+        )
         {
             if (!quadrantHashMap.TryGetFirstValue(key, out var quadrantData, out var iterator)) return;
-
-            closestQuadrantData = quadrantData;
-
-            var closestDistance = math.distance(pos, quadrantData.LocalToWorld.Position);
 
             do
             {
@@ -100,16 +132,5 @@ namespace Reese.Demo
             } while (quadrantHashMap.TryGetNextValue(out quadrantData, ref iterator));
         }
 
-        public static void SearchQuadrantNeighbors(in NativeParallelMultiHashMap<int, QuadrantData> quadrantHashMap,
-            in int key, in Entity currentEntity, in PathFlocking flocking, in float3 pos, in PathFlockingSettings flockingSettings, ref int separationNeighbors,
-            ref int alignmentNeighbors, ref int cohesionNeighbors, ref float3 cohesionPos, ref float3 alignmentVec,
-            ref float3 separationVec, ref QuadrantData closestQuadrantData)
-        {
-            SearchQuadrantNeighbor(quadrantHashMap, key, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
-            SearchQuadrantNeighbor(quadrantHashMap, key + 1, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
-            SearchQuadrantNeighbor(quadrantHashMap, key - 1, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
-            SearchQuadrantNeighbor(quadrantHashMap, key + flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
-            SearchQuadrantNeighbor(quadrantHashMap, key - flockingSettings.QuadrantZMultiplier, currentEntity, flocking, pos, ref separationNeighbors, ref alignmentNeighbors, ref cohesionNeighbors, ref cohesionPos, ref alignmentVec, ref separationVec, ref closestQuadrantData);
-        }
     }
 }
