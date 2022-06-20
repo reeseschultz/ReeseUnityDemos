@@ -10,7 +10,7 @@ namespace Reese.Nav
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavSteeringSystem))]
-    public class NavMoveSystem : SystemBase
+    public partial class NavMoveSystem : SystemBase
     {
         static void Translate(float deltaSeconds, NavSteering steering, NavAgent agent, ref Translation translation)
             => translation.Value += steering.CurrentHeading * agent.TranslationSpeed * deltaSeconds;

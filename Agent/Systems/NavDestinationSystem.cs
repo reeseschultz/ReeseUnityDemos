@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
+using Unity.Physics.Systems;
 using Unity.Transforms;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 using Collider = Unity.Physics.Collider;
@@ -14,11 +15,14 @@ namespace Reese.Nav
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavSurfaceSystem))]
-    public class NavDestinationSystem : SystemBase
+    public partial class NavDestinationSystem : SystemBase
     {
         NavSystem navSystem => World.GetOrCreateSystem<NavSystem>();
         BuildPhysicsWorld buildPhysicsWorld => World.GetOrCreateSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+
+        protected override void OnStartRunning()
+            => this.RegisterPhysicsRuntimeSystemReadWrite();
 
         protected override void OnUpdate()
         {

@@ -4,7 +4,6 @@ using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
-using UnityEngine;
 using RaycastHit = Unity.Physics.RaycastHit;
 
 namespace Reese.Nav
@@ -12,7 +11,7 @@ namespace Reese.Nav
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateAfter(typeof(NavMoveSystem))]
-    public class NavGroundSystem : SystemBase
+    public partial class NavGroundSystem : SystemBase
     {
         public bool IsDebugging = false;
 

@@ -1,19 +1,21 @@
 {
 	"name": "com.reese.nav",
+	"documentationUrl": "https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.nav/README.md#reeses-dots-navigation",
+	"changelogUrl": "https://github.com/reeseschultz/ReeseUnityDemos/commits/master/Packages/com.reese.nav",
 	"version": "0.22.2",
 	"displayName": "Reese's DOTS Navigation",
 	"description": "DOTS navigation with flocking, auto-jumping agents and dynamic surfaces.",
 	"dependencies": {
 		"com.reese.math": "0.1.0",
-		"com.unity.entities": "0.17.0-preview.42",
-		"com.unity.physics": "0.6.0-preview.3",
-		"com.unity.rendering.hybrid": "0.11.0-preview.44"
+		"com.unity.entities": "0.51.0-preview.32",
+		"com.unity.physics": "0.51.0-preview.32",
+		"com.unity.rendering.hybrid": "0.51.0-preview.32"
 	},
 	"unity": "2020.3",
 	"unityRelease": "12f1",
 	"author": {
 		"name": "Reese Schultz",
-		"email": "reeseschultz@gmail.com",
-		"url": "https://reeseschultz.com"
+		"email": "contact@reese.codes",
+		"url": "https://reese.codes"
 	}
 }

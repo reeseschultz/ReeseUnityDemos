@@ -4,7 +4,7 @@ using Unity.Transforms;
 
 namespace Reese.Nav
 {
-    public class NavFollowSystem : SystemBase
+    public partial class NavFollowSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
