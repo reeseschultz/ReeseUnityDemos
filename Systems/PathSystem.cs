@@ -3,7 +3,7 @@ using Unity.Entities;
 namespace Reese.Path
 {
     /// </summary>System serving as the single source of truth of navigation settings.</summary>
-    public class PathSystem : SystemBase
+    public partial class PathSystem : SystemBase
     {
         /// <summary>Settings that can be updated at runtime.</summary>
         public PathSettings Settings = new PathSettings

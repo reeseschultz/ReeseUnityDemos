@@ -1,5 +1,7 @@
 # Reese's DOTS Pathing
 
+[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+
 ## Introduction
 
 This was forked from the [navigation package](https://github.com/reeseschultz/ReeseUnityDemos/tree/nav#reeses-dots-navigation), and stripped of everything except what's required for setting destinations and pathing. Thus, there is **no** physics-related code (which includes surface management and obstacle avoidance), lerping, terrain support, etc. You must supply world positions and anticipate world positions as output—there is no support for local positioning, unlike the aforementioned navigation package.
@@ -7,8 +9,6 @@ This was forked from the [navigation package](https://github.com/reeseschultz/Re
 Furthermore, because physics is ripped out entirely from this package, you may have to do more to validate correctness of the positions you supply. Remember, unlike the navigation package, this one does not raycast underneath agents to check for a potential surface.
 
 And unlike the navigation package, which includes [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents) by default, you must install it yourself for this package to work properly.
-
-By the way, this package is maintained by me, [Reese](https://github.com/reeseschultz/).
 
 ## Import
 
@@ -117,6 +117,4 @@ This package uses [PathUtils](https://github.com/reeseschultz/ReeseUnityDemos/tr
 
 ## Contributing
 
-Find a problem, or have an improvement in mind? Great. Go ahead and submit a pull request. Note that the maintainer, Reese, offers no assurance he will respond to you, fix bugs or add features on your behalf in a timely fashion, if ever, [unless you reach an agreement with him about support...](https://reese.codes)
-
-By submitting a pull request, you agree to license your work under [this project's MIT license](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
+All contributions to this repository are licensed under [MIT](https://github.com/reeseschultz/ReeseUnityDemos/blob/master/LICENSE).
