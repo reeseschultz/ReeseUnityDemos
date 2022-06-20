@@ -2,14 +2,14 @@
 	"name": "com.reese.epg",
 	"documentationUrl": "https://github.com/reeseschultz/ReeseUnityDemos/tree/master/Packages/com.reese.epg#reeses-entity-prefab-groups",
 	"changelogUrl": "https://github.com/reeseschultz/ReeseUnityDemos/commits/master/Packages/com.reese.epg",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"displayName": "Reese's Entity Prefab Groups",
 	"description": "Create and reference groups of entity prefabs with ease.",
 	"dependencies": {
 		"com.unity.entities": "0.51.0-preview.32"
 	},
-	"unity": "2020.3",
-	"unityRelease": "18f1",
+	"unity": "2021.3",
+	"unityRelease": "4f1",
 	"author": {
 		"name": "Reese Schultz",
 		"email": "contact@reese.codes",
