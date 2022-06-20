@@ -19,7 +19,19 @@ namespace Reese.Nav
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 
-        static void HandleCompletePath(ComponentDataFromEntity<LocalToWorld> localToWorldFromEntity, Entity entity, Rotation rotation, ref NavAgent agent, Parent surface, Translation translation, PhysicsWorld physicsWorld, float elapsedSeconds, EntityCommandBuffer.ParallelWriter commandBuffer, int entityInQueryIndex, NavSettings settings)
+        static void HandleCompletePath(
+            ComponentDataFromEntity<LocalToWorld> localToWorldFromEntity,
+            Entity entity,
+            Rotation rotation,
+            ref NavAgent agent,
+            Parent surface,
+            Translation translation,
+            PhysicsWorld physicsWorld,
+            float elapsedSeconds,
+            EntityCommandBuffer.ParallelWriter commandBuffer,
+            int entityInQueryIndex,
+            NavSettings settings
+        )
         {
             var rayInput = new RaycastInput
             {

@@ -116,8 +116,13 @@ namespace Reese.Nav
                         NavConstants.PATH_NODE_MAX
                     );
 
-                    var jumpBuffer = !jumpBufferFromEntity.HasComponent(entity) ? commandBuffer.AddBuffer<NavJumpBufferElement>(entityInQueryIndex, entity) : jumpBufferFromEntity[entity];
-                    var pathBuffer = !pathBufferFromEntity.HasComponent(entity) ? commandBuffer.AddBuffer<NavPathBufferElement>(entityInQueryIndex, entity) : pathBufferFromEntity[entity];
+                    var jumpBuffer = !jumpBufferFromEntity.HasComponent(entity) ?
+                        commandBuffer.AddBuffer<NavJumpBufferElement>(entityInQueryIndex, entity) :
+                        jumpBufferFromEntity[entity];
+
+                    var pathBuffer = !pathBufferFromEntity.HasComponent(entity) ?
+                        commandBuffer.AddBuffer<NavPathBufferElement>(entityInQueryIndex, entity) :
+                        pathBufferFromEntity[entity];
 
                     if (jumping)
                     {
@@ -138,7 +143,7 @@ namespace Reese.Nav
                     }
                     else if (status == PathQueryStatus.Success)
                     {
-                        if (pathBuffer.Length > 0) pathBuffer.RemoveAt(pathBuffer.Length - 1);
+                        pathBuffer.Clear();
 
                         for (var i = straightPathCount - 1; i > 0; --i) pathBuffer.Add(
                             ((float3)straightPath[i].position + agent.Offset).ToLocal(localToWorldFromEntity[surface.Value])
