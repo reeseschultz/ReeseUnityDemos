@@ -2,15 +2,15 @@
 	"name": "com.reese.math",
 	"documentationUrl": "https://github.com/reeseschultz/ReeseUnityDemos/blob/master/Packages/com.reese.math/README.md#reeses-dots-math-extensions",
 	"changelogUrl": "https://github.com/reeseschultz/ReeseUnityDemos/commits/master/Packages/com.reese.math/README.md",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"displayName": "Reese's DOTS Math Extensions",
 	"description": "Includes math functions missing from DOTS.",
 	"dependencies": {
 		"com.unity.mathematics": "1.2.6",
 		"com.unity.entities": "0.51.0-preview.32"
 	},
-	"unity": "2020.3",
-	"unityRelease": "18f1",
+	"unity": "2021.3",
+	"unityRelease": "4f1",
 	"author": {
 		"name": "Reese Schultz",
 		"email": "contact@reese.codes",
