@@ -3,7 +3,7 @@ using Unity.Jobs;
 
 namespace Reese.Utility
 {
-    public class RootSystem : SystemBase
+    public partial class RootSystem : SystemBase
     {
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 

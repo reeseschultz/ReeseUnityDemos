@@ -6,7 +6,7 @@ using Unity.Mathematics;
 
 namespace Reese.Utility
 {
-    public class FixTranslationSystem : SystemBase
+    public partial class FixTranslationSystem : SystemBase
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetExistingSystem<BuildPhysicsWorld>();
 

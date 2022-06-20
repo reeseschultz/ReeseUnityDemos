@@ -1,8 +1,9 @@
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Physics;
 using Unity.Transforms;
+using Unity.Physics;
+using Unity.Physics.Systems;
 using Collider = Unity.Physics.Collider;
 using SphereCollider = Unity.Physics.SphereCollider;
 using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
@@ -10,11 +11,14 @@ using BuildPhysicsWorld = Unity.Physics.Systems.BuildPhysicsWorld;
 namespace Reese.Utility
 {
     [UpdateAfter(typeof(TransformSystemGroup))]
-    public class StickySystem : SystemBase
+    public partial class StickySystem : SystemBase
     {
         BuildPhysicsWorld buildPhysicsWorld => World.GetOrCreateSystem<BuildPhysicsWorld>();
 
         EntityCommandBufferSystem barrier => World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+
+        protected override void OnStartRunning()
+            => this.RegisterPhysicsRuntimeSystemReadOnly();
 
         protected override void OnUpdate()
         {
@@ -23,8 +27,6 @@ namespace Reese.Utility
             var physicsWorld = buildPhysicsWorld.PhysicsWorld;
 
             var localToWorldFromEntity = GetComponentDataFromEntity<LocalToWorld>(true);
-
-            Dependency = JobHandle.CombineDependencies(Dependency, buildPhysicsWorld.GetOutputDependency());
 
             Entities
                 .WithAll<LocalToWorld>()
