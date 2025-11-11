@@ -2,7 +2,9 @@
 
 # Reese's DOTS Spawning (***DEPRECATED!***)
 
-***This package is no longer maintained! Please use the `EntityManager` or `CommandBuffer` to instantiate entities from prefabs instead.***
+**[This project is archived—no longer maintained.](https://github.com/reeseschultz/ReeseUnityDemos/issues/100) So long, and thanks for all the fish!**
+
+**This package was deprecated long before archival because the `EntityManager` or `CommandBuffer` were preferred for instantiating entities from prefabs instead, at the time.**
 
 ---
 
