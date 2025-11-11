@@ -1,8 +1,6 @@
 # Reese's DOTS Navigation
 
-[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
-
-[![openupm](https://img.shields.io/npm/v/com.reese.nav?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.reese.nav/)
+**[This project is archived—no longer maintained.](https://github.com/reeseschultz/ReeseUnityDemos/issues/100) So long, and thanks for all the fish!**
 
 ## Introduction
 
