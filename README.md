@@ -1,6 +1,6 @@
 # Reese's DOTS Math Extensions
 
-[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+**[This project is archived—no longer maintained.](https://github.com/reeseschultz/ReeseUnityDemos/issues/100) So long, and thanks for all the fish!**
 
 Includes math functions missing from DOTS.
 
