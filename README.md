@@ -1,6 +1,6 @@
 # Reese's Entity Prefab Groups
 
-[![Discord Shield](https://discordapp.com/api/guilds/732665868521177117/widget.png?style=shield)](https://discord.gg/CZ85mguYjK)
+**[This project is archived—no longer maintained.](https://github.com/reeseschultz/ReeseUnityDemos/issues/100) So long, and thanks for all the fish!**
 
 Create and reference groups of entity prefabs with ease.
 
